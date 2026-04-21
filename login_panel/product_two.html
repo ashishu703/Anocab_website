@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Product Calculators</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: #f8fafc;
+    }
+
+    header {
+      background-color: #2c5364;
+      padding: 20px;
+      color: white;
+      text-align: center;
+      font-size: 24px;
+      font-weight: bold;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 20px;
+      padding: 40px;
+      max-width: 1200px;
+      margin: auto;
+    }
+
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+      transition: 0.3s ease;
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
+      cursor: pointer;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 20px rgba(0, 0, 0, 0.12);
+    }
+
+    .card h3 {
+      font-size: 18px;
+      color: #2c5364;
+    }
+
+    @media (max-width: 500px) {
+      .card h3 {
+        font-size: 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>Product Price Calculators</header>
+
+  <div class="grid">
+    <a href="../price_list/multicore_copper_2coreflat.html" class="card"><h3>2CORE FLAT</h3></a>
+    <a href="../price_list/multicore_copper_2coreround.html" class="card"><h3>2CORE ROUND</h3></a>
+    <a href="../price_list/multicore_copper_3corecopperround.html" class="card"><h3>3CORE ROUND</h3></a>
+    <a href="../price_list/multicore_copper_4core_round.html" class="card"><h3>4CORE ROUND</h3></a>
+  </div>
+
+</body>
+</html>

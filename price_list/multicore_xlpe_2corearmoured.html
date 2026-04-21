@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Cable Cost Calculator (XLPE)</title>
+  <style>
+    table, th, td {
+      border: 1px solid black;
+      border-collapse: collapse;
+      padding: 8px;
+    }
+    th {
+      background-color: #f0f0f0;
+    }
+    input[type="number"] {
+      width: 80px;
+    }
+    .center {
+      text-align: center;
+      margin-top: 20px;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+<h2>Cable Cost Calculator (XLPE)</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>NO. OF CORES</th>
+      <th>NORMAL CROSS-SECTIONAL AREA</th>
+      <th>TOTAL WT OF CONDUCTOR</th>
+      <th>TOTAL WT OF XLPE INSULATION</th>
+      <th>TOTAL WT OF INNER SHEATH INSULATION</th>
+      <th>TOTAL WT OF ARMOURED WIRE</th>
+      <th>TOTAL WT OF PVC ST-2 OUTER SHEATH INSULATION</th>
+      <th>RATE OF ALUMINIUM</th>
+      <th>RATE OF XLPE</th>
+      <th>RATE OF T PVC</th>
+      <th>RATE OF ARMOURED</th>
+      <th>RATE OF PVC ST-2</th>
+      <th>RAW MATERIAL COSTING</th>
+      <th>PROCESSING (13.5%)</th>
+      <th>PROFIT (10%)</th>
+      <th>PER MTR COST</th>
+    </tr>
+  </thead>
+  <tbody id="data-table"></tbody>
+</table>
+
+<div class="center">
+  <button onclick="calculateAll()">Calculate</button>
+</div>
+
+<script>
+  const tableData = [
+    [2, 2.5, 13.52, 23.08, 73.74, 224, 84.6, 265, 120, 90, 55, 120],
+    [2, 4, 21.62, 26.69, 88.88, 247, 90.68, 265, 120, 90, 55, 120],
+    [2, 6, 32.44, 30.56, 106.7, 272, 97.2, 265, 120, 90, 55, 120],
+    [2, 10, 54.06, 36.7, 138.26, 311, 107.53, 265, 120, 90, 55, 120],
+    [2, 25, 135.15, 60.69, 34.92, 264, 158.4, 265, 120, 90, 55, 120],
+    [2, 35, 189.21, 79.08, 54.16, 308, 203.05, 265, 120, 90, 55, 120],
+    [2, 50, 270.3, 125.81, 83.37, 379, 324.39, 265, 120, 90, 55, 120],
+    [2, 70, 378.42, 215.57, 217.71, 703, 756.79, 265, 120, 90, 55, 120],
+    [2, 95, 513.57, 278.86, 249.79, 805, 965.55, 265, 120, 90, 55, 120]
+  ];
+
+  function createInput(value, rowIdx, colIdx) {
+    const input = document.createElement('input');
+    input.type = 'number';
+    input.step = 'any';
+    input.value = value;
+    input.dataset.row = rowIdx;
+    input.dataset.col = colIdx;
+    input.oninput = () => calculateRow(rowIdx);
+    return input;
+  }
+
+  function calculateRow(rowIdx) {
+    const row = document.querySelector(`#row-${rowIdx}`);
+    const cells = row.querySelectorAll('td');
+
+    const wtConductor = parseFloat(cells[2].textContent) || 0;
+    const wtXLPE = parseFloat(cells[3].textContent) || 0;
+    const wtTPVC = parseFloat(cells[4].textContent) || 0;
+    const wtArmoured = parseFloat(cells[5].textContent) || 0;
+    const wtST2 = parseFloat(cells[6].textContent) || 0;
+
+    const rateInputs = row.querySelectorAll('input');
+    const [rateAl, rateXLPE, rateTPVC, rateArmoured, rateST2] = Array.from(rateInputs).map(i => parseFloat(i.value) || 0);
+
+    const rawCost = (wtConductor * rateAl) + (wtXLPE * rateXLPE) + (wtTPVC * rateTPVC) + (wtArmoured * rateArmoured) + (wtST2 * rateST2);
+    const processing = (rawCost / 86.5) * 100;
+    const profit = processing * 1.1;
+    const perMtrCost = profit / 1000;
+
+    const outputCells = row.querySelectorAll('.output');
+    outputCells[0].textContent = rawCost.toFixed(0);
+    outputCells[1].textContent = processing.toFixed(0);
+    outputCells[2].textContent = profit.toFixed(0);
+    outputCells[3].textContent = perMtrCost.toFixed(2);
+  }
+
+  function calculateAll() {
+    for (let i = 0; i < tableData.length; i++) {
+      calculateRow(i);
+    }
+  }
+
+  function generateTable() {
+    const tbody = document.getElementById('data-table');
+
+    tableData.forEach((rowData, rowIdx) => {
+      const tr = document.createElement('tr');
+      tr.id = `row-${rowIdx}`;
+
+      // First 7 fixed columns
+      for (let i = 0; i < 7; i++) {
+        const td = document.createElement('td');
+        td.textContent = rowData[i];
+        tr.appendChild(td);
+      }
+
+      // Next 5 inputs (rate columns)
+      for (let i = 7; i < 12; i++) {
+        const td = document.createElement('td');
+        td.appendChild(createInput(rowData[i], rowIdx, i));
+        tr.appendChild(td);
+      }
+
+      // Output cells (4)
+      for (let i = 0; i < 4; i++) {
+        const td = document.createElement('td');
+        td.classList.add('output');
+        td.textContent = '-';
+        tr.appendChild(td);
+      }
+
+      tbody.appendChild(tr);
+      calculateRow(rowIdx);
+    });
+  }
+
+  generateTable();
+</script>
+
+</body>
+</html>

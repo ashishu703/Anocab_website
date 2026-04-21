@@ -1,0 +1,215 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Price List Table</title>
+  <style>
+    table {
+      border-collapse: collapse;
+      width: 80%;
+      margin: 20px auto;
+    }
+    th, td {
+      border: 1px solid #000;
+      padding: 8px;
+      text-align: center;
+    }
+    td[contenteditable="true"] {
+      background-color: #f0f8ff;
+      cursor: pointer;
+    }
+    #submitBtn {
+      display: block;
+      margin: 20px auto;
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <table id="priceTable">
+    <thead>
+      <tr>
+        <th>RAW MATERIAL</th>
+        <th>BASIC</th>
+        <th>GST PAID RATE WITH TRANSPORT</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>ALUMINIUM EC GRADE</td>
+        <td contenteditable="true" oninput="calculateGST(this)">260</td>
+        <td>308.80</td>
+      </tr>
+      <tr>
+        <td>ALUMINIUM CG GRADE</td>
+        <td contenteditable="true" oninput="calculateGST(this)">250</td>
+        <td>297.00</td>
+      </tr>
+      <tr>
+        <td>PVC RP INNER</td>
+        <td contenteditable="true" oninput="calculateGST(this)">50</td>
+        <td>61.00</td>
+      </tr>
+      <tr>
+        <td>PVC RP OUTER</td>
+        <td contenteditable="true" oninput="calculateGST(this)">50</td>
+        <td>61.00</td>
+      </tr>
+      <tr>
+        <td>ALUMINIUM ALLOY</td>
+        <td contenteditable="true" oninput="calculateGST(this)">245</td>
+        <td>291.10</td>
+      </tr>
+      <tr>
+        <td>COPPER LME GRADE</td>
+        <td contenteditable="true" oninput="calculateGST(this)">898</td>
+        <td>1061.64</td>
+      </tr>
+      <tr>
+        <td>XLPE</td>
+        <td contenteditable="true" oninput="calculateGST(this)">120</td>
+        <td>141.24</td>
+      </tr>
+      <tr>
+        <td>PVC ST1/TYPE A</td>
+        <td contenteditable="true" oninput="calculateGST(this)">116</td>
+        <td>138.88</td>
+      </tr>
+      <tr>
+        <td>PVC ST2</td>
+        <td contenteditable="true" oninput="calculateGST(this)">70</td>
+        <td>84.60</td>
+      </tr>
+      <tr>
+        <td>FR PVC</td>
+        <td contenteditable="true" oninput="calculateGST(this)">156</td>
+        <td>186.08</td>
+      </tr>
+      <tr>
+        <td>FRLSH PVC</td>
+        <td contenteditable="true" oninput="calculateGST(this)">180</td>
+        <td>214.40</td>
+      </tr>
+      <tr>
+        <td>G.I WIRE 0.6 MM</td>
+        <td contenteditable="true" oninput="calculateGST(this)">80</td>
+        <td>96.40</td>
+      </tr>
+      <tr>
+        <td>G.I WIRE 1.4 MM</td>
+        <td contenteditable="true" oninput="calculateGST(this)">97</td>
+        <td>116.46</td>
+      </tr>
+      <tr>
+        <td>G.I ARMOURING STRIP</td>
+        <td contenteditable="true" oninput="calculateGST(this)">97</td>
+        <td>116.46</td>
+      </tr>
+      <tr>
+        <td>LD</td>
+        <td contenteditable="true" oninput="calculateGST(this)">90</td>
+        <td>108.20</td>
+      </tr>
+      <tr>
+        <td>STEEL RATE</td>
+        <td contenteditable="true" oninput="calculateGST(this)">60</td>
+        <td>72.80</td>
+      </tr>
+      <tr>
+        <td>PVC ST1 + PVC ST2</td>
+        <td id="combinedBase"></td>
+        <td id="combinedMRP"></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <button id="submitBtn">Submit for Approval</button>
+
+  <script src="/config.js"></script>
+  <script>
+    
+    function calculateMRP(basePrice) {
+      return parseFloat((basePrice * 1.18 + 2).toFixed(2));
+    }
+
+    function updateCombinedRow() {
+      const rows = document.querySelectorAll("#priceTable tbody tr");
+      let st1Base = null;
+      let st2Base = null;
+
+      rows.forEach(row => {
+        const itemName = row.cells[0].innerText.trim();
+        if (itemName === "PVC ST1/TYPE A") {
+          st1Base = parseFloat(row.cells[1].innerText.trim());
+        } else if (itemName === "PVC ST2") {
+          st2Base = parseFloat(row.cells[1].innerText.trim());
+        }
+      });
+
+      if (!isNaN(st1Base) && !isNaN(st2Base)) {
+        const average = (st1Base + st2Base) / 2;
+        const mrp = calculateMRP(average);
+        document.getElementById("combinedBase").innerText = average.toFixed(2);
+        document.getElementById("combinedMRP").innerText = mrp.toFixed(2);
+      }
+    }
+
+    document.getElementById("submitBtn").addEventListener("click", async () => {
+      const rows = document.querySelectorAll("#priceTable tbody tr");
+      const data = [];
+
+      let st1Base = null, st2Base = null;
+
+      rows.forEach(row => {
+        const item = row.cells[0].innerText.trim();
+        const baseCell = row.cells[1];
+        const basePrice = parseFloat(baseCell.innerText.trim());
+        const gst = 18;
+
+        if (item === "PVC ST1/TYPE A") st1Base = basePrice;
+        if (item === "PVC ST2") st2Base = basePrice;
+
+        if (!isNaN(basePrice)) {
+          const mrp = calculateMRP(basePrice);
+          if (row.cells[2]) row.cells[2].innerText = mrp.toFixed(2);
+          data.push({ item, basePrice, gst, mrp });
+        }
+      });
+
+      if (!isNaN(st1Base) && !isNaN(st2Base)) {
+        const avgBase = (st1Base + st2Base)/2;
+        const avgMRP = calculateMRP(avgBase);
+        document.getElementById("combinedBase").innerText = avgBase.toFixed(2);
+        document.getElementById("combinedMRP").innerText = avgMRP.toFixed(2);
+        data.push({ item: "PVC ST1 + PVC ST2", basePrice: avgBase, gst: 18, mrp: avgMRP });
+      }
+
+      const response = await fetch(`${API_BASE_URL}/api/prices/bulk`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ prices: data }),
+      });
+
+      if (response.ok) {
+        alert("✅ Prices submitted for approval.");
+      } else {
+        alert("❌ Submission failed.");
+      }
+    });
+
+    // Auto-update combined row on any input
+    const editableCells = document.querySelectorAll('td[contenteditable="true"]');
+    editableCells.forEach(cell => {
+      cell.addEventListener("input", updateCombinedRow);
+    });
+
+    // Initialize combined row on load
+    updateCombinedRow();
+  </script>
+</body>
+</html>

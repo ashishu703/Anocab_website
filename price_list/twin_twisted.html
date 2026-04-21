@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Coil Price Calculator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 30px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    th, td {
+      padding: 10px;
+      border: 1px solid #ccc;
+    }
+    th {
+      background-color: #f5f5f5;
+    }
+    input[type="number"] {
+      width: 80px;
+    }
+    .center-btn {
+      text-align: center;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+<h2>Coil Price Calculator</h2>
+
+<div id="tableContainer"></div>
+
+<div class="center-btn">
+  <button onclick="calculatePrices()">Calculate</button>
+</div>
+
+<script>
+  // --- Fetch approved rates for PVC and Copper ---
+  let approvedPVC = null;
+  let approvedCopper = null;
+
+  const API_BASE_URL = "http://localhost:3000";
+  async function fetchApprovedRates() {
+  try {
+    const response = await fetch('http://localhost:3000/api/prices/approved');
+    const apiResponse = await response.json();
+    
+    // Check if we have the data array
+    if (!apiResponse || !Array.isArray(apiResponse.data)) {
+      console.error('API returned invalid data format:', apiResponse);
+      return;
+    }
+
+    // Convert array to object for easier lookup
+    const priceMap = {};
+    apiResponse.data.forEach(item => {
+      if (item && item.item && item.mrp) {
+        priceMap[item.item] = item;
+      }
+    });
+
+    // Update coilData with approved rates
+    coilData.forEach(item => {
+      // Get PVC rates
+      const pvcSt1 = priceMap['PVC ST1/TYPE A'];
+      const pvcSt2 = priceMap['PVC ST2'];
+      if (pvcSt1 && pvcSt2) {
+        // Calculate PVC rate using the same method as price_list.html
+        const baseAverage = ((parseFloat(pvcSt1.basePrice) + parseFloat(pvcSt2.basePrice)) / 2);
+        const pvcRate = parseFloat((baseAverage * 1.18 + 2).toFixed(2));
+        item.rateOfPVC = pvcRate.toFixed(2);
+      }
+      
+      // Get Copper rate
+      const copper = priceMap['COPPER LME GRADE'];
+      if (copper) {
+        item.rateOfCopper = parseFloat(copper.mrp);
+      }
+    });
+  } catch (error) {
+    console.error('Error fetching approved rates:', error);
+  }
+}
+
+  // Data for coil sizes
+  const coilData = [
+    { size: '0.5', wtOfConductor: 4.4450, wtOfInsulation: 4.5687, rateOfPVC: 111.74, rateOfCopper: 1061.64, lengthOfCoil: 90, packingCharge: 15.00, couponPrice: 0.00 },
+    { size: '0.75', wtOfConductor: 6.6675, wtOfInsulation: 5.2434, rateOfPVC: 111.74, rateOfCopper: 1061.64, lengthOfCoil: 90, packingCharge: 15.00, couponPrice: 0.00 },
+    { size: '1', wtOfConductor: 8.8900, wtOfInsulation: 5.8042, rateOfPVC: 111.74, rateOfCopper: 1061.64, lengthOfCoil: 90, packingCharge: 15.00, couponPrice: 0.00 },
+    { size: '1.5', wtOfConductor: 13.3350, wtOfInsulation: 6.6801, rateOfPVC: 111.74, rateOfCopper: 1061.64, lengthOfCoil: 90, packingCharge: 15.00, couponPrice: 0.00 },
+    { size: '2.5', wtOfConductor: 22.2250, wtOfInsulation: 9.8281, rateOfPVC: 111.74, rateOfCopper: 1061.64, lengthOfCoil: 90, packingCharge: 15.00, couponPrice: 0.00 },
+    { size: '4', wtOfConductor: 35.5600, wtOfInsulation: 13.9493, rateOfPVC: 111.74, rateOfCopper: 1061.64, lengthOfCoil: 90, packingCharge: 15.00, couponPrice: 0.00 },
+    { size: '6', wtOfConductor: 53.3400, wtOfInsulation: 16.4089, rateOfPVC: 111.74, rateOfCopper: 1061.64, lengthOfCoil: 90, packingCharge: 15.00, couponPrice: 0.00 }
+  ];
+
+  // Create table dynamically
+  async function createTable() {
+    await fetchApprovedRates();
+    // Use approved rates if available
+    if (approvedPVC !== null || approvedCopper !== null) {
+      coilData.forEach(coil => {
+        if (approvedPVC !== null) coil.rateOfPVC = approvedPVC;
+        if (approvedCopper !== null) coil.rateOfCopper = approvedCopper;
+      });
+    }
+    const tableContainer = document.getElementById('tableContainer');
+    
+    const table = document.createElement('table');
+    const thead = document.createElement('thead');
+    const tbody = document.createElement('tbody');
+
+    // Table headers
+    const headers = ['Size (sqmm)', 'Wt of Conductor', 'Wt of Insulation', 'Rate of PVC', 'Rate of Copper', 'Length (m)', 'Packing Charge', 'Coupon Price', 'Raw Cost', 'Processing Charge', 'Basic Price', 'Super Stockist', 'Distributor', 'Dealer', 'MRP'];
+    const headerRow = document.createElement('tr');
+    headers.forEach(header => {
+      const th = document.createElement('th');
+      th.textContent = header;
+      headerRow.appendChild(th);
+    });
+    thead.appendChild(headerRow);
+    
+    // Populate table rows with data
+    coilData.forEach(coil => {
+      const row = document.createElement('tr');
+      
+      Object.keys(coil).forEach(key => {
+        const cell = document.createElement('td');
+        if (key === 'size') {
+          cell.textContent = coil[key];
+        } else {
+          const input = document.createElement('input');
+          input.type = 'number';
+          input.value = coil[key];
+          input.step = '0.01';
+          input.dataset.key = key; // Store the key for reference
+          cell.appendChild(input);
+        }
+        row.appendChild(cell);
+      });
+      
+      // Add empty cells for calculation results
+      for (let i = 0; i < 7; i++) {
+        const cell = document.createElement('td');
+        cell.classList.add('calcResult');
+        row.appendChild(cell);
+      }
+      
+      tbody.appendChild(row);
+    });
+    
+    table.appendChild(thead);
+    table.appendChild(tbody);
+    tableContainer.appendChild(table);
+  }
+
+  // Calculate prices
+  function calculatePrices() {
+    const mrpMap = {};
+    const rows = document.querySelectorAll('table tbody tr');
+
+    rows.forEach(row => {
+      const cells = row.querySelectorAll('td');
+      const inputConductor = cells[1].querySelector('input');
+      const inputInsulation = cells[2].querySelector('input');
+      const inputRatePVC = cells[3].querySelector('input');
+      const inputRateCopper = cells[4].querySelector('input');
+      const inputLength = cells[5].querySelector('input');
+      const inputPackingCharge = cells[6].querySelector('input');
+      const inputCouponPrice = cells[7].querySelector('input');
+
+      // Get values from inputs
+      const wtOfConductor = parseFloat(inputConductor.value);
+      const wtOfInsulation = parseFloat(inputInsulation.value);
+      const rateOfPVC = parseFloat(inputRatePVC.value);
+      const rateOfCopper = parseFloat(inputRateCopper.value);
+      const lengthOfCoil = parseFloat(inputLength.value);
+      const packingCharge = parseFloat(inputPackingCharge.value);
+      const couponPrice = parseFloat(inputCouponPrice.value);
+
+      // Calculate raw cost
+      const rawCost = (wtOfInsulation * rateOfPVC) + (wtOfConductor * rateOfCopper);
+      
+      // Calculate processing charge
+      const processingCharge = (rawCost / 86.5) * 100;
+
+      // Calculate basic price of coil
+      const basicPriceOfCoil = ((processingCharge * lengthOfCoil) / 1000) + packingCharge + couponPrice;
+
+      // Calculate prices
+      const superStockistPrice = (basicPriceOfCoil * 102) / 100;
+      const distributorPrice = (superStockistPrice * 103) / 100;
+      const dealerPrice = (distributorPrice * 106.5) / 100;
+      const mrp = (dealerPrice / 55) * 100;
+
+      // Output calculated values to respective cells
+      cells[8].textContent = rawCost.toFixed(2);
+      cells[9].textContent = processingCharge.toFixed(2);
+      cells[10].textContent = basicPriceOfCoil.toFixed(2);
+      cells[11].textContent = superStockistPrice.toFixed(2);
+      cells[12].textContent = distributorPrice.toFixed(2);
+      cells[13].textContent = dealerPrice.toFixed(2);
+      cells[14].textContent = Math.round(mrp); // MRP rounded
+      // Store MRP by size for use in mcw_product_one.html
+      const size = parseFloat(cells[0].textContent.trim()).toString();
+      mrpMap[size] = Math.round(mrp);
+      // POST MRP to backend for each size
+      fetch('https://api.anocab.com/api/mrp/update', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          productName: 'Multistrand 1 Core Copper',
+          size: size,
+          basicPrice: basicPriceOfCoil.toFixed(2),
+          finalMRP: Math.round(mrp)
+        })
+      }).catch(err => console.error('Error saving MRP:', err));
+    });
+    // Save all MRPs to localStorage
+    localStorage.setItem('multistrand_mrps', JSON.stringify(mrpMap));
+  }
+
+  // Initial table creation
+  (async function() {
+    await createTable();
+    calculatePrices();
+  })();
+</script>
+
+</body>
+</html>

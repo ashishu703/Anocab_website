@@ -1,0 +1,199 @@
+.cable-showcase {
+    padding: 10px;
+    background-size: cover;
+}
+
+.showcase-wrapper {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    flex-wrap: nowrap;
+}
+
+.slider-wrapper {
+    flex: 3;
+    padding: 10px;
+    position: relative;
+}
+
+.slider-carousel {
+    position: relative;
+    overflow: hidden;
+}
+
+.slide-item {
+    display: none;
+    position: relative;
+    width: 100%;
+}
+
+.slide-item.active {
+    display: block;
+}
+
+.slide-bg {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    display: block;
+}
+
+.content-container {
+    position: absolute;
+    top: 50%;
+    right: 10%;
+    transform: translateY(-50%);
+    color: white;
+    text-align: right;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.6);
+}
+
+.animate-text {
+    animation: slideInFromRight 1s ease-out;
+}
+
+@keyframes slideInFromRight {
+    from {
+        right: -30px;
+        opacity: 0;
+    }
+    to {
+        right: 10%;
+        opacity: 1;
+    }
+}
+
+.slide-title a {
+    font-size: 32px;
+    font-weight: bold;
+    color: #fff;
+    text-decoration: none;
+}
+
+.slide-subtitle {
+    font-size: 12px;
+    font-style: italic;
+    color: #fff;
+}
+
+.slide-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    font-size: 18px;
+    z-index: 1;
+}
+
+.slide-btn.prev {
+    background-color: #013a5b;
+    padding: 5px;
+    left: 10px;
+    opacity: 0.5;
+}
+
+.slide-btn.next {
+    background-color: #013a5b;
+    padding: 5px;
+    right: 10px;
+    opacity: 0.5;
+}
+
+.requirement-cta {
+    width:80%;
+    flex: 1;
+    padding: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+.cta-link {
+    position: relative;
+    display: block;
+    width: 100%;
+}
+
+.cta-image {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+.cta-button {
+    position: absolute;
+    width:80%;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-radius: 10px 0px;
+    background-color: #013a5b;
+    color: #fff;
+    font-size: 14px;
+    padding: 10px 20px;
+    border: 1px solid white;
+    cursor: pointer;
+    text-align: center;
+}
+
+.cta-button:hover{
+    transform: translateX(-47%);
+    background-color: #108810;
+}
+
+@media (max-width: 768px) {
+    .showcase-wrapper {
+        flex-direction: column;
+    }
+    .slide-title a {
+    font-size: 24px;
+    }
+
+    .slide-subtitle {
+        font-size: 12px;
+    }
+    .cta-image {
+        width: 80%;
+        margin-left: 10%;
+        margin-right: 10%;
+    }
+    .cta-button {
+        width:60%;
+    }
+    .about-us-faq .container{
+        width:95%;
+    }
+    .container .inner {
+        width:95%;
+    }
+    .slide-item{
+        border:2px solid black;
+    }
+}
+
+@media (max-width: 480px) {
+    .showcase-wrapper {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .slider-wrapper,
+    .requirement-cta {
+        width: 100%;
+        padding: 10px 0;
+    }
+
+    .slide-title a {
+    font-size: 17px;
+    }
+
+    .slide-subtitle {
+        font-size: 8px;
+    }
+}

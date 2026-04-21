@@ -1,0 +1,22 @@
+{
+    "name": "price-manager",
+    "type": "commonjs",
+    "version": "1.0.0",
+    "main": "server.js",
+    "scripts": {
+        "start": "node server.js"
+    },
+    "dependencies": {
+        "body-parser": "^1.20.3",
+        "cors": "^2.8.5",
+        "dotenv": "^16.0.3",
+        "express": "^4.21.2",
+        "mongoose": "^7.8.6",
+        "multer": "^1.4.5-lts.2",
+        "nodemailer": "^6.10.1"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "description": ""
+}

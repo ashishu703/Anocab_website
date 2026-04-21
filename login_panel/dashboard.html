@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin Dashboard - Anocab</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #f5f7fa;
+      min-height: 100vh;
+    }
+
+    .header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 20px 40px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+
+    .header-left h1 {
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 5px;
+    }
+
+    .header-left p {
+      font-size: 14px;
+      opacity: 0.9;
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: rgba(255, 255, 255, 0.15);
+      padding: 10px 20px;
+      border-radius: 50px;
+      backdrop-filter: blur(10px);
+    }
+
+    .user-avatar {
+      width: 40px;
+      height: 40px;
+      background: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      font-weight: 600;
+      color: #667eea;
+    }
+
+    .logout-btn {
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      padding: 10px 24px;
+      border-radius: 50px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+
+    .logout-btn:hover {
+      background: rgba(255, 255, 255, 0.3);
+      transform: translateY(-2px);
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 40px auto;
+      padding: 0 40px;
+    }
+
+    .welcome-card {
+      background: white;
+      padding: 30px;
+      border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      margin-bottom: 40px;
+    }
+
+    .welcome-card h2 {
+      color: #333;
+      font-size: 24px;
+      margin-bottom: 10px;
+    }
+
+    .welcome-card p {
+      color: #666;
+      font-size: 15px;
+    }
+
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 25px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 16px;
+      padding: 30px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      transition: all 0.3s ease;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      background: linear-gradient(90deg, #667eea, #764ba2);
+      transform: scaleX(0);
+      transition: transform 0.3s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 12px 40px rgba(102, 126, 234, 0.2);
+    }
+
+    .card:hover::before {
+      transform: scaleX(1);
+    }
+
+    .card-icon {
+      width: 60px;
+      height: 60px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      margin-bottom: 20px;
+    }
+
+    .card h3 {
+      font-size: 20px;
+      color: #333;
+      margin-bottom: 10px;
+      font-weight: 600;
+    }
+
+    .card p {
+      font-size: 14px;
+      color: #666;
+      line-height: 1.6;
+    }
+
+    @media (max-width: 768px) {
+      .header {
+        padding: 20px;
+      }
+
+      .container {
+        padding: 0 20px;
+      }
+
+      .dashboard-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .header-left h1 {
+        font-size: 24px;
+      }
+
+      .user-info {
+        order: 3;
+        width: 100%;
+        justify-content: center;
+      }
+    }
+
+    .loading {
+      text-align: center;
+      padding: 40px;
+      color: #666;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="header-left">
+      <h1>🎯 Admin Dashboard</h1>
+      <p>Manage your Anocab platform</p>
+    </div>
+    <div class="header-right">
+      <div class="user-info">
+        <div class="user-avatar">A</div>
+        <span id="userEmail">Admin</span>
+      </div>
+      <button class="logout-btn" onclick="logout()">Logout</button>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="welcome-card">
+      <h2>Welcome back! 👋</h2>
+      <p>Here's what you can manage from your dashboard</p>
+    </div>
+
+    <div class="dashboard-grid">
+      <div class="card" onclick="location.href='../admin_panel/price_marquee.html'">
+        <div class="card-icon">💰</div>
+        <h3>Price Marquee</h3>
+        <p>Update material prices displayed on the homepage marquee</p>
+      </div>
+
+      <div class="card" onclick="location.href='price_calculators.html'">
+        <div class="card-icon">🧮</div>
+        <h3>Price Calculators</h3>
+        <p>Calculate MRP dynamically using updated material values</p>
+      </div>
+
+      <div class="card" onclick="location.href='price_list_approval.html'">
+        <div class="card-icon">✅</div>
+        <h3>Price Approvals</h3>
+        <p>Review and approve raw material price submissions</p>
+      </div>
+
+      <div class="card" onclick="location.href='price_marqueedata.html'">
+        <div class="card-icon">📊</div>
+        <h3>Marquee Data</h3>
+        <p>View historical data submitted to the marquee system</p>
+      </div>
+
+      <div class="card" onclick="location.href='price_list_data.html'">
+        <div class="card-icon">📋</div>
+        <h3>Price List Data</h3>
+        <p>Review past price list entries with approval status</p>
+      </div>
+
+      <div class="card" onclick="location.href='enquiry_data.html'">
+        <div class="card-icon">📧</div>
+        <h3>Enquiry Data</h3>
+        <p>View and manage customer enquiries and messages</p>
+      </div>
+
+      <div class="card" onclick="location.href='newsletter_subscribers.html'">
+        <div class="card-icon">📬</div>
+        <h3>Newsletter Subscribers</h3>
+        <p>View all newsletter subscribers and export data</p>
+      </div>
+
+      <div class="card" onclick="location.href='blog_management.html'">
+        <div class="card-icon">📝</div>
+        <h3>Blog Management</h3>
+        <p>Create, edit, and manage blog posts and articles</p>
+      </div>
+
+      <div class="card" onclick="location.href='client_management.html'">
+        <div class="card-icon">🏢</div>
+        <h3>Client Management</h3>
+        <p>Add and manage client logos for "Trusted Across India" section</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Check authentication on page load
+    (async function checkAuth() {
+      try {
+        const response = await fetch('/check-auth', {
+          credentials: 'include'
+        });
+        const data = await response.json();
+        
+        if (!data.authenticated) {
+          window.location.href = '/login_panel/login.html';
+        } else {
+          // Display user email
+          if (data.email) {
+            document.getElementById('userEmail').textContent = data.email;
+            document.querySelector('.user-avatar').textContent = data.email.charAt(0).toUpperCase();
+          }
+        }
+      } catch (error) {
+        console.error('Auth check failed:', error);
+        window.location.href = '/login_panel/login.html';
+      }
+    })();
+
+    // Logout function
+    async function logout() {
+      try {
+        await fetch('/logout', { 
+          method: 'POST',
+          credentials: 'include'
+        });
+        window.location.href = '/login_panel/login.html';
+      } catch (error) {
+        console.error('Logout failed:', error);
+        window.location.href = '/login_panel/login.html';
+      }
+    }
+  </script>
+</body>
+</html>

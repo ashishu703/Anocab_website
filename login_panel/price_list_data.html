@@ -1,0 +1,228 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Raw Material Price List</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f4f7fa;
+      margin: 0;
+      padding: 40px;
+    }
+
+    h2 {
+      text-align: center;
+      color: #333;
+      margin-bottom: 40px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background-color: #ffffff;
+      border-radius: 10px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+      overflow: hidden;
+    }
+
+    thead {
+      background-color: #f0f3f7;
+    }
+
+    th, td {
+      padding: 16px;
+      text-align: center;
+      border-bottom: 1px solid #e0e6ed;
+    }
+
+    th {
+      color: #444;
+      font-weight: 600;
+      text-transform: uppercase;
+      font-size: 14px;
+    }
+
+    td {
+      color: #555;
+      font-size: 15px;
+    }
+
+    tr:hover {
+      background-color: #f9fcff;
+    }
+
+    .status-approved {
+      color: green;
+      font-weight: bold;
+    }
+
+    .status-rejected {
+      color: red;
+      font-weight: bold;
+    }
+
+    @media screen and (max-width: 768px) {
+      table, thead, tbody, th, td, tr {
+        display: block;
+      }
+
+      thead tr {
+        display: none;
+      }
+
+      td {
+        position: relative;
+        padding-left: 50%;
+      }
+
+      td::before {
+        position: absolute;
+        left: 10px;
+        top: 16px;
+        white-space: nowrap;
+        font-weight: bold;
+        color: #777;
+      }
+
+      td:nth-of-type(1)::before { content: "Raw Material"; }
+      td:nth-of-type(2)::before { content: "Basic"; }
+      td:nth-of-type(3)::before { content: "GST (%)"; }
+      td:nth-of-type(4)::before { content: "MRP"; }
+      td:nth-of-type(5)::before { content: "Status"; }
+      td:nth-of-type(6)::before { content: "Date"; }
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Raw Material Price List</h2>
+
+  <table id="priceListTable">
+    <thead>
+      <tr>
+        <th>Raw Material</th>
+        <th>Basic</th>
+        <th>GST (%)</th>
+        <th>MRP</th>
+        <th>Status</th>
+        <th>Date</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <script src="/config.js"></script>
+<script>
+    
+    // Pagination variables
+    let currentPage = 1;
+    let totalPages = 1;
+    const PAGE_LIMIT = 20;
+
+    async function loadPrices(page = 1) {
+      try {
+        // Fetch both approved and rejected prices with pagination
+        const [approvedRes, rejectedRes] = await Promise.all([
+          fetch(`${API_BASE_URL}/api/prices/approved?page=${page}&limit=${PAGE_LIMIT}`),
+          fetch(`${API_BASE_URL}/api/prices/rejected?page=${page}&limit=${PAGE_LIMIT}`)
+        ]);
+        
+        const approvedData = await approvedRes.json();
+        const rejectedData = await rejectedRes.json();
+
+        // Combine data and calculate total pages (using max of both)
+        const approved = approvedData.data || [];
+        const rejected = rejectedData.data || [];
+        totalPages = Math.max(approvedData.totalPages || 1, rejectedData.totalPages || 1);
+        currentPage = page;
+
+        // Combine and sort by date
+        const combined = [
+          ...approved.map(p => ({ ...p, status: 'approved', date: p.approvedAt })),
+          ...rejected.map(p => ({ ...p, status: 'rejected', date: p.rejectedAt || p.createdAt }))
+        ].sort((a, b) => new Date(b.date) - new Date(a.date));
+
+        const tbody = document.querySelector('#priceListTable tbody');
+        tbody.innerHTML = '';
+
+        if (combined.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="6">No data found.</td></tr>';
+        } else {
+          combined.forEach(item => {
+            const statusClass = item.status === 'approved' ? 'status-approved' : 'status-rejected';
+            const statusLabel = item.status.charAt(0).toUpperCase() + item.status.slice(1);
+            const date = new Date(item.date).toLocaleDateString();
+            const mrp = (item.basePrice + (item.basePrice * item.gst / 100)).toFixed(2);
+
+            const row = `
+              <tr>
+                <td>${item.item}</td>
+                <td>₹${item.basePrice}</td>
+                <td>${item.gst}%</td>
+                <td>₹${mrp}</td>
+                <td class="${statusClass}">${statusLabel}</td>
+                <td>${date}</td>
+              </tr>
+            `;
+            tbody.innerHTML += row;
+          });
+        }
+        renderPagination();
+      } catch (error) {
+        console.error('Error loading prices:', error);
+      }
+    }
+
+    function renderPagination() {
+      let paginationDiv = document.getElementById('pagination');
+      if (!paginationDiv) {
+        paginationDiv = document.createElement('div');
+        paginationDiv.id = 'pagination';
+        paginationDiv.style.textAlign = 'center';
+        paginationDiv.style.marginTop = '24px';
+        document.body.appendChild(paginationDiv);
+      }
+      paginationDiv.innerHTML = '';
+      if (totalPages <= 1) return;
+      for (let i = 1; i <= totalPages; i++) {
+        const btn = document.createElement('button');
+        btn.textContent = i;
+        btn.style.margin = '0 4px';
+        btn.style.padding = '6px 14px';
+        btn.style.borderRadius = '5px';
+        btn.style.border = i === currentPage ? '2px solid #007bff' : '1px solid #bbb';
+        btn.style.background = i === currentPage ? '#e3f0ff' : '#fff';
+        btn.style.cursor = 'pointer';
+        btn.disabled = (i === currentPage);
+        btn.onclick = () => loadPrices(i);
+        paginationDiv.appendChild(btn);
+      }
+    }
+    
+    // Load prices when the page loads
+    window.onload = function() {
+      loadPrices(1);
+    };
+  </script>
+</body>
+<script src="/config.js"></script>
+<script>
+// Inactivity auto-logout (30s)
+(function() {
+  let timer;
+  function resetTimer() {
+    clearTimeout(timer);
+    timer = setTimeout(logout, 30000);
+  }
+  function logout() {
+    fetch('/logout', {method:'POST'}).then(()=>{
+      window.location.href = '/login_panel/login.html';
+    });
+  }
+  ['mousemove','keydown','mousedown','touchstart'].forEach(evt =>
+    window.addEventListener(evt, resetTimer, true));
+  resetTimer();
+})();
+</script>
+</html>

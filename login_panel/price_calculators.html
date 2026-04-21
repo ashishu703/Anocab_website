@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Product Calculators</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: #f8fafc;
+    }
+
+    header {
+      background-color: #2c5364;
+      padding: 20px;
+      color: white;
+      text-align: center;
+      font-size: 24px;
+      font-weight: bold;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 20px;
+      padding: 40px;
+      max-width: 1200px;
+      margin: auto;
+    }
+
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+      transition: 0.3s ease;
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
+      cursor: pointer;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 20px rgba(0, 0, 0, 0.12);
+    }
+
+    .card h3 {
+      font-size: 18px;
+      color: #2c5364;
+    }
+
+    @media (max-width: 500px) {
+      .card h3 {
+        font-size: 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>Product Price Calculators</header>
+  <div class="grid">
+    <a href="product1.html" class="card"><h3>MCW</h3></a>
+    <a href="product_two.html" class="card"><h3>MCC</h3></a>
+    <a href="product3.html" class="card"><h3>PISCAC</h3></a>
+    <a href="product4.html" class="card"><h3>PISC</h3></a>
+    <a href="product5.html" class="card"><h3>PIMAC</h3></a>
+    <a href="product6.html" class="card"><h3>SWW</h3></a>
+    <a href="product7.html" class="card"><h3>TTCW</h3></a>
+    <a href="product8.html" class="card"><h3>SC</h3></a>
+    <a href="product9.html" class="card"><h3>CC</h3></a>
+    <a href="product10.html" class="card"><h3>LC</h3></a>
+    <a href="product11.html" class="card"><h3>AW</h3></a>
+    <a href="product12.html" class="card"><h3>SC</h3></a>
+    <a href="product13.html" class="card"><h3>COC</h3></a>
+    <a href="product14.html" class="card"><h3>PFC</h3></a>
+    <a href="product15.html" class="card"><h3>AUPICCC</h3></a>
+    <a href="product16.html" class="card"><h3>TSBC</h3></a>
+    <a href="product17.html" class="card"><h3>MXIAUC</h3></a>
+    <a href="product18.html" class="card"><h3>MPIAUC</h3></a>
+    <a href="product19.html" class="card"><h3>MXIAAC</h3></a>
+    <a href="product20.html" class="card"><h3>PCACDW</h3></a>
+    <a href="product21.html" class="card"><h3>SCXIACUC</h3></a>
+    <a href="product22.html" class="card"><h3>SCPIACAUC</h3></a>
+    <a href="../price_list/ab_cable.html" class="card"><h3>ABC</h3></a>
+    <a href="product24.html" class="card"><h3>PCACDW</h3></a>
+    <a href="../price_list/acsr.html" class="card"><h3>ACGSRAC</h3></a>
+    <a href="../price_list/aaac.html" class="card"><h3>AAAC</h3></a>
+  </div>
+</body>
+<script>
+// Inactivity auto-logout (30s)
+(function() {
+  let timer;
+  function resetTimer() {
+    clearTimeout(timer);
+    timer = setTimeout(logout, 30000);
+  }
+  function logout() {
+    fetch('/logout', {method:'POST'}).then(()=>{
+      window.location.href = '/login_panel/login.html';
+    });
+  }
+  ['mousemove','keydown','mousedown','touchstart'].forEach(evt =>
+    window.addEventListener(evt, resetTimer, true));
+  resetTimer();
+})();
+</script>
+</html>

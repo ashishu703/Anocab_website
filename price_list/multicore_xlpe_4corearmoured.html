@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Wire Cost Calculator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+
+    h2 {
+      text-align: center;
+    }
+
+    .table {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      border: 1px solid #ccc;
+    }
+
+    .row {
+      display: flex;
+      flex-wrap: wrap;
+      border-bottom: 1px solid #ccc;
+    }
+
+    .row.header {
+      background: #f0f0f0;
+      font-weight: bold;
+    }
+
+    .cell {
+      flex: 1 1 80px;
+      min-width: 80px;
+      padding: 6px;
+      box-sizing: border-box;
+      text-align: center;
+      border-right: 1px solid #eee;
+    }
+
+    .row:last-child .cell {
+      border-bottom: none;
+    }
+
+    input[type="number"] {
+      width: 100%;
+      padding: 4px;
+      box-sizing: border-box;
+      border: none;
+      text-align: center;
+      background-color: #f9f9f9;
+    }
+
+    input.readonly {
+      background-color: #eaeaea;
+      color: #333;
+    }
+
+    .output {
+      font-weight: bold;
+      background: #f9f9f9;
+    }
+
+    .button-container {
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    button {
+      padding: 10px 25px;
+      font-size: 16px;
+      background: black;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      background: white;
+      color: black;
+      border: 1px solid black;
+    }
+  </style>
+</head>
+<body>
+
+<h2>Wire Cost Calculator</h2>
+
+<div class="table" id="wireTable">
+  <!-- Header Row -->
+  <div class="row header">
+    <div class="cell">N/O CORES</div>
+    <div class="cell">AREA</div>
+    <div class="cell">WT CONDUCTOR</div>
+    <div class="cell">WT XLPE</div>
+    <div class="cell">WT T PVC</div>
+    <div class="cell">WT ARMOURED</div>
+    <div class="cell">WT PVC ST-2</div>
+    <div class="cell">RATE ALUMINIUM</div>
+    <div class="cell">RATE XLPE</div>
+    <div class="cell">RATE T PVC</div>
+    <div class="cell">RATE ARMOURED</div>
+    <div class="cell">RATE ST-2</div>
+    <div class="cell">RAW COST</div>
+    <div class="cell">PROCESSING</div>
+    <div class="cell">PROFIT</div>
+    <div class="cell">PER MTR</div>
+  </div>
+</div>
+
+<div class="button-container">
+  <button onclick="calculateAll()">Calculate</button>
+</div>
+
+<script>
+const data = [
+  [4, 25, 270.3, 121.37, 34.92, 264, 158.4, 265, 120, 90, 55, 120],
+  [4, 35, 378.42, 158.17, 54.16, 308, 203.05, 265, 120, 90, 55, 120],
+  [4, 50, 540.6, 251.62, 83.37, 379, 324.39, 265, 120, 90, 55, 120],
+  [4, 70, 756.84, 431.14, 217.71, 703, 756.79, 265, 120, 90, 55, 120],
+  [4, 95, 1027.14, 557.72, 249.79, 805, 965.55, 265, 120, 90, 55, 120]
+];
+
+function createRow(values) {
+  const row = document.createElement('div');
+  row.className = 'row';
+
+  values.forEach((val, index) => {
+    const cell = document.createElement('div');
+    cell.className = 'cell';
+    const input = document.createElement('input');
+    input.type = 'number';
+    input.value = val;
+
+    // Only allow editing of rate inputs (index 7-11)
+    if (index < 7 || index > 11) {
+      input.readOnly = true;
+      input.classList.add('readonly');
+    }
+
+    cell.appendChild(input);
+    row.appendChild(cell);
+  });
+
+  // Output placeholders
+  for (let i = 0; i < 4; i++) {
+    const outputCell = document.createElement('div');
+    outputCell.className = 'cell output';
+    outputCell.textContent = '0';
+    row.appendChild(outputCell);
+  }
+
+  document.getElementById('wireTable').appendChild(row);
+}
+
+function calculateAll() {
+  const rows = document.querySelectorAll('.table .row:not(.header)');
+  rows.forEach(row => {
+    const inputs = row.querySelectorAll('input');
+    const values = Array.from(inputs).map(i => parseFloat(i.value) || 0);
+
+    const [_, __, wtConductor, wtXLPE, wtTPVC, wtArmoured, wtST2, rateAl, rateXLPE, rateTPVC, rateArmoured, rateST2] = values;
+
+    const rawCost = (wtConductor * rateAl) +
+                    (wtXLPE * rateXLPE) +
+                    (wtTPVC * rateTPVC) +
+                    (wtArmoured * rateArmoured) +
+                    (wtST2 * rateST2);
+    const processing = (rawCost / 86.5) * 100;
+    const profit = processing * 1.1;
+    const perMtrCost = profit / 1000;
+
+    const outputs = row.querySelectorAll('.output');
+    outputs[0].textContent = rawCost.toFixed(0);
+    outputs[1].textContent = processing.toFixed(0);
+    outputs[2].textContent = profit.toFixed(0);
+    outputs[3].textContent = perMtrCost.toFixed(2);
+  });
+}
+
+// Initialize rows
+data.forEach(row => createRow(row));
+</script>
+
+</body>
+</html>

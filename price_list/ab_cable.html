@@ -1,0 +1,157 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Aluminium Cable Price Calculator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      font-size: 14px;
+    }
+    th, td {
+      border: 1px solid #444;
+      padding: 8px;
+      text-align: center;
+    }
+    th {
+      background-color: #f2f2f2;
+    }
+    input[type="number"] {
+      width: 70px;
+      padding: 4px;
+    }
+  </style>
+</head>
+<body>
+
+<h2>Aluminium Cable Price Calculator</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>Size</th>
+      <th>ALU (kg/km)</th>
+      <th>INSU (kg/km)</th>
+      <th>ALUMINIUM EC GRADE Rate (Rs/kg)</th>
+      <th>XLPE Rate (Rs/kg)</th>
+      <th>Basic Price (Rs)</th>
+      <th>MRP (Rs)</th>
+    </tr>
+  </thead>
+  <tbody id="cableTable">
+    <!-- Rows will be inserted here -->
+  </tbody>
+</table>
+
+<script src="/config.js"></script>
+<script>
+  const cables = [
+    { size: "3*16+1*16+1*25", alu: 241.62, insu: 89.26 },
+    { size: "3*25+1*16+1*25", alu: 314.06, insu: 102.64 },
+    { size: "3*35+1*16+1*25", alu: 397.86, insu: 115.4 },
+    { size: "3*50+1*16+1*35", alu: 550.87, insu: 162.57 },
+    { size: "3*70+1*16+1*50", alu: 760.47, insu: 186.35 },
+    { size: "3*95+1*16+1*70", alu: 896.16, insu: 209.59 }
+  ];
+
+  let aluRateDefault = 280;
+  let xlpeRateDefault = 118;
+
+  
+  async function fetchRates() {
+  try {
+    const res = await fetch(`${API_BASE_URL}/api/prices/approved`);
+    const data = await res.json();
+    const approvedList = data.data || [];
+
+    const aluItem = approvedList.find(item => item.item.toUpperCase() === 'ALUMINIUM EC GRADE');
+    const xlpeItem = approvedList.find(item => item.item.toUpperCase() === 'XLPE');
+
+    if (aluItem && aluItem.mrp) {
+      // Remove 18% GST from ALU rate
+      aluRateDefault = +(parseFloat(aluItem.mrp) / 1.18-2).toFixed(2);
+      console.log("✅ ALU Rate (without GST):", aluRateDefault);
+    }
+    if (xlpeItem && xlpeItem.mrp) {
+      xlpeRateDefault = +(parseFloat(xlpeItem.mrp) / 1.18-2).toFixed(2);
+    }
+  } catch (err) {
+    console.error('Error fetching approved rates:', err);
+  }
+}
+
+
+  async function renderTable() {
+    await fetchRates();
+
+    const tbody = document.getElementById("cableTable");
+    cables.forEach((item, index) => {
+      const row = document.createElement("tr");
+
+      row.innerHTML = `
+        <td>${item.size}</td>
+        <td>${item.alu.toFixed(2)}</td>
+        <td>${item.insu.toFixed(2)}</td>
+        <td><input type="number" class="aluRate" value="${aluRateDefault}"></td>
+        <td><input type="number" class="xlpeRate" value="${xlpeRateDefault}"></td>
+        <td class="basicPrice">-</td>
+        <td class="mrp">-</td>
+      `;
+
+      const aluRateInput = row.querySelector(".aluRate");
+      const xlpeRateInput = row.querySelector(".xlpeRate");
+
+      const calculateMRP = () => {
+        const alu = item.alu;
+        const insu = item.insu;
+        const aluRate = parseFloat(aluRateInput.value);
+        const xlpeRate = parseFloat(xlpeRateInput.value);
+
+        if (!isNaN(aluRate) && !isNaN(xlpeRate)) {
+          const basicPrice = ((alu * aluRate) + (insu * xlpeRate)) / 1000;
+          const mrp = (basicPrice * 1.2) + 4;
+
+          row.querySelector(".basicPrice").innerText = basicPrice.toFixed(0);
+          row.querySelector(".mrp").innerText = mrp.toFixed(0);
+
+          const mrpData = {
+            productName: "Aluminium Cable",
+            size: item.size,
+            aluWeight: alu,
+            insuWeight: insu,
+            aluRate: aluRate,
+            xlpeRate: xlpeRate,
+            basicPrice: basicPrice.toFixed(2),
+            finalMRP: mrp.toFixed(2)
+          };
+
+          fetch(`${API_BASE_URL}/api/mrp/update`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(mrpData)
+          }).catch(err => console.error('Error saving MRP:', err));
+        }
+      };
+
+      // Initial calculation
+      calculateMRP();
+
+      // Auto-recalculate on input change
+      aluRateInput.addEventListener('input', calculateMRP);
+      xlpeRateInput.addEventListener('input', calculateMRP);
+
+      tbody.appendChild(row);
+    });
+  }
+
+  window.onload = renderTable;
+</script>
+
+</body>
+</html>

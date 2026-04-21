@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Newsletter Subscribers - Anocab Admin</title>
+  <script src="/config.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #f5f7fa;
+      min-height: 100vh;
+    }
+
+    .header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 20px 40px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .header h1 {
+      font-size: 24px;
+      font-weight: 700;
+    }
+
+    .back-btn {
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      padding: 10px 24px;
+      border-radius: 50px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      text-decoration: none;
+    }
+
+    .back-btn:hover {
+      background: rgba(255, 255, 255, 0.3);
+      transform: translateY(-2px);
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 40px auto;
+      padding: 0 20px;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+
+    .stat-card {
+      background: white;
+      padding: 25px;
+      border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      text-align: center;
+    }
+
+    .stat-card h3 {
+      color: #666;
+      font-size: 14px;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+    }
+
+    .stat-card .number {
+      color: #667eea;
+      font-size: 36px;
+      font-weight: 700;
+    }
+
+    .table-card {
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      overflow: hidden;
+    }
+
+    .table-header {
+      padding: 25px;
+      border-bottom: 1px solid #e0e0e0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .table-header h2 {
+      color: #333;
+      font-size: 20px;
+      font-weight: 600;
+    }
+
+    .export-btn {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      margin-left: 10px;
+    }
+
+    .export-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+    }
+
+    .send-email-btn {
+      background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+
+    .send-email-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(40, 167, 69, 0.4);
+    }
+
+    /* Email Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal.show {
+      display: flex;
+    }
+
+    .modal-content {
+      background: white;
+      border-radius: 16px;
+      max-width: 800px;
+      width: 90%;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    }
+
+    .modal-header {
+      padding: 25px;
+      border-bottom: 1px solid #e0e0e0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-header h2 {
+      color: #333;
+      font-size: 20px;
+      font-weight: 600;
+    }
+
+    .close-btn {
+      background: none;
+      border: none;
+      font-size: 28px;
+      color: #999;
+      cursor: pointer;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      transition: all 0.3s ease;
+    }
+
+    .close-btn:hover {
+      background: #f0f0f0;
+      color: #333;
+    }
+
+    .modal-body {
+      padding: 25px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      color: #333;
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .form-group input,
+    .form-group textarea {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      font-size: 14px;
+      transition: all 0.3s ease;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+    }
+
+    .form-group textarea {
+      min-height: 300px;
+      font-family: monospace;
+    }
+
+    .checkbox-group {
+      margin-bottom: 20px;
+    }
+
+    .checkbox-group label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px;
+      cursor: pointer;
+    }
+
+    .checkbox-group input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+    }
+
+    .modal-footer {
+      padding: 20px 25px;
+      border-top: 1px solid #e0e0e0;
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+
+    .btn-cancel {
+      background: #f0f0f0;
+      color: #666;
+      border: none;
+      padding: 10px 24px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+
+    .btn-cancel:hover {
+      background: #e0e0e0;
+    }
+
+    .btn-send {
+      background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+      color: white;
+      border: none;
+      padding: 10px 24px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+
+    .btn-send:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(40, 167, 69, 0.4);
+    }
+
+    .btn-send:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .template-btn {
+      background: #007bff;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 600;
+      margin-top: 5px;
+    }
+
+    .template-btn:hover {
+      background: #0056b3;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    thead {
+      background: #f8f9fa;
+    }
+
+    th {
+      padding: 15px 20px;
+      text-align: left;
+      font-weight: 600;
+      color: #666;
+      font-size: 14px;
+      text-transform: uppercase;
+    }
+
+    td {
+      padding: 15px 20px;
+      border-top: 1px solid #f0f0f0;
+      color: #333;
+    }
+
+    tbody tr:hover {
+      background: #f8f9fa;
+    }
+
+    .status-badge {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .status-active {
+      background: #d4edda;
+      color: #155724;
+    }
+
+    .status-inactive {
+      background: #f8d7da;
+      color: #721c24;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 40px;
+      color: #666;
+    }
+
+    .no-data {
+      text-align: center;
+      padding: 60px 20px;
+      color: #999;
+    }
+
+    .no-data-icon {
+      font-size: 60px;
+      margin-bottom: 20px;
+    }
+
+    @media (max-width: 768px) {
+      .header {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+      }
+
+      .table-card {
+        overflow-x: auto;
+      }
+
+      table {
+        min-width: 600px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <script>
+    // Check authentication
+    (async function checkAuth() {
+      try {
+        const response = await fetch('/check-auth', { credentials: 'include' });
+        const data = await response.json();
+        if (!data.authenticated) {
+          window.location.href = '/login_panel/login.html';
+        }
+      } catch (error) {
+        window.location.href = '/login_panel/login.html';
+      }
+    })();
+  </script>
+
+  <div class="header">
+    <h1>📧 Newsletter Subscribers</h1>
+    <a href="dashboard.html" class="back-btn">← Back to Dashboard</a>
+  </div>
+
+  <div class="container">
+    <div class="stats">
+      <div class="stat-card">
+        <h3>Total Subscribers</h3>
+        <div class="number" id="totalCount">-</div>
+      </div>
+      <div class="stat-card">
+        <h3>Active</h3>
+        <div class="number" id="activeCount">-</div>
+      </div>
+      <div class="stat-card">
+        <h3>This Month</h3>
+        <div class="number" id="monthCount">-</div>
+      </div>
+    </div>
+
+    <div class="table-card">
+      <div class="table-header">
+        <h2>All Subscribers</h2>
+        <div>
+          <button class="send-email-btn" onclick="openEmailModal()">📧 Send Email</button>
+          <button class="export-btn" onclick="exportToCSV()">Export CSV</button>
+        </div>
+      </div>
+      
+      <div id="tableContent">
+        <div class="loading">Loading subscribers...</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Email Modal -->
+  <div id="emailModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>📧 Send Bulk Email</h2>
+        <button class="close-btn" onclick="closeEmailModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Subject</label>
+          <input type="text" id="emailSubject" placeholder="Enter email subject">
+        </div>
+        
+        <div class="form-group">
+          <label>Email Content (HTML)</label>
+          <button class="template-btn" onclick="loadTemplate()">Load Welcome Template</button>
+          <textarea id="emailContent" placeholder="Enter HTML content here..."></textarea>
+        </div>
+        
+        <div class="checkbox-group">
+          <label>
+            <input type="checkbox" id="sendToAll" checked onchange="toggleSelectAll()">
+            <span><strong>Send to all subscribers</strong></span>
+          </label>
+        </div>
+        
+        <div id="recipientsList" style="display: none; max-height: 200px; overflow-y: auto; border: 1px solid #e0e0e0; border-radius: 8px; padding: 10px;">
+          <!-- Checkboxes will be populated here -->
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-cancel" onclick="closeEmailModal()">Cancel</button>
+        <button class="btn-send" id="sendBtn" onclick="sendBulkEmail()">Send Email</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let subscribers = [];
+
+    // Load subscribers
+    async function loadSubscribers() {
+      try {
+        const response = await fetch(API_BASE_URL + '/api/newsletter', {
+          credentials: 'include'
+        });
+        
+        if (!response.ok) throw new Error('Failed to load');
+        
+        subscribers = await response.json();
+        displaySubscribers();
+        updateStats();
+      } catch (error) {
+        console.error('Error:', error);
+        document.getElementById('tableContent').innerHTML = '<div class="no-data"><div class="no-data-icon">⚠️</div><p>Failed to load subscribers</p></div>';
+      }
+    }
+
+    // Display subscribers in table
+    function displaySubscribers() {
+      const tableContent = document.getElementById('tableContent');
+      
+      if (subscribers.length === 0) {
+        tableContent.innerHTML = '<div class="no-data"><div class="no-data-icon">📭</div><p>No subscribers yet</p></div>';
+        return;
+      }
+
+      const tableHTML = '<table><thead><tr><th>#</th><th>Email</th><th>Subscribed Date</th><th>Status</th></tr></thead><tbody>' +
+        subscribers.map((sub, index) => 
+          '<tr><td>' + (index + 1) + '</td><td>' + sub.email + '</td><td>' + 
+          new Date(sub.subscribedAt).toLocaleDateString('en-IN', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+          }) + '</td><td><span class="status-badge ' + 
+          (sub.active ? 'status-active' : 'status-inactive') + '">' + 
+          (sub.active ? 'Active' : 'Inactive') + '</span></td></tr>'
+        ).join('') + '</tbody></table>';
+      
+      tableContent.innerHTML = tableHTML;
+    }
+
+    // Update statistics
+    function updateStats() {
+      const total = subscribers.length;
+      const active = subscribers.filter(s => s.active).length;
+      
+      const now = new Date();
+      const thisMonth = subscribers.filter(s => {
+        const subDate = new Date(s.subscribedAt);
+        return subDate.getMonth() === now.getMonth() && 
+               subDate.getFullYear() === now.getFullYear();
+      }).length;
+
+      document.getElementById('totalCount').textContent = total;
+      document.getElementById('activeCount').textContent = active;
+      document.getElementById('monthCount').textContent = thisMonth;
+    }
+
+    // Export to CSV
+    function exportToCSV() {
+      if (subscribers.length === 0) {
+        alert('No data to export');
+        return;
+      }
+
+      const csv = [
+        ['#', 'Email', 'Subscribed Date', 'Status'],
+        ...subscribers.map((sub, index) => [
+          index + 1,
+          sub.email,
+          new Date(sub.subscribedAt).toLocaleString('en-IN'),
+          sub.active ? 'Active' : 'Inactive'
+        ])
+      ].map(row => row.join(',')).join('\n');
+
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'newsletter-subscribers-' + new Date().toISOString().split('T')[0] + '.csv';
+      a.click();
+      window.URL.revokeObjectURL(url);
+    }
+
+    // Email Modal Functions
+    function openEmailModal() {
+      if (subscribers.length === 0) {
+        alert('No subscribers to send email to');
+        return;
+      }
+      
+      const recipientsList = document.getElementById('recipientsList');
+      recipientsList.innerHTML = subscribers.map(sub => 
+        '<label style="display: block; padding: 5px;"><input type="checkbox" class="recipient-checkbox" value="' + 
+        sub.email + '" checked>' + sub.email + '</label>'
+      ).join('');
+      
+      document.getElementById('emailModal').classList.add('show');
+    }
+
+    function closeEmailModal() {
+      document.getElementById('emailModal').classList.remove('show');
+      document.getElementById('emailSubject').value = '';
+      document.getElementById('emailContent').value = '';
+      document.getElementById('sendToAll').checked = true;
+      document.getElementById('recipientsList').style.display = 'none';
+    }
+
+    function toggleSelectAll() {
+      const sendToAll = document.getElementById('sendToAll').checked;
+      const recipientsList = document.getElementById('recipientsList');
+      
+      if (sendToAll) {
+        recipientsList.style.display = 'none';
+      } else {
+        recipientsList.style.display = 'block';
+      }
+    }
+
+    function loadTemplate() {
+      const template = '<!DOCTYPE html>\n<html>\n<head>\n  <style>\n    body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }\n    .container { max-width: 600px; margin: 0 auto; padding: 20px; }\n    .header { background: linear-gradient(135deg, #013A5B 0%, #1f2f3d 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }\n    .content { background: #f9f9f9; padding: 30px; border-radius: 0 0 10px 10px; }\n    .feature { margin: 15px 0; padding-left: 25px; }\n    .footer { text-align: center; margin-top: 30px; color: #666; font-size: 12px; }\n  </style>\n</head>\n<body>\n  <div class="container">\n    <div class="header">\n      <h1>Hi 👋</h1>\n      <h2>Thank you for subscribing to ANOCAB! 🎉</h2>\n    </div>\n    <div class="content">\n      <p>You\'re now part of our updates list — and that means you\'ll be among the first to know about:</p>\n      \n      <div class="feature">✔️ Latest aluminium wire prices 📊</div>\n      <div class="feature">✔️ Daily/weekly rate updates 🔄</div>\n      <div class="feature">✔️ Exclusive offers & deals 💰</div>\n      <div class="feature">✔️ Important market changes 📉📈</div>\n      <div class="feature">✔️ Hiring updates & career opportunities 💼</div>\n      \n      <p style="margin-top: 25px;">We\'ll keep you informed with updates that matter to you 🔔</p>\n      \n      <p style="margin-top: 25px; color: #666; font-size: 14px;">\n        If you did not subscribe, you can ignore this email. You can unsubscribe anytime.\n      </p>\n      \n      <p style="margin-top: 30px;">Thanks 🙌,<br><strong>Team ANOCAB</strong></p>\n    </div>\n    <div class="footer">\n      <p>© 2025 Anode Electric Pvt Ltd. All rights reserved.</p>\n    </div>\n  </div>\n</body>\n</html>';
+      
+      document.getElementById('emailContent').value = template;
+      document.getElementById('emailSubject').value = 'Welcome to ANOCAB Newsletter! 🎉';
+    }
+
+    async function sendBulkEmail() {
+      const subject = document.getElementById('emailSubject').value.trim();
+      const content = document.getElementById('emailContent').value.trim();
+      const sendToAll = document.getElementById('sendToAll').checked;
+      
+      if (!subject || !content) {
+        alert('Please fill in subject and content');
+        return;
+      }
+      
+      let selectedEmails = [];
+      if (!sendToAll) {
+        const checkboxes = document.querySelectorAll('.recipient-checkbox:checked');
+        selectedEmails = Array.from(checkboxes).map(cb => cb.value);
+        
+        if (selectedEmails.length === 0) {
+          alert('Please select at least one recipient');
+          return;
+        }
+      }
+      
+      const sendBtn = document.getElementById('sendBtn');
+      sendBtn.disabled = true;
+      sendBtn.textContent = 'Sending...';
+      
+      try {
+        const response = await fetch(API_BASE_URL + '/api/newsletter/send-bulk', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({
+            subject: subject,
+            htmlContent: content,
+            selectedEmails: sendToAll ? [] : selectedEmails
+          })
+        });
+        
+        const result = await response.json();
+        
+        if (response.ok) {
+          alert('✅ ' + result.message);
+          closeEmailModal();
+        } else {
+          alert('❌ Error: ' + result.error);
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        alert('❌ Failed to send emails');
+      } finally {
+        sendBtn.disabled = false;
+        sendBtn.textContent = 'Send Email';
+      }
+    }
+
+    // Load on page load
+    loadSubscribers();
+  </script>
+</body>
+</html>

@@ -1,0 +1,198 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Conductor Price Calculator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 30px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      text-align: center;
+    }
+    th, td {
+      padding: 10px;
+      border: 1px solid #ccc;
+    }
+    th {
+      background-color: #f5f5f5;
+    }
+    input[type="number"] {
+      padding: 5px;
+      font-size: 16px;
+      width: 150px;
+    }
+    .center {
+      text-align: center;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Conductor Price Calculator</h2>
+
+  <div id="tableContainer"></div>
+
+  <div class="center">
+    <button onclick="updateTable()">Recalculate</button>
+  </div>
+
+  <script src="/config.js"></script>
+<script>
+    const conductorData = [
+      { name: 'Mole', area: 15, mass: 40 },
+      { name: 'Squirrel', area: 22, mass: 60 },
+      { name: 'Weasel', area: 34, mass: 94 },
+      { name: 'Rabbit', area: 56, mass: 149 },
+      { name: 'Raccoon', area: 80, mass: 218 },
+      { name: 'Dog', area: 100, mass: 273 },
+      { name: 'Dog-up', area: 125, mass: 342 },
+      { name: 'Coyote', area: 148, mass: 407 },
+      { name: 'Wolf', area: 173, mass: 474 },
+      { name: 'Wolf-up', area: 200, mass: 549 },
+      { name: 'Panther', area: 232, mass: 636 },
+      { name: 'Panther-up1', area: 288, mass: 794 },
+      { name: 'Panther-up2', area: 346, mass: 952 },
+      { name: 'Kundan', area: 400, mass: 1101 },
+      { name: 'Zebra', area: 455, mass: 1280 },
+      { name: 'Zebra-up', area: 525, mass: 1448 },
+      { name: 'Moose', area: 570, mass: 1573 },
+      { name: 'Morkulia', area: 604, mass: 1665 },
+      { name: 'Moose-up', area: 642, mass: 1770 },
+      { name: 'Morkula-up', area: 960, mass: 1918 },
+      { name: 'Bersimis', area: 767, mass: 2115 }
+    ];
+
+    let aluRate = 270; // Default rate, in case the fetch fails
+
+    
+    async function fetchAluRate() {
+  try {
+    const res = await fetch(`${API_BASE_URL}/api/prices/approved`);
+    const data = await res.json();
+    const approvedList = data.data || [];
+
+    const aluItem = approvedList.find(item =>
+      item.item.toUpperCase() === "ALUMINIUM ALLOY"
+    );
+
+    if (aluItem?.mrp) {
+      // Remove 18% GST automatically
+      const mrpWithGST = parseFloat(aluItem.mrp);
+      aluRate = +(mrpWithGST / 1.18-2).toFixed(2); // Base price without GST
+      console.log("✅ ALU rate after removing 18% GST:", aluRate);
+    } else {
+      console.warn("⚠️ Using default ALU rate");
+      aluRate = 270;
+    }
+  } catch (err) {
+    console.error("❌ Fetch error:", err);
+    aluRate = 270;
+  }
+
+  updateTable(); // Automatically render table once rate is fetched
+}
+
+
+    function updateTable() {
+      const tableContainer = document.getElementById('tableContainer');
+      tableContainer.innerHTML = '';
+
+      const table = document.createElement('table');
+      const thead = document.createElement('thead');
+      const tbody = document.createElement('tbody');
+
+      const headers = ['Conductor Name', 'Cross Section (SQ MM)', 'Mass (Kg/Km)', 'ALU RATE', 'Basic Price', 'Final MRP'];
+      const headerRow = document.createElement('tr');
+
+      headers.forEach(header => {
+        const th = document.createElement('th');
+        th.textContent = header;
+        headerRow.appendChild(th);
+      });
+
+      thead.appendChild(headerRow);
+
+      conductorData.forEach(conductor => {
+        const row = document.createElement('tr');
+
+        const nameCell = document.createElement('td');
+        nameCell.textContent = conductor.name;
+        row.appendChild(nameCell);
+
+        const areaCell = document.createElement('td');
+        areaCell.textContent = conductor.area;
+        row.appendChild(areaCell);
+
+        const massCell = document.createElement('td');
+        massCell.textContent = conductor.mass;
+        row.appendChild(massCell);
+
+        const aluRateCell = document.createElement('td');
+        const aluRateInput = document.createElement('input');
+        aluRateInput.type = 'number';
+        aluRateInput.step = '0.01';
+        aluRateInput.value = aluRate;
+        aluRateCell.appendChild(aluRateInput);
+        row.appendChild(aluRateCell);
+
+        const basicPriceCell = document.createElement('td');
+        const finalMRPCell = document.createElement('td');
+        row.appendChild(basicPriceCell);
+        row.appendChild(finalMRPCell);
+
+        function calculate() {
+          const inputRate = parseFloat(aluRateInput.value) || aluRate;
+          const basicPrice = (conductor.mass * inputRate) / 1000;
+          const mrp = (basicPrice * 1.12) + 3;
+
+          basicPriceCell.textContent = basicPrice.toFixed(2);
+          finalMRPCell.textContent = mrp.toFixed(2);
+
+          const mrpData = {
+            productName: 'AAAC',
+            size: conductor.name,
+            area: conductor.area,
+            mass: conductor.mass,
+            aluRate: inputRate,
+            basicPrice: basicPrice.toFixed(2),
+            finalMRP: mrp.toFixed(2)
+          };
+
+          fetch(`${API_BASE_URL}/api/mrp/update`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(mrpData)
+          }).catch(err => console.error('Error saving MRP:', err));
+        }
+
+        // Initial calculation
+        calculate();
+
+        // Recalculate when input changes
+        aluRateInput.addEventListener('input', calculate);
+
+        tbody.appendChild(row);
+      });
+
+      table.appendChild(thead);
+      table.appendChild(tbody);
+      tableContainer.appendChild(table);
+    }
+
+    // Kick things off
+    fetchAluRate();
+  </script>
+
+</body>
+</html>

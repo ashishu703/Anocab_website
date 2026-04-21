@@ -1,0 +1,222 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>ANOCAB Cable MRP Calculator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      font-size: 14px;
+    }
+    th, td {
+      border: 1px solid #444;
+      padding: 8px;
+      text-align: center;
+    }
+    th {
+      background-color: #f2f2f2;
+    }
+    input[type="number"] {
+      width: 70px;
+      padding: 4px;
+    }
+    .center-btn {
+      text-align: center;
+      margin-top: 20px;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+<h2>ANOCAB MULTISTRAND CABLE MRP CALCULATOR</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>Size (SQMM)</th>
+      <th>Total WT of Conductor</th>
+      <th>Total WT of Insulation</th>
+      <th>WT of Outer Sheath</th>
+      <th>Rate of PVC ST 1 + PVC ST 2</th>
+      <th>Rate of Copper</th>
+      <th>Raw Cost</th>
+      <th>Processing Charge</th>
+      <th>Length</th>
+      <th>Basic Price</th>
+      <th>Super Stockist</th>
+      <th>Distributor</th>
+      <th>Dealer</th>
+      <th>MRP</th>
+    </tr>
+  </thead>
+  <tbody id="cableData"></tbody>
+</table>
+
+<div class="center-btn">
+  <button onclick="calculate()">Calculate</button>
+</div>
+
+<script src="/config.js"></script>
+<script>
+  
+  let pvcRateDefault = 92.63;
+  let copperRateDefault = 912.02;
+
+  const cableSpecs = [
+    { size: 0.5, conductor: 17.780, insulation: 17.781, sheath: 37.2682 },
+    { size: 0.75, conductor: 26.670, insulation: 20.392, sheath: 41.9147 },
+    { size: 1.0, conductor: 35.560, insulation: 23.377, sheath: 47.5032 },
+    { size: 1.5, conductor: 53.340, insulation: 26.983, sheath: 54.6521 },
+    { size: 2.5, conductor: 88.900, insulation: 39.168, sheath: 76.8327 },
+    { size: 4.0, conductor: 142.240, insulation: 46.422, sheath: 88.4163 },
+    { size: 6.0, conductor: 213.360, insulation: 46.422, sheath: 94.0211 },
+    { size: 10.0, conductor: 355.600, insulation: 62.172, sheath: 113.9865 }
+  ];
+
+  async function fetchApprovedRates() {
+    try {
+      // To handle pagination and get all products, modify the API call
+      // First try with limit=100 to get all products at once
+      const res = await fetch(`${API_BASE_URL}/api/prices/approved?limit=100`);
+      const data = await res.json();
+      let allRates = data.data || [];
+      
+      // If there are more pages, fetch them (this is a fallback if limit doesn't work)
+      if (data.totalPages > 1 && data.currentPage === 1) {
+        console.log(`Detected pagination: ${data.totalPages} pages total. Fetching all...`);
+        const additionalRequests = [];
+        for (let page = 2; page <= data.totalPages; page++) {
+          additionalRequests.push(
+            fetch(`${API_BASE_URL}/api/prices/approved?page=${page}`)
+              .then(res => res.json())
+              .then(pageData => pageData.data || [])
+          );
+        }
+        const additionalResults = await Promise.all(additionalRequests);
+        // Combine all results
+        additionalResults.forEach(pageRates => {
+          allRates = [...allRates, ...pageRates];
+        });
+      }
+      
+      // Debug: Log all available items to see what's actually coming from the server
+      console.log('Available items from API after fetching all pages:', allRates.map(r => r.item));
+      console.log('Total items fetched:', allRates.length);
+      
+      // First try to find PVC ST1 + PVC ST2 directly
+      let pvcObj = allRates.find(r => {
+        if (!r.item) return false;
+        return r.item.toUpperCase().trim() === 'PVC ST1 + PVC ST2';
+      });
+      
+      // If not found, try to get the average of PVC ST1 and PVC ST2 separately
+      if (!pvcObj) {
+        const st1Obj = allRates.find(r => r.item && (r.item.toUpperCase().includes('PVC ST1/TYPE A') || r.item.toUpperCase() === 'PVC ST1'));
+        const st2Obj = allRates.find(r => r.item && r.item.toUpperCase() === 'PVC ST2');
+        
+        if (st1Obj?.mrp && st2Obj?.mrp) {
+          console.log('Found separate PVC ST1 rate:', st1Obj.mrp, 'and PVC ST2 rate:', st2Obj.mrp);
+          // Create a combined rate as the average
+          const st1Rate = parseFloat(st1Obj.mrp);
+          const st2Rate = parseFloat(st2Obj.mrp);
+          const avgRate = (st1Rate + st2Rate) / 2;
+          pvcRateDefault = avgRate;
+          console.log('Calculated average rate:', avgRate);
+          return; // Exit early since we've already set the rate
+        }
+      }
+      
+      const copperObj = allRates.find(r => r.item?.toUpperCase().includes('COPPER LME GRADE'));
+      
+      if (pvcObj?.mrp) {
+        console.log('Found PVC ST1 + PVC ST2 rate:', pvcObj.mrp);
+        pvcRateDefault = parseFloat(pvcObj.mrp);
+      } else {
+        console.warn('PVC ST1 + PVC ST2 rate not found, using default:', pvcRateDefault);
+      }
+      
+      copperRateDefault = copperObj?.mrp ? parseFloat(copperObj.mrp) : copperRateDefault;
+    } catch (err) {
+      console.warn("Failed to fetch rates, using default values", err);
+    }
+  }
+
+  function renderTable() {
+    const tableBody = document.getElementById("cableData");
+    tableBody.innerHTML = '';
+    cableSpecs.forEach((item, index) => {
+      const row = `
+        <tr>
+          <td>${item.size}</td>
+          <td>${item.conductor.toFixed(2)}</td>
+          <td>${item.insulation.toFixed(2)}</td>
+          <td>${item.sheath.toFixed(2)}</td>
+          <td><input type="number" class="pvcRate" value="${pvcRateDefault}" /></td>
+          <td><input type="number" class="copperRate" value="${copperRateDefault}" /></td>
+          <td class="rawCost">-</td>
+          <td class="processing">-</td>
+          <td>1 MTR</td>
+          <td class="basicPrice">-</td>
+          <td class="superStockist">-</td>
+          <td class="distributor">-</td>
+          <td class="dealer">-</td>
+          <td class="mrp">-</td>
+        </tr>
+      `;
+      tableBody.insertAdjacentHTML('beforeend', row);
+    });
+  }
+
+  function calculate() {
+    const rows = document.querySelectorAll("#cableData tr");
+    rows.forEach((row, index) => {
+      const pvcRate = parseFloat(row.querySelector('.pvcRate').value);
+      const copperRate = parseFloat(row.querySelector('.copperRate').value);
+      const item = cableSpecs[index];
+
+      const rawCost = ((item.insulation + item.sheath) * pvcRate) + (item.conductor * copperRate);
+      const processingCharge = (rawCost / 86.5) * 100;
+      const basicPrice = processingCharge / 1000;
+      const superStockist = basicPrice * 1.02;
+      const distributor = superStockist * 1.03;
+      const dealer = (distributor * 106.5) / 100;
+      const mrp = (dealer / 55) * 100;
+
+      row.querySelector('.rawCost').innerText = rawCost.toFixed(0);
+      row.querySelector('.processing').innerText = processingCharge.toFixed(0);
+      row.querySelector('.basicPrice').innerText = basicPrice.toFixed(0);
+      row.querySelector('.superStockist').innerText = superStockist.toFixed(0);
+      row.querySelector('.distributor').innerText = distributor.toFixed(0);
+      row.querySelector('.dealer').innerText = dealer.toFixed(0);
+      row.querySelector('.mrp').innerText = mrp.toFixed(0);
+    });
+
+    // Store MRP in localStorage with correct key
+    const rates = cableSpecs.map((item, index) => {
+      const mrp = document.querySelectorAll(".mrp")[index].innerText;
+      return { size: item.size, rate: mrp };
+    });
+    localStorage.setItem('mcc_copper_4core_round_rates', JSON.stringify(rates));
+  }
+
+  window.onload = async function() {
+    await fetchApprovedRates();
+    renderTable();
+    calculate();
+  };
+</script>
+
+
+</body>
+</html>

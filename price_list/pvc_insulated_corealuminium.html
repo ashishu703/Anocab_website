@@ -1,0 +1,228 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>pvc insulated single core aluminium wire</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+    }
+    th, td {
+      padding: 8px 10px;
+      text-align: center;
+      border: 1px solid #ccc;
+    }
+    th {
+      background-color: #f4f4f4;
+      font-weight: bold;
+    }
+    tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+    caption {
+      font-size: 20px;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+    input[type="number"] {
+      width: 70px;
+      padding: 2px;
+    }
+  </style>
+</head>
+<body>
+
+  <table>
+    <caption>Conductor Price Table</caption>
+    <thead>
+      <tr>
+        <th>SIZE IN MM (SQ MM)</th>
+        <th>TOTAL WT OF CONDUCTOR (KG/KM)</th>
+        <th>TOTAL WT OF INSULATION (KG/KM)</th>
+        <th>WT OF OUTER SHEAT (KG/KM)</th>
+        <th>RATE OF PVC ST 1 + PVC ST 2 (RS/KG)</th>
+        <th>RATE OF ALUMINIUM EC GRADE (RS/KG)</th>
+        <th>RAW COST (RS/KM)</th>
+        <th>PROCESSING CHARGE (RS/KM)</th>
+        <th>LENGTH OF COIL (MTR)</th>
+        <th>Basic Price of Coil (RS)</th>
+        <th>SUPER STOCKIST (RS)</th>
+        <th>DISTRIBUTOR (RS)</th>
+        <th>DEALER (RS)</th>
+        <th>MRP (RS)</th>
+      </tr>
+    </thead>
+    <tbody id="priceTableBody">
+      <!-- JS will inject rows here -->
+    </tbody>
+  </table>
+
+  <script src="/config.js"></script>
+<script>
+    
+    const data = [
+      { size: 4, conductor: 6.7056, insulation: 9.1186, sheat: 5.70, length: 90 },
+      { size: 6, conductor: 8.2127, insulation: 9.1186, sheat: 8.70, length: 90 },
+      { size: 8, conductor: 9.4832, insulation: 12.4344, sheat: 11.79, length: 90 },
+      { size: 10, conductor: 10.6025, insulation: 12.4344, sheat: 14.72, length: 90 },
+      { size: 4.0, conductor: 10.9201, insulation: 13.92476, sheat: 18.32, length: 90 },
+      { size: 6.0, conductor: 16.3802, insulation: 16.30905, sheat: 21.30, length: 90 },
+      { size: 10.0, conductor: 27.3003, insulation: 26.14871, sheat: 29.00, length: 90 },
+    ];
+
+    const tbody = document.getElementById("priceTableBody");
+    
+    // Default rate values (will be updated from API)
+    let pvcRateDefault = 96.22;
+    let aluRateDefault = 315.70;
+    
+    // Function to fetch approved rates from API
+    async function fetchApprovedRates() {
+      try {
+        // Use limit=100 to get all products at once
+        const res = await fetch(`${API_BASE_URL}/api/prices/approved?limit=100`);
+        const data = await res.json();
+        let allRates = data.data || [];
+        
+        // Handle pagination if needed
+        if (data.totalPages > 1 && data.currentPage === 1) {
+          console.log(`Detected pagination: ${data.totalPages} pages total. Fetching all...`);
+          const additionalRequests = [];
+          for (let page = 2; page <= data.totalPages; page++) {
+            additionalRequests.push(
+              fetch(`${API_BASE_URL}/api/prices/approved?page=${page}`)
+                .then(res => res.json())
+                .then(pageData => pageData.data || [])
+            );
+          }
+          const additionalResults = await Promise.all(additionalRequests);
+          additionalResults.forEach(pageRates => {
+            allRates = [...allRates, ...pageRates];
+          });
+        }
+        
+        console.log('Available items from API:', allRates.map(r => r.item));
+        
+        // Find PVC ST1 + PVC ST2 rate
+        const pvcObj = allRates.find(r => {
+          if (!r.item) return false;
+          return r.item.toUpperCase().includes('PVC ST1 + PVC ST2');
+        });
+        
+        // If not found as combined, try to get separate and average them
+        if (!pvcObj) {
+          const st1Obj = allRates.find(r => r.item && (r.item.toUpperCase().includes('PVC ST1/TYPE A') || r.item.toUpperCase() === 'PVC ST1'));
+          const st2Obj = allRates.find(r => r.item && r.item.toUpperCase() === 'PVC ST2');
+          
+          if (st1Obj?.mrp && st2Obj?.mrp) {
+            console.log('Found separate PVC ST1 rate:', st1Obj.mrp, 'and PVC ST2 rate:', st2Obj.mrp);
+            const st1Rate = parseFloat(st1Obj.mrp);
+            const st2Rate = parseFloat(st2Obj.mrp);
+            pvcRateDefault = (st1Rate + st2Rate) / 2;
+            console.log('Calculated average PVC rate:', pvcRateDefault);
+          } else if (pvcObj?.mrp) {
+            pvcRateDefault = parseFloat(pvcObj.mrp);
+            console.log('Found PVC ST1 + PVC ST2 rate:', pvcRateDefault);
+          }
+        } else if (pvcObj?.mrp) {
+          pvcRateDefault = parseFloat(pvcObj.mrp);
+          console.log('Found PVC ST1 + PVC ST2 rate:', pvcRateDefault);
+        }
+        
+        // XLPE rate section removed as requested
+        
+        // Find Aluminium EC GRADE rate
+        const aluObj = allRates.find(r => r.item && r.item.toUpperCase().includes('ALUMINIUM EC GRADE'));
+        if (aluObj?.mrp) {
+          aluRateDefault = parseFloat(aluObj.mrp);
+          console.log('Found Aluminium EC GRADE rate:', aluRateDefault);
+        }
+        
+        // Render table with new rates
+        renderTable();
+      } catch (err) {
+        console.error("Failed to fetch rates, using defaults:", err);
+        renderTable(); // Use defaults if API fails
+      }
+    }
+    
+    // Function to render the table with current rates
+    function renderTable() {
+      tbody.innerHTML = ''; // Clear existing rows
+      
+      data.forEach((item, index) => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${item.size}</td>
+          <td>${item.conductor}</td>
+          <td>${item.insulation}</td>
+          <td>${item.sheat}</td>
+          <td><input type="number" step="0.01" value="${pvcRateDefault}" onchange="calculate(${index})" id="pvc${index}"></td>
+          <td><input type="number" step="0.01" value="${aluRateDefault}" onchange="calculate(${index})" id="alu${index}"></td>
+          <td id="raw${index}">0</td>
+          <td id="proc${index}">0</td>
+          <td>${item.length}</td>
+          <td id="basic${index}">0</td>
+          <td id="stockist${index}">0</td>
+          <td id="dist${index}">0</td>
+          <td id="dealer${index}">0</td>
+          <td id="mrp${index}">0</td>
+        `;
+        tbody.appendChild(row);
+        calculate(index);
+      });
+    }
+
+    function calculate(index) {
+      const conductor = data[index].conductor;
+      const insulation = data[index].insulation;
+      const sheat = data[index].sheat;
+      const length = data[index].length;
+      const size = data[index].size;
+
+      const pvc = parseFloat(document.getElementById(`pvc${index}`).value) || 0;
+      const alu = parseFloat(document.getElementById(`alu${index}`).value) || 0;
+
+      // Calculate raw cost using only PVC and aluminium rates
+      // For insulation, we'll also use PVC rate since XLPE was removed
+      const raw = (conductor * alu) + (insulation * pvc);
+      const proc = (raw / 86.5)*100;
+      const basic = (proc * length) / 1000;
+      const stockist = basic * 1.02;
+      const dist = stockist * 1.03;
+      const dealer = dist * 1.065;
+      const mrp = (dealer / 55) * 100;
+
+      document.getElementById(`raw${index}`).innerText = raw.toFixed(2);
+      document.getElementById(`proc${index}`).innerText = proc.toFixed(2);
+      document.getElementById(`basic${index}`).innerText = basic.toFixed(2);
+      document.getElementById(`stockist${index}`).innerText = stockist.toFixed(2);
+      document.getElementById(`dist${index}`).innerText = dist.toFixed(2);
+      document.getElementById(`dealer${index}`).innerText = dealer.toFixed(2);
+      document.getElementById(`mrp${index}`).innerText = mrp.toFixed(2);
+      
+      // Save MRP to local storage with size as key
+      saveMRPToLocalStorage(size, mrp.toFixed(2));
+    }
+    
+    // Function to save MRP to local storage
+    function saveMRPToLocalStorage(size, mrp) {
+      // Ensure we store the exact size format (4, 6, 8, 10, 4.0, 6.0, 10.0)
+      const key = `piscac_aluminium_${size}`;
+      localStorage.setItem(key, mrp);
+      console.log(`Saved MRP for size ${size} to local storage: ${mrp}`);
+    }
+    
+    // Initialize by fetching rates and rendering the table
+    fetchApprovedRates();
+  </script>
+
+</body>
+</html>

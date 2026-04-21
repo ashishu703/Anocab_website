@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Price Marquee Data</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: #f8fafc;
+    }
+
+    header {
+      background-color: #2c5364;
+      padding: 20px;
+      color: white;
+      text-align: center;
+      font-size: 24px;
+      font-weight: bold;
+    }
+
+    table {
+      width: 90%;
+      margin: 40px auto;
+      border-collapse: collapse;
+      background-color: #fff;
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    th, td {
+      padding: 12px 20px;
+      text-align: center;
+      border: 1px solid #ddd;
+    }
+
+    th {
+      background-color: #2c5364;
+      color: white;
+    }
+
+    td {
+      color: #555;
+    }
+
+    tr:nth-child(even) {
+      background-color: #f2f2f2;
+    }
+
+    tr:hover {
+      background-color: #f1f1f1;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    
+    .action-buttons {
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    .action-buttons button {
+      background-color: #2c5364;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    .action-buttons button:hover {
+      background-color: #1f3d4b;
+    }
+  </style>
+</head>
+<body>
+
+  <header>Price Marquee Data</header>
+
+  <div class="container">
+    <table>
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Time</th>
+          <th>Copper Price</th>
+          <th>Aluminum EC Price</th>
+          <th>Aluminum Alloy Price</th>
+          <th>PVC Price</th>
+          <th>XLDPE Price</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Data will be inserted here by JavaScript -->
+      </tbody>
+    </table>
+
+    <div id="pagination" class="action-buttons"></div>
+    <div class="action-buttons">
+      <button onclick="window.location.href='price_marquee_update.html'">Update Prices</button>
+    </div>
+  </div>
+
+  <script>
+    const PAGE_LIMIT = 10;
+    let currentPage = 1;
+    let totalPages = 1;
+    let allHistory = [];
+
+    async function fetchHistory() {
+      try {
+        const res = await fetch('/api/prices/history');
+        allHistory = await res.json();
+        totalPages = Math.ceil(allHistory.length / PAGE_LIMIT) || 1;
+        renderTable();
+        renderPagination();
+      } catch (err) {
+        document.querySelector('tbody').innerHTML = '<tr><td colspan="7">Failed to load data.</td></tr>';
+      }
+    }
+
+    function renderTable(page = 1) {
+      currentPage = page;
+      const tbody = document.querySelector('tbody');
+      tbody.innerHTML = '';
+      if (!allHistory.length) {
+        tbody.innerHTML = '<tr><td colspan="7">No price history found.</td></tr>';
+        return;
+      }
+      const start = (page - 1) * PAGE_LIMIT;
+      const end = start + PAGE_LIMIT;
+      const pageData = allHistory.slice(start, end);
+      pageData.forEach(entry => {
+        const row = `<tr>
+          <td>${entry.date || ''}</td>
+          <td>${entry.time || ''}</td>
+          <td>₹${entry.copper ?? ''}</td>
+          <td>₹${entry.aluminum_ec ?? ''}</td>
+          <td>₹${entry.aluminum_alloy ?? ''}</td>
+          <td>₹${entry.pvc ?? ''}</td>
+          <td>₹${entry.lldpe ?? ''}</td>
+        </tr>`;
+        tbody.innerHTML += row;
+      });
+    }
+
+    function renderPagination() {
+      const div = document.getElementById('pagination');
+      div.innerHTML = '';
+      if (totalPages <= 1) return;
+      for (let i = 1; i <= totalPages; i++) {
+        const btn = document.createElement('button');
+        btn.textContent = i;
+        btn.style.margin = '0 4px';
+        btn.style.padding = '6px 14px';
+        btn.style.borderRadius = '5px';
+        btn.style.border = i === currentPage ? '2px solid #007bff' : '1px solid #bbb';
+        btn.style.background = i === currentPage ? '#e3f0ff' : '#fff';
+        btn.style.cursor = 'pointer';
+        btn.disabled = (i === currentPage);
+        btn.onclick = () => { renderTable(i); renderPagination(); };
+        div.appendChild(btn);
+      }
+    }
+
+    window.onload = fetchHistory;
+  </script>
+</body>
+<script>
+// Inactivity auto-logout (30s)
+(function() {
+  let timer;
+  function resetTimer() {
+    clearTimeout(timer);
+    timer = setTimeout(logout, 30000);
+  }
+  function logout() {
+    fetch('/logout', {method:'POST'}).then(()=>{
+      window.location.href = '/login_panel/login.html';
+    });
+  }
+  ['mousemove','keydown','mousedown','touchstart'].forEach(evt =>
+    window.addEventListener(evt, resetTimer, true));
+  resetTimer();
+})();
+</script>
+</html>

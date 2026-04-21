@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>API Config Test</title>
+  <script src="/config.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: 50px auto;
+      padding: 20px;
+      background: #f5f5f5;
+    }
+    .card {
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+    }
+    h1 {
+      color: #333;
+      margin-bottom: 20px;
+    }
+    .info {
+      background: #e3f2fd;
+      padding: 15px;
+      border-radius: 5px;
+      margin: 10px 0;
+      border-left: 4px solid #2196F3;
+    }
+    .success {
+      background: #e8f5e9;
+      border-left-color: #4CAF50;
+    }
+    .error {
+      background: #ffebee;
+      border-left-color: #f44336;
+    }
+    button {
+      background: #2196F3;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+      margin: 5px;
+    }
+    button:hover {
+      background: #1976D2;
+    }
+    pre {
+      background: #263238;
+      color: #aed581;
+      padding: 15px;
+      border-radius: 5px;
+      overflow-x: auto;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>🧪 API Configuration Test</h1>
+    
+    <div class="info">
+      <strong>Current API Base URL:</strong><br>
+      <code id="apiUrl">Loading...</code>
+    </div>
+
+    <div class="info">
+      <strong>Environment:</strong><br>
+      <code id="environment">Detecting...</code>
+    </div>
+
+    <button onclick="testPricesAPI()">Test /api/prices</button>
+    <button onclick="testConfigAPI()">Test /api/config</button>
+    <button onclick="location.reload()">Reload Page</button>
+
+    <div id="result"></div>
+  </div>
+
+  <div class="card">
+    <h2>📝 How to Use</h2>
+    <p>Add this line to your HTML files:</p>
+    <pre>&lt;script src="/config.js"&gt;&lt;/script&gt;</pre>
+    
+    <p>Then use <code>API_BASE_URL</code> in your code:</p>
+    <pre>fetch(`${API_BASE_URL}/api/prices`)
+  .then(res => res.json())
+  .then(data => console.log(data));</pre>
+
+    <h3>To Change API URL:</h3>
+    <ol>
+      <li>Edit <code>backend/.env</code></li>
+      <li>Change <code>API_BASE_URL=your-url</code></li>
+      <li>Restart backend server</li>
+      <li>Reload this page</li>
+    </ol>
+  </div>
+
+  <script>
+    // Display current config
+    document.getElementById('apiUrl').textContent = window.API_BASE_URL || 'Not loaded';
+    
+    const hostname = window.location.hostname;
+    const env = (hostname === 'localhost' || hostname === '127.0.0.1') ? 'Development' : 'Production';
+    document.getElementById('environment').textContent = env;
+
+    // Test prices API
+    async function testPricesAPI() {
+      const resultDiv = document.getElementById('result');
+      resultDiv.innerHTML = '<div class="info">Testing /api/prices...</div>';
+      
+      try {
+        const response = await fetch(`${API_BASE_URL}/api/prices`);
+        const data = await response.json();
+        
+        resultDiv.innerHTML = `
+          <div class="info success">
+            <strong>✅ Success!</strong><br>
+            Status: ${response.status} ${response.statusText}
+          </div>
+          <pre>${JSON.stringify(data, null, 2)}</pre>
+        `;
+      } catch (error) {
+        resultDiv.innerHTML = `
+          <div class="info error">
+            <strong>❌ Error!</strong><br>
+            ${error.message}
+          </div>
+        `;
+      }
+    }
+
+    // Test config API
+    async function testConfigAPI() {
+      const resultDiv = document.getElementById('result');
+      resultDiv.innerHTML = '<div class="info">Testing /api/config...</div>';
+      
+      try {
+        const response = await fetch(`${API_BASE_URL}/api/config`);
+        const data = await response.json();
+        
+        resultDiv.innerHTML = `
+          <div class="info success">
+            <strong>✅ Success!</strong><br>
+            Status: ${response.status} ${response.statusText}
+          </div>
+          <pre>${JSON.stringify(data, null, 2)}</pre>
+        `;
+      } catch (error) {
+        resultDiv.innerHTML = `
+          <div class="info error">
+            <strong>❌ Error!</strong><br>
+            ${error.message}
+          </div>
+        `;
+      }
+    }
+
+    // Auto-test on load
+    console.log('🌐 API Base URL:', window.API_BASE_URL);
+    console.log('🔧 Environment:', env);
+  </script>
+</body>
+</html>

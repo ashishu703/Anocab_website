@@ -1,0 +1,401 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>3 Core Cable Price Calculator</title>
+  <style>
+    table, th, td {
+      border: 1px solid black;
+      border-collapse: collapse;
+      padding: 8px;
+      text-align: center;
+    }
+    th {
+      background-color: #eee;
+    }
+    input[type="number"] {
+      width: 80px;
+    }
+    .center {
+      text-align: center;
+      margin-top: 20px;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+    }
+  </style>
+</head>
+<body>
+
+<h2>3 Core Cable Price Calculator</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>CORE</th>
+      <th>SIZE (sqmm)</th>
+      <th>TOTAL WT OF CONDUCTOR (kg/km)</th>
+      <th>TOTAL WT OF INSULATION (kg/km)</th>
+      <th>WT OF OUTER SHEATH (kg/km)</th>
+      <th>RATE OF PVCST1+ST2</th>
+      <th>RATE OF COPPER</th>
+      <th>RAW COST</th>
+      <th>PROCESSING CHARGE</th>
+      <th>LENGTH (m)</th>
+      <th>Basic Price of Coil</th>
+      <th>SUPER STOCKIST</th>
+      <th>DISTRIBUTOR</th>
+      <th>DEALER</th>
+      <th>MRP</th>
+    </tr>
+  </thead>
+  <tbody id="data-table"></tbody>
+</table>
+
+<div class="center">
+  <button onclick="calculateAll()">Calculate</button>
+</div>
+
+<script src="/config.js"></script>
+<script>
+  let pvcRateDefault = 0;
+  let copperRateDefault = 0;
+
+  const cableData = [
+    [3, 0.5, 13.34, 13.71, 34.49, 0, 0, 90],
+    [3, 1.0, 26.67, 17.41, 41.13, 0, 0, 90],
+    [3, 1.5, 40.01, 20.04, 46.05, 0, 0, 90],
+    [3, 2.5, 66.68, 29.48, 63.99, 0, 0, 90],
+    [3, 4, 106.68, 41.85, 80.05, 0, 0, 90],
+    [3, 6, 160.02, 49.23, 101.19, 0, 0, 90]
+  ];
+
+  
+  async function fetchRates() {
+    try {
+      console.log('Fetching rates from API...');
+      const response = await fetch(`${API_BASE_URL}/api/prices/approved`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      console.log('API Response:', data);
+      
+      if (!data || !data.data || !Array.isArray(data.data)) {
+        throw new Error('Invalid API response format');
+      }
+
+      const rates = data.data;
+      
+      // Find PVC ST1 and PVC ST2 rates separately
+      const pvcST1Obj = rates.find(r => 
+        r.item && r.item.toUpperCase().includes('PVC ST1')
+      );
+      
+      const pvcST2Obj = rates.find(r => 
+        r.item && r.item.toUpperCase().includes('PVC ST2')
+      );
+      
+      // Calculate combined PVC rate (ST1 + ST2) and then divide by 2
+      const pvcCombinedRate = ((pvcST1Obj?.mrp || 0) + (pvcST2Obj?.mrp || 0)) / 2;
+      
+      // Find Copper rate with multiple search terms
+      const copperObj = rates.find(r => 
+        r.item && 
+        (r.item.toUpperCase().includes('COPPER LME GRADE') || 
+         r.item.toUpperCase().includes('COPPER') || 
+         r.item.toUpperCase().includes('LME'))
+      );
+      
+      // Log found rates
+      console.log('Found PVC ST1 rate:', pvcST1Obj);
+      console.log('Found PVC ST2 rate:', pvcST2Obj);
+      console.log('Found Copper rate:', copperObj);
+      
+      // Use MRP (GST included) prices from API response
+      pvcRateDefault = pvcCombinedRate || 56;  // Combined PVC ST1 + ST2 rate
+      copperRateDefault = copperObj ? parseFloat(copperObj.mrp) : 45;  // GST included price
+      
+      console.log('Using rates:', { 
+        pvcST1ST2: pvcRateDefault, 
+        copper: copperRateDefault,
+        source: pvcST1Obj && pvcST2Obj ? 'API' : 'Default',
+        sourceCopper: copperObj ? 'API' : 'Default',
+        apiData: {
+          pvc: {
+            st1: pvcST1Obj ? {item: pvcST1Obj.item, price: pvcST1Obj.mrp} : null,
+            st2: pvcST2Obj ? {item: pvcST2Obj.item, price: pvcST2Obj.mrp} : null,
+            combined: pvcCombinedRate,
+            combinedPerUnit: pvcCombinedRate / 2
+          },
+          copper: copperObj ? {item: copperObj.item, price: copperObj.mrp} : null
+        }
+      });
+      
+      // Get exact MRP values from API for different sizes
+      const mrpValues = {};
+      
+      // Find MRP values for each size
+      cableData.forEach(([core, size]) => {
+        const sizeStr = size.toString();
+        
+        // Find exact MRP for this size
+        const sizeObj = rates.find(r => 
+          r.item && 
+          r.item.toUpperCase().includes(`PVC ${sizeStr} SQMM`) ||
+          r.item.toUpperCase().includes(`PVC ${sizeStr} SQ`) ||
+          r.item.toUpperCase().includes(`PVC ${sizeStr}MM2`)
+        );
+        
+        if (sizeObj) {
+          mrpValues[sizeStr] = parseFloat(sizeObj.mrp).toFixed(2);
+          console.log(`Found MRP for ${sizeStr} sqmm:`, sizeObj.mrp);
+        } else {
+          console.log(`No MRP found for ${sizeStr} sqmm, using default`);
+          // Use default calculation if no exact MRP found
+          mrpValues[sizeStr] = (pvcCombinedRate * 1.0).toFixed(2); // Using 100% as default
+        }
+      });
+
+      // Store the exact MRP mapping in localStorage
+      localStorage.setItem('summersible_mrps', JSON.stringify(mrpValues));
+      
+      // Log stored MRP values
+      console.log('Stored MRP values:', mrpValues);
+
+      // Update all input fields with the fetched rates
+      document.querySelectorAll('[id^="pvcRate-"]').forEach(input => {
+        input.value = pvcRateDefault;
+        input.style.backgroundColor = pvcST1Obj && pvcST2Obj ? '' : '#ffcccc'; // Red background if using default
+      });
+      document.querySelectorAll('[id^="copperRate-"]').forEach(input => {
+        input.value = copperRateDefault;
+        input.style.backgroundColor = copperObj ? '' : '#ffcccc'; // Red background if using default
+      });
+      
+      // Recalculate all rows with new rates
+      calculateAll();
+    } catch (err) {
+      console.error('Error in rate calculation:', err);
+      alert('Error calculating rates. Using default values.');
+      // Still update with default values even if there's an error
+      document.querySelectorAll('[id^="pvcRate-"]').forEach(input => {
+        input.value = 56;
+        input.style.backgroundColor = '#ffcccc'; // Red background to indicate default
+      });
+      document.querySelectorAll('[id^="copperRate-"]').forEach(input => {
+        input.value = 45;
+        input.style.backgroundColor = '#ffcccc'; // Red background to indicate default
+      });
+      calculateAll();
+      pvcRateDefault = 56;
+      copperRateDefault = 45;
+    }
+  }
+
+  function createInput(value, rowIdx, colIdx, idSuffix = "", isEditable = true) {
+    const input = document.createElement('input');
+    input.type = 'number';
+    input.step = 'any';
+    input.value = value;
+    input.id = `${idSuffix}-${rowIdx}`;
+    input.dataset.row = rowIdx;
+    input.dataset.col = colIdx;
+    if (!isEditable) input.readOnly = true;
+    input.oninput = () => calculateRow(rowIdx);
+    return input;
+  }
+
+  function calculateRow(rowIdx) {
+    // Check if table exists before calculating
+    const table = document.querySelector('#data-table');
+    if (!table) {
+      console.error('Table not found, cannot calculate row');
+      return;
+    }
+
+    const row = table.querySelector(`#row-${rowIdx}`);
+    if (!row) {
+      console.error(`Row ${rowIdx} not found`);
+      return;
+    }
+
+    const cells = row.querySelectorAll('td');
+
+    const wtOfConductor = parseFloat(cells[2].textContent) || 0;
+    const wtOfInsulation = parseFloat(cells[3].textContent) || 0;
+    const wtOfOuterSheath = parseFloat(cells[4].textContent) || 0;
+
+    const ratePVC = parseFloat(document.getElementById(`pvcRate-${rowIdx}`).value) || 0;
+    const rateCopper = parseFloat(document.getElementById(`copperRate-${rowIdx}`).value) || 0;
+    const length = parseFloat(document.getElementById(`length-${rowIdx}`).value) || 0;
+
+    const rawCost = (wtOfInsulation + wtOfOuterSheath) * ratePVC + (wtOfConductor * rateCopper);
+    const processingCharge = (rawCost / 86.5) * 100;
+    const basicCoil = (processingCharge * length) / 1000;
+
+    const superStockist = (basicCoil * 102) / 100;
+    const distributor = (superStockist * 103) / 100;
+    const dealer = (distributor * 106.5) / 100;
+    const mrp = (dealer / 55) * 100;
+
+    const outputs = row.querySelectorAll('.output');
+    outputs[0].textContent = rawCost.toFixed(2);
+    outputs[1].textContent = processingCharge.toFixed(2);
+    outputs[2].textContent = basicCoil.toFixed(2);
+    outputs[3].textContent = superStockist.toFixed(2);
+    outputs[4].textContent = distributor.toFixed(2);
+    outputs[5].textContent = dealer.toFixed(2);
+    outputs[6].textContent = Math.round(mrp);
+
+    // Store MRP in localStorage for pisc_product_four.html
+    const size = cells[1].textContent.trim();
+    let mrps = JSON.parse(localStorage.getItem('summersible_mrps') || '{}');
+    mrps[size] = Math.round(mrp);
+    localStorage.setItem('summersible_mrps', JSON.stringify(mrps));
+
+    // POST MRP to backend (optional, keep if needed)
+    const mrpData = {
+      productName: 'PVC INSULATED SUBMERSIBLE CABLE',
+      size: size, // just the numeric value, e.g. '1.0'
+      pvcRate: ratePVC,
+      copperRate: rateCopper,
+      pvcWeight: wtOfInsulation + wtOfOuterSheath,
+      copperWeight: wtOfConductor,
+      basicPrice: basicCoil.toFixed(2),
+      finalMRP: Math.round(mrp)
+    };
+
+    fetch('https://api.anocab.com/api/mrp/update', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(mrpData)
+    }).catch(err => console.error('Error saving MRP:', err));
+  }
+
+  function calculateAll() {
+    for (let i = 0; i < cableData.length; i++) {
+      calculateRow(i);
+    }
+    // After all calculations, aggregate and store all MRPs
+    let mrps = {};
+    document.querySelectorAll('#data-table tr').forEach(row => {
+      const cells = row.querySelectorAll('td');
+      if (cells.length > 1) {
+        const size = cells[1].textContent.trim();
+        const mrpCell = cells[cells.length - 1];
+        const mrpValue = mrpCell.textContent.trim();
+        if (size && mrpValue && !isNaN(Number(mrpValue))) {
+          mrps[size] = Number(mrpValue);
+        }
+      }
+    });
+    localStorage.setItem('summersible_mrps', JSON.stringify(mrps));
+  }
+
+  function generateTable() {
+    const tbody = document.getElementById('data-table');
+
+    cableData.forEach((rowData, rowIdx) => {
+      const tr = document.createElement('tr');
+      tr.id = `row-${rowIdx}`;
+
+      // Static columns
+      for (let i = 0; i <= 4; i++) {
+        const td = document.createElement('td');
+        td.textContent = rowData[i];
+        tr.appendChild(td);
+      }
+
+      // Input fields for PVC and Copper rate
+      let tdPVC = document.createElement('td');
+      tdPVC.appendChild(createInput(pvcRateDefault, rowIdx, 5, "pvcRate"));
+      tr.appendChild(tdPVC);
+
+      let tdCopper = document.createElement('td');
+      tdCopper.appendChild(createInput(copperRateDefault, rowIdx, 6, "copperRate"));
+      tr.appendChild(tdCopper);
+
+      // Outputs
+      for (let i = 0; i < 2; i++) {
+        const td = document.createElement('td');
+        td.classList.add('output');
+        td.textContent = '-';
+        tr.appendChild(td);
+      }
+
+      // Length input
+      let tdLength = document.createElement('td');
+      tdLength.appendChild(createInput(rowData[7], rowIdx, 7, "length"));
+      tr.appendChild(tdLength);
+
+      // Final price outputs
+      for (let i = 0; i < 5; i++) {
+        const td = document.createElement('td');
+        td.classList.add('output');
+        td.textContent = '-';
+        tr.appendChild(td);
+      }
+
+      tbody.appendChild(tr);
+    });
+  }
+
+  (async function() {
+    try {
+      // Generate table first
+      generateTable();
+      // Then fetch rates
+      await fetchRates();
+    } catch (error) {
+      console.error('Error in initialization:', error);
+      // Still generate table even if rates fail to fetch
+      generateTable();
+    }
+    // Store all MRP values to localStorage after table generation
+    setTimeout(function() {
+      let mrps = {};
+      document.querySelectorAll('#data-table tr').forEach(row => {
+        const cells = row.querySelectorAll('td');
+        if (cells.length > 1) {
+          const size = cells[1].textContent.trim();
+          const mrpCell = cells[cells.length - 1];
+          const mrpValue = mrpCell.textContent.trim();
+          if (size && mrpValue && !isNaN(Number(mrpValue))) {
+            mrps[size] = Number(mrpValue);
+          }
+        }
+      });
+      localStorage.setItem('summersible_mrps', JSON.stringify(mrps));
+    }, 500);
+
+    // Apply default rates and calculate
+    cableData.forEach((data, index) => {
+      const pvcInput = document.getElementById(`pvcRate-${index}`);
+      const copperInput = document.getElementById(`copperRate-${index}`);
+      if (pvcInput) pvcInput.value = pvcRateDefault;
+      if (copperInput) copperInput.value = copperRateDefault;
+    });
+
+    calculateAll();
+
+    // Add auto-calculate event listeners
+    cableData.forEach((_, index) => {
+      document.getElementById(`pvcRate-${index}`).addEventListener('input', () => calculateRow(index));
+      document.getElementById(`copperRate-${index}`).addEventListener('input', () => calculateRow(index));
+      document.getElementById(`length-${index}`).addEventListener('input', () => calculateRow(index));
+    });
+  })();
+</script>
+
+</body>
+</html>

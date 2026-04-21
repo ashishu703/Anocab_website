@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Product Enquiry Page</title>
+  <script src="/config.js"></script>
+  <style>
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      padding: 0;
+      margin: 0;
+      background: linear-gradient(120deg, #e0eafc 0%, #cfdef3 100%);
+      min-height: 100vh;
+    }
+    .form-container {
+      background: #fff;
+      padding: 32px 24px;
+      border-radius: 16px;
+      max-width: 480px;
+      margin: 32px auto;
+      box-shadow: 0 8px 32px rgba(44,62,80,0.10), 0 1.5px 8px rgba(44,62,80,0.05);
+      transition: box-shadow 0.2s;
+      overflow: visible;
+      position: relative;
+    }
+    .form-container:hover {
+      box-shadow: 0 12px 40px rgba(44,62,80,0.13), 0 2px 12px rgba(44,62,80,0.08);
+    }
+    h2 {
+      text-align: center;
+      color: #2c3e50;
+      margin-bottom: 28px;
+      font-size: 2rem;
+      letter-spacing: 1px;
+    }
+    .form-row {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 18px;
+      flex-wrap: wrap;
+    }
+    .form-group {
+      flex: 1 1 140px;
+      display: flex;
+      flex-direction: column;
+      margin-bottom: 12px;
+      position: relative;
+    }
+    #subProductGroup,
+    #otherCommentGroup {
+      display: flex !important;
+      flex-direction: column;
+      position: relative;
+      z-index: 2;
+    }
+    #subProduct, #otherComment {
+      z-index: 3;
+      position: relative;
+      width: 100%;
+      max-width: 100%;
+      min-width: 0;
+      box-sizing: border-box;
+    }
+    label {
+      font-weight: 600;
+      color: #2c3e50;
+      margin-bottom: 6px;
+      letter-spacing: 0.5px;
+    }
+    input, select, textarea {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 7px;
+      border: 1px solid #bfc9d1;
+      font-size: 1rem;
+      background: #f9fbfc;
+      color: #2c3e50;
+      transition: border 0.2s;
+      box-sizing: border-box;
+      outline: none;
+    }
+    input:focus, select:focus, textarea:focus {
+      border: 1.5px solid #4CAF50;
+      background: #fff;
+    }
+    textarea {
+      resize: vertical;
+      min-height: 70px;
+      max-height: 180px;
+    }
+    button {
+      background: linear-gradient(90deg,#4CAF50 0%,#43cea2 100%);
+      color: #fff;
+      padding: 14px 0;
+      border: none;
+      border-radius: 7px;
+      cursor: pointer;
+      width: 100%;
+      font-size: 1.15rem;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      box-shadow: 0 2px 8px rgba(44,62,80,0.07);
+      transition: background 0.18s, box-shadow 0.2s;
+    }
+    button:hover, button:focus {
+      background: linear-gradient(90deg,#43cea2 0%,#4CAF50 100%);
+      box-shadow: 0 4px 14px rgba(44,62,80,0.12);
+    }
+    ::placeholder {
+      color: #bfc9d1;
+      opacity: 1;
+      font-size: 0.97rem;
+    }
+    /* Ensure dropdowns stay inside the form */
+    #subProductGroup,
+    #otherCommentGroup {
+      display: flex !important;
+      flex-direction: column;
+      position: relative;
+      z-index: 2;
+    }
+    select {
+      z-index: 3;
+      position: relative;
+    }
+    /* Responsive Styles */
+    @media (max-width: 600px) {
+      .form-container {
+        padding: 18px 5vw;
+        max-width: 98vw;
+        margin: 18px 1vw;
+        border-radius: 10px;
+      }
+      h2 {
+        font-size: 1.35rem;
+        margin-bottom: 18px;
+      }
+      .form-row {
+        flex-direction: column;
+        gap: 0;
+        margin-bottom: 6px;
+      }
+      .form-group {
+        margin-bottom: 8px;
+      }
+      button {
+        font-size: 1rem;
+        padding: 12px 0;
+      }
+    }
+    /* Custom scrollbar for textarea (optional, looks modern) */
+    textarea::-webkit-scrollbar {
+      width: 7px;
+      background: #f4f4f4;
+    }
+    textarea::-webkit-scrollbar-thumb {
+      background: #bfc9d1;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="form-container">
+  <h2>Anocab Enquiry Form</h2>
+  <form id="enquiryForm">
+    <div class="form-row">
+      <div class="form-group">
+        <label>Full Name:</label>
+        <input type="text" name="fullName" required autocomplete="off">
+      </div>
+      <div class="form-group">
+        <label>Company Name: </label>
+        <input type="text" name="companyName" autocomplete="off">
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>Email Address:</label>
+        <input type="email" name="email" required autocomplete="off">
+      </div>
+      <div class="form-group">
+        <label>Phone Number:</label>
+        <input type="tel" name="phone" required autocomplete="off">
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Address:</label>
+      <input type="text" name="address" autocomplete="off">
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>Product Type</label>
+        <select id="productType" required>
+          <option value="">-- Select Product --</option>
+          <option value="Mining">Mining</option>
+          <option value="Sub Sea">Sub Sea</option>
+          <option value="Marine">Marine</option>
+          <option value="Solar">Solar</option>
+          <option value="Wind Farm">Wind Farm</option>
+          <option value="Oil and Gas">Oil and Gas</option>
+          <option value="Telecommunication data Communication">Telecommunication data Communication</option>
+          <option value="Industrial Power Transmission and distribution">Industrial Power Transmission and distribution</option>
+          <option value="Railways">Railways</option>
+          <option value="others">Others</option>
+        </select>
+      </div>
+
+      <div class="form-group" id="subProductGroup" style="display: none;">
+        <label>Product Name</label>
+        <select id="subProduct" required></select>
+      </div>
+    </div>
+
+    <div class="form-group" id="otherCommentGroup" style="display: none;">
+      <label>Product Specification</label>
+      <input type="text" id="otherComment" placeholder="Please specify...">
+    </div>
+
+    <div class="form-group" style="margin-bottom: 20px;">
+      <label>Enquiry Message</label>
+      <textarea name="message" placeholder="Your enquiry..."></textarea>
+    </div>
+
+    <button type="submit">Submit Enquiry</button>
+  </form>
+</div>
+<script>
+  const subProductsData = {
+    Mining: [
+      "-- Select Product --",
+      "Mining",
+    ],
+    Sub_Sea: [
+      "-- Select Product --",
+      "Sub_Sea",
+    ],
+    Marine: [
+      "-- Select Product --",
+      "Marine",
+    ],
+    Solar: [
+      "-- Select Product --",
+      "Solar",
+    ],
+    Wind_Farm: [
+      "-- Select Product --",
+      "Wind Farm",
+    ],
+    Oil_and_Gas: [
+      "-- Select Product --",
+      "Oil and Gas",
+    ],
+    Telecommunication_data_Communication: [
+      "-- Select Product --",
+      "Telecommunication data Communication",
+    ],
+    Industrial_Power_Transmission_and_distribution: [
+      "-- Select Product --",
+      "Industrial Power Transmission and distribution",
+    ],
+    Railways: [
+      "-- Select Product --",
+      "Railways",
+    ]
+  };
+
+  const productTypeSelect = document.getElementById('productType');
+  const subProductGroup = document.getElementById('subProductGroup');
+  const subProductSelect = document.getElementById('subProduct');
+  const otherCommentGroup = document.getElementById('otherCommentGroup');
+
+  productTypeSelect.addEventListener('change', function() {
+    const selectedProduct = this.value;
+
+    if (selectedProduct === 'others') {
+      subProductGroup.style.display = 'none';
+      subProductSelect.innerHTML = '';
+      otherCommentGroup.style.display = 'flex';
+    } else if (selectedProduct && subProductsData[selectedProduct]) {
+      subProductGroup.style.display = 'flex';
+      subProductSelect.innerHTML = subProductsData[selectedProduct]
+        .map(sub => `<option value="${sub}">${sub}</option>`)
+        .join('');
+      otherCommentGroup.style.display = 'none';
+    } else {
+      subProductGroup.style.display = 'none';
+      subProductSelect.innerHTML = '';
+      otherCommentGroup.style.display = 'none';
+    }
+  });
+
+  document.getElementById('enquiryForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    // Gather form data in the required format
+    const fullName = document.querySelector('input[name="fullName"]').value.trim();
+    const companyName = document.querySelector('input[name="companyName"]').value.trim();
+    const emailAddress = document.querySelector('input[name="email"]').value.trim();
+    const phoneNumber = document.querySelector('input[name="phone"]').value.trim();
+    const address = document.querySelector('input[name="address"]').value.trim();
+    const productType = document.getElementById('productType') ? document.getElementById('productType').value : '';
+    let productName = '';
+    if (document.getElementById('subProductGroup').style.display !== 'none') {
+      productName = document.getElementById('subProduct').value;
+    } else if (document.getElementById('otherCommentGroup').style.display !== 'none') {
+      productName = document.getElementById('otherComment').value.trim();
+    }
+    const enquiryMessage = document.querySelector('textarea[name="message"]').value.trim();
+    // POST to API
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/enquiry`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          fullName,
+          companyName,
+          emailAddress,
+          phoneNumber,
+          address,
+          productType,
+          productName,
+          enquiryMessage
+        })
+      });
+      if (res.ok) {
+        alert('✅ Thank you!\nWe’ve received your inquiry about Anocab Wires and Cables.\nOur team will get back to you shortly. 📩🙂');
+        e.target.reset();
+      } else {
+        alert('Submission failed. Please try again.');
+      }
+    } catch (err) {
+      alert('Error submitting form. Please try again.');
+    }
+  });
+</script>
+</body>
+</html>

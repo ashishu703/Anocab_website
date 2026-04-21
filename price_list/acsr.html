@@ -1,0 +1,201 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>ACSR Conductor Calculator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      text-align: center;
+    }
+    th, td {
+      padding: 8px;
+      border: 1px solid #ccc;
+    }
+    th {
+      background-color: #f0f0f0;
+    }
+    input[type="number"] {
+      width: 80px;
+      padding: 4px;
+    }
+    .center {
+      text-align: center;
+      margin-top: 20px;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+<h2>ACSR Conductor MRP Calculator</h2>
+
+<div id="tableContainer"></div>
+
+<div class="center">
+  <button onclick="calculateMRP()">Calculate</button>
+</div>
+
+<script src="/config.js"></script>
+<script>
+  const conductorData = [
+    { name: "Mole", area: "10 SQMM", aluWeight: 29, steelWeight: 14 },
+    { name: "Special", area: "18 SQMM", aluWeight: 49, steelWeight: 24 },
+    { name: "Squirrel", area: "20 SQMM", aluWeight: 58, steelWeight: 27 },
+    { name: "Weasel", area: "30 SQMM", aluWeight: 87, steelWeight: 41 },
+    { name: "Rabbit", area: "50 SQMM", aluWeight: 145, steelWeight: 69 },
+    { name: "Raccoon", area: "80 SQMM", aluWeight: 216, steelWeight: 103 },
+    { name: "Dog", area: "100 SQMM", aluWeight: 288, steelWeight: 106 },
+    { name: "Wolf", area: "150 SQMM", aluWeight: 437, steelWeight: 289 },
+    { name: "Panther", area: "200 SQMM", aluWeight: 586, steelWeight: 388 },
+    { name: "Kundah", area: "400 SQMM", aluWeight: 1116, steelWeight: 165 },
+    { name: "Zebra", area: "420 SQMM", aluWeight: 1186, steelWeight: 435 },
+    { name: "Moose", area: "520 SQMM", aluWeight: 1467, steelWeight: 537 },
+    { name: "Bersimis", area: "690 SQMM", aluWeight: 1907, steelWeight: 280 }
+  ];
+
+  let aluRateDefault = 270;
+  let steelRateDefault = 60;
+
+  
+  async function fetchRates() {
+  try {
+    const res = await fetch(`${API_BASE_URL}/api/prices/approved`);
+    const data = await res.json();
+    const approvedList = data.data || [];
+
+    const aluItem = approvedList.find(item => item.item && item.item.toUpperCase() === 'ALUMINIUM EC GRADE');
+    const steelItem = approvedList.find(item => item.item && item.item.toUpperCase() === 'STEEL RATE');
+
+    if (aluItem && aluItem.mrp) {
+      // Remove 18% GST from ALU rate
+      aluRateDefault = +(parseFloat(aluItem.mrp) / 1.18-2).toFixed(2);
+      console.log("✅ ALU Rate (without GST):", aluRateDefault);
+    }
+
+    if (steelItem && steelItem.mrp) {
+      steelRateDefault = parseFloat(steelItem.mrp);
+    }
+  } catch (err) {
+    console.error('Error fetching rates:', err);
+    aluRateDefault = '';
+    steelRateDefault = '';
+  }
+}
+
+
+  function createTable() {
+    const container = document.getElementById("tableContainer");
+    container.innerHTML = '';
+
+    const table = document.createElement("table");
+    const thead = document.createElement("thead");
+    const headers = [
+      "CONDUCTOR NAME", "SQ MM", "ALUMINIUM RATE", "STEEL RATE", 
+      "ALUMINIUM WT", "STEEL WT", "ALUMINIUM", "STEEL", "ACSR", "MRP"
+    ];
+
+    const headerRow = document.createElement("tr");
+    headers.forEach(header => {
+      const th = document.createElement("th");
+      th.textContent = header;
+      headerRow.appendChild(th);
+    });
+    thead.appendChild(headerRow);
+    table.appendChild(thead);
+
+    const tbody = document.createElement("tbody");
+
+    conductorData.forEach((data, index) => {
+      const row = document.createElement("tr");
+
+      row.innerHTML = `
+        <td>${data.name}</td>
+        <td>${data.area}</td>
+        <td><input type="number" value="${aluRateDefault !== '' ? aluRateDefault : ''}" step="0.01" id="aluRate-${index}"></td>
+        <td><input type="number" value="${steelRateDefault !== '' ? steelRateDefault : ''}" step="0.01" id="steelRate-${index}"></td>
+        <td>${data.aluWeight}</td>
+        <td>${data.steelWeight}</td>
+        <td id="aluValue-${index}">-</td>
+        <td id="steelValue-${index}">-</td>
+        <td id="acsrValue-${index}">-</td>
+        <td id="mrpValue-${index}">-</td>
+      `;
+
+      tbody.appendChild(row);
+    });
+
+    table.appendChild(tbody);
+    container.appendChild(table);
+  }
+
+  function calculateMRP() {
+  conductorData.forEach((data, index) => {
+    const aluRate = parseFloat(document.getElementById(`aluRate-${index}`).value);
+    const steelRate = parseFloat(document.getElementById(`steelRate-${index}`).value);
+
+    const aluValue = data.aluWeight * aluRate;
+    const steelValue = data.steelWeight * steelRate;
+    const acsr = (aluValue + steelValue)/1000;
+    const mrp = ((acsr * 1.12) + 3);
+
+    document.getElementById(`aluValue-${index}`).textContent = aluValue.toFixed(2);
+    document.getElementById(`steelValue-${index}`).textContent = steelValue.toFixed(2);
+    document.getElementById(`acsrValue-${index}`).textContent = acsr.toFixed(2);
+    document.getElementById(`mrpValue-${index}`).textContent = mrp.toFixed(2);
+
+    // POST MRP to backend
+    const mrpData = {
+      productName: 'ACSR',
+      size: data.name,
+      aluRate: aluRate,
+      steelRate: steelRate,
+      aluWeight: data.aluWeight,
+      steelWeight: data.steelWeight,
+      basicPrice: acsr.toFixed(2),
+      finalMRP: mrp.toFixed(2)
+    };
+    fetch(`${API_BASE_URL}/api/mrp/update`, { // Update to use API_BASE_URL
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(mrpData)
+    }).catch(err => console.error('Error saving MRP:', err));
+  });
+}
+
+
+
+  // Initialize table on page load
+  (async function() {
+    await fetchRates();
+    createTable();
+    // Set default rates in all input fields
+    conductorData.forEach((data, index) => {
+      let aluInput = document.getElementById(`aluRate-${index}`);
+      let steelInput = document.getElementById(`steelRate-${index}`);
+      if (aluInput) aluInput.value = aluRateDefault;
+      if (steelInput) steelInput.value = steelRateDefault;
+    });
+    calculateMRP();
+    // Add event listeners for auto-calc and save
+    conductorData.forEach((data, index) => {
+      let aluInput = document.getElementById(`aluRate-${index}`);
+      let steelInput = document.getElementById(`steelRate-${index}`);
+      if (aluInput) aluInput.addEventListener('input', calculateMRP);
+      if (steelInput) steelInput.addEventListener('input', calculateMRP);
+    });
+  })();
+</script>
+
+</body>
+</html>
