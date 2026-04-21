@@ -1,0 +1,220 @@
+name: Initial VPS Setup
+
+on:
+  workflow_dispatch:
+
+jobs:
+  setup:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Install sshpass
+      run: sudo apt-get install -y sshpass
+
+    - name: Initial VPS Setup
+      env:
+        SERVER_IP: ${{ secrets.SERVER_IP }}
+        SERVER_PASSWORD: ${{ secrets.SERVER_PASSWORD }}
+        MONGODB_URI: ${{ github.event.inputs.mongodb_uri }}
+        ADMIN_EMAIL: ${{ github.event.inputs.admin_email }}
+        ADMIN_PASSWORD: ${{ github.event.inputs.admin_password }}
+        MAIL_USER: ${{ github.event.inputs.mail_user }}
+        MAIL_PASS: ${{ github.event.inputs.mail_pass }}
+      run: |
+        sshpass -p "$SERVER_PASSWORD" ssh -o StrictHostKeyChecking=no root@$SERVER_IP << 'ENDSSH'
+          set -e
+          
+          echo "🚀 Starting VPS Setup..."
+          
+          # Update system
+          echo "📦 Updating system..."
+          apt update && apt upgrade -y
+          
+          # Install Node.js
+          echo "📦 Installing Node.js..."
+          curl -fsSL https://deb.nodesource.com/setup_18.x | bash -
+          apt-get install -y nodejs
+          
+          # Install PM2
+          echo "📦 Installing PM2..."
+          npm install -g pm2
+          pm2 startup systemd -u root --hp /root
+          
+          # Install NGINX
+          echo "📦 Installing NGINX..."
+          apt install nginx -y
+          systemctl enable nginx
+          systemctl start nginx
+          
+          # Install Git
+          apt install git -y
+          
+          # Setup firewall
+          echo "🔒 Configuring firewall..."
+          ufw allow OpenSSH
+          ufw allow 'Nginx Full'
+          ufw --force enable
+          
+          # Create project directory
+          echo "📁 Creating project directory..."
+          mkdir -p /var/www/anocab
+          cd /var/www/anocab
+          
+          # Clone repository
+          echo "📥 Cloning repository..."
+          if [ -d ".git" ]; then
+            git pull origin main
+          else
+            git clone https://github.com/ashishu703/Anocab_website.git .
+          fi
+          
+          # Create log directory
+          mkdir -p /var/log/pm2
+          
+          # Install dependencies
+          echo "📦 Installing dependencies..."
+          cd backend && npm ci --production && cd ..
+          cd admin_panel && npm ci --production && cd ..
+          cd apply_now && npm ci --production && cd ..
+          
+          echo "✅ VPS Setup Complete!"
+        ENDSSH
+
+    - name: Setup Environment Variables
+      env:
+        SERVER_IP: ${{ secrets.SERVER_IP }}
+        SERVER_PASSWORD: ${{ secrets.SERVER_PASSWORD }}
+      run: |
+        sshpass -p "$SERVER_PASSWORD" ssh -o StrictHostKeyChecking=no root@$SERVER_IP << 'ENDSSH'
+          set -e
+          
+          echo "⚙️  Setting up environment variables..."
+          
+          # Backend .env
+          cat > /var/www/anocab/backend/.env << EOF
+PORT=1111
+NODE_ENV=production
+API_BASE_URL=http://$SERVER_IP
+CORS_ORIGIN=*
+
+ADMIN_EMAIL=admin@anocab.com
+ADMIN_PASSWORD=yourSecurePassword123
+
+SESSION_SECRET=your-super-secret-session-key-change-this-in-production
+
+MONGODB_URI=mongodb+srv://ashishu703_db_user:Ashish7870@cluster0.rlc2rg5.mongodb.net/monzo?authSource=admin&retryWrites=true&w=majority
+
+MAIL_USER=admin@anocab.in
+MAIL_PASS=xfss vdao mlrq fynn
+MAIL_HOST=smtp.gmail.com
+MAIL_PORT=587
+
+NOTIFICATION_EMAIL=admin@anocab.in
+EOF
+
+          # Admin Panel .env
+          cat > /var/www/anocab/admin_panel/.env << EOF
+PORT=1112
+NODE_ENV=production
+ADMIN_EMAIL=admin@anocab.com
+ADMIN_PASSWORD=yourSecurePassword123
+SESSION_SECRET=your-super-secret-session-key-change-this-in-production
+EOF
+
+          # Apply Now .env
+          cat > /var/www/anocab/apply_now/.env << EOF
+PORT=1113
+NODE_ENV=production
+
+MONGODB_URI=mongodb+srv://ashishu703_db_user:Ashish7870@cluster0.rlc2rg5.mongodb.net/monzo?authSource=admin&retryWrites=true&w=majority
+
+MAIL_USER=admin@anocab.in
+MAIL_PASS=xfss vdao mlrq fynn
+MAIL_HOST=smtp.gmail.com
+MAIL_PORT=587
+
+ADMIN_EMAIL=admin@anocab.in
+EOF
+
+          # Secure .env files
+          chmod 600 /var/www/anocab/backend/.env
+          chmod 600 /var/www/anocab/admin_panel/.env
+          chmod 600 /var/www/anocab/apply_now/.env
+          
+          echo "✅ Environment variables configured!"
+        ENDSSH
+
+    - name: Setup NGINX
+      env:
+        SERVER_IP: ${{ secrets.SERVER_IP }}
+        SERVER_PASSWORD: ${{ secrets.SERVER_PASSWORD }}
+      run: |
+        sshpass -p "$SERVER_PASSWORD" ssh -o StrictHostKeyChecking=no root@$SERVER_IP << 'ENDSSH'
+          set -e
+          
+          echo "🌐 Configuring NGINX..."
+          
+          # Copy NGINX config
+          cp /var/www/anocab/nginx.conf /etc/nginx/sites-available/anocab
+          ln -sf /etc/nginx/sites-available/anocab /etc/nginx/sites-enabled/
+          rm -f /etc/nginx/sites-enabled/default
+          
+          # Test and restart NGINX
+          nginx -t
+          systemctl restart nginx
+          
+          echo "✅ NGINX configured!"
+        ENDSSH
+
+    - name: Start Services
+      env:
+        SERVER_IP: ${{ secrets.SERVER_IP }}
+        SERVER_PASSWORD: ${{ secrets.SERVER_PASSWORD }}
+      run: |
+        sshpass -p "$SERVER_PASSWORD" ssh -o StrictHostKeyChecking=no root@$SERVER_IP << 'ENDSSH'
+          set -e
+          
+          echo "🚀 Starting services..."
+          
+          cd /var/www/anocab
+          pm2 start ecosystem.config.js
+          pm2 save
+          
+          echo "✅ Services started!"
+          pm2 status
+        ENDSSH
+
+    - name: Verify Deployment
+      env:
+        SERVER_IP: ${{ secrets.SERVER_IP }}
+      run: |
+        sleep 15
+        echo "🧪 Testing deployment..."
+        
+        # Test frontend
+        curl -f http://$SERVER_IP || echo "⚠️ Frontend test failed"
+        
+        # Test API
+        curl -f http://$SERVER_IP/api/prices || echo "⚠️ API test failed"
+        
+        echo "✅ Setup verification complete!"
+
+    - name: Display Success Message
+      run: |
+        echo "✅ ============================================"
+        echo "✅ VPS Setup Complete!"
+        echo "✅ ============================================"
+        echo ""
+        echo "🌐 Your website is now live at:"
+        echo "   http://${{ secrets.SERVER_IP }}"
+        echo ""
+        echo "📊 Check service status:"
+        echo "   ssh root@${{ secrets.SERVER_IP }}"
+        echo "   pm2 status"
+        echo "   pm2 logs"
+        echo ""
+        echo "🔄 Future deployments will happen automatically"
+        echo "   when you push to the main branch!"
