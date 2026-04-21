@@ -28,61 +28,62 @@ jobs:
       env:
         SERVER_IP: ${{ secrets.SERVER_IP }}
         SERVER_PASSWORD: ${{ secrets.SERVER_PASSWORD }}
+        MONGODB_URI: ${{ secrets.MONGODB_URI }}
+        MAIL_USER: ${{ secrets.MAIL_USER }}
+        MAIL_PASS: ${{ secrets.MAIL_PASS }}
+        ADMIN_EMAIL: ${{ secrets.ADMIN_EMAIL }}
+        ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
+        SESSION_SECRET: ${{ secrets.SESSION_SECRET }}
       run: |
         sshpass -p "$SERVER_PASSWORD" ssh -o StrictHostKeyChecking=no root@$SERVER_IP << 'ENDSSH'
           set -e
           
-          # Check if directory exists, if not run initial setup
           if [ ! -d "/var/www/anocab" ]; then
-            echo "First time setup - creating directory and cloning repo"
             mkdir -p /var/www/anocab
             cd /var/www/anocab
             git clone https://github.com/ashishu703/Anocab_website.git .
             
-            # Install dependencies
             cd backend && npm ci --production && cd ..
             cd admin_panel && npm ci --production && cd ..
             cd apply_now && npm ci --production && cd ..
             
-            # Create .env files
-            cat > /var/www/anocab/backend/.env << EOF
+            cat > /var/www/anocab/backend/.env << 'ENVEOF'
 PORT=1111
 NODE_ENV=production
-API_BASE_URL=http://\$SERVER_IP
+API_BASE_URL=http://SERVER_IP_PLACEHOLDER
 CORS_ORIGIN=*
-ADMIN_EMAIL=admin@anocab.com
-ADMIN_PASSWORD=yourSecurePassword123
-SESSION_SECRET=your-super-secret-session-key-change-this-in-production
-MONGODB_URI=mongodb+srv://ashishu703_db_user:Ashish7870@cluster0.rlc2rg5.mongodb.net/monzo?authSource=admin&retryWrites=true&w=majority
-MAIL_USER=admin@anocab.in
-MAIL_PASS=xfss vdao mlrq fynn
+ADMIN_EMAIL=ADMIN_EMAIL_PLACEHOLDER
+ADMIN_PASSWORD=ADMIN_PASSWORD_PLACEHOLDER
+SESSION_SECRET=SESSION_SECRET_PLACEHOLDER
+MONGODB_URI=MONGODB_URI_PLACEHOLDER
+MAIL_USER=MAIL_USER_PLACEHOLDER
+MAIL_PASS=MAIL_PASS_PLACEHOLDER
 MAIL_HOST=smtp.gmail.com
 MAIL_PORT=587
-NOTIFICATION_EMAIL=admin@anocab.in
-EOF
+NOTIFICATION_EMAIL=ADMIN_EMAIL_PLACEHOLDER
+ENVEOF
 
-            cat > /var/www/anocab/admin_panel/.env << EOF
+            cat > /var/www/anocab/admin_panel/.env << 'ENVEOF'
 PORT=1112
 NODE_ENV=production
-ADMIN_EMAIL=admin@anocab.com
-ADMIN_PASSWORD=yourSecurePassword123
-SESSION_SECRET=your-super-secret-session-key-change-this-in-production
-EOF
+ADMIN_EMAIL=ADMIN_EMAIL_PLACEHOLDER
+ADMIN_PASSWORD=ADMIN_PASSWORD_PLACEHOLDER
+SESSION_SECRET=SESSION_SECRET_PLACEHOLDER
+ENVEOF
 
-            cat > /var/www/anocab/apply_now/.env << EOF
+            cat > /var/www/anocab/apply_now/.env << 'ENVEOF'
 PORT=1113
 NODE_ENV=production
-MONGODB_URI=mongodb+srv://ashishu703_db_user:Ashish7870@cluster0.rlc2rg5.mongodb.net/monzo?authSource=admin&retryWrites=true&w=majority
-MAIL_USER=admin@anocab.in
-MAIL_PASS=xfss vdao mlrq fynn
+MONGODB_URI=MONGODB_URI_PLACEHOLDER
+MAIL_USER=MAIL_USER_PLACEHOLDER
+MAIL_PASS=MAIL_PASS_PLACEHOLDER
 MAIL_HOST=smtp.gmail.com
 MAIL_PORT=587
-ADMIN_EMAIL=admin@anocab.in
-EOF
+ADMIN_EMAIL=ADMIN_EMAIL_PLACEHOLDER
+ENVEOF
 
             chmod 600 /var/www/anocab/*/.env
             
-            # Setup NGINX if not exists
             if [ ! -f "/etc/nginx/sites-available/anocab" ]; then
               cp /var/www/anocab/nginx.conf /etc/nginx/sites-available/anocab
               ln -sf /etc/nginx/sites-available/anocab /etc/nginx/sites-enabled/
@@ -90,13 +91,11 @@ EOF
               nginx -t && systemctl restart nginx
             fi
             
-            # Start PM2
             mkdir -p /var/log/pm2
             cd /var/www/anocab
             pm2 start ecosystem.config.js
             pm2 save
           else
-            # Normal deployment
             cd /var/www/anocab
             git pull origin main
             
@@ -109,6 +108,26 @@ EOF
           fi
           
           pm2 status
+        ENDSSH
+        
+        # Replace placeholders with actual secrets
+        sshpass -p "$SERVER_PASSWORD" ssh -o StrictHostKeyChecking=no root@$SERVER_IP << ENDSSH
+          sed -i "s|SERVER_IP_PLACEHOLDER|$SERVER_IP|g" /var/www/anocab/backend/.env
+          sed -i "s|MONGODB_URI_PLACEHOLDER|$MONGODB_URI|g" /var/www/anocab/backend/.env
+          sed -i "s|MONGODB_URI_PLACEHOLDER|$MONGODB_URI|g" /var/www/anocab/apply_now/.env
+          sed -i "s|MAIL_USER_PLACEHOLDER|$MAIL_USER|g" /var/www/anocab/backend/.env
+          sed -i "s|MAIL_USER_PLACEHOLDER|$MAIL_USER|g" /var/www/anocab/apply_now/.env
+          sed -i "s|MAIL_PASS_PLACEHOLDER|$MAIL_PASS|g" /var/www/anocab/backend/.env
+          sed -i "s|MAIL_PASS_PLACEHOLDER|$MAIL_PASS|g" /var/www/anocab/apply_now/.env
+          sed -i "s|ADMIN_EMAIL_PLACEHOLDER|$ADMIN_EMAIL|g" /var/www/anocab/backend/.env
+          sed -i "s|ADMIN_EMAIL_PLACEHOLDER|$ADMIN_EMAIL|g" /var/www/anocab/admin_panel/.env
+          sed -i "s|ADMIN_EMAIL_PLACEHOLDER|$ADMIN_EMAIL|g" /var/www/anocab/apply_now/.env
+          sed -i "s|ADMIN_PASSWORD_PLACEHOLDER|$ADMIN_PASSWORD|g" /var/www/anocab/backend/.env
+          sed -i "s|ADMIN_PASSWORD_PLACEHOLDER|$ADMIN_PASSWORD|g" /var/www/anocab/admin_panel/.env
+          sed -i "s|SESSION_SECRET_PLACEHOLDER|$SESSION_SECRET|g" /var/www/anocab/backend/.env
+          sed -i "s|SESSION_SECRET_PLACEHOLDER|$SESSION_SECRET|g" /var/www/anocab/admin_panel/.env
+          
+          pm2 restart all
         ENDSSH
 
     - name: Health Check
