@@ -20,11 +20,6 @@ jobs:
       uses: actions/setup-node@v3
       with:
         node-version: ${{ env.NODE_VERSION }}
-        cache: 'npm'
-        cache-dependency-path: |
-          backend/package-lock.json
-          admin_panel/package-lock.json
-          apply_now/package-lock.json
 
     - name: Install sshpass
       run: sudo apt-get install -y sshpass
@@ -37,50 +32,21 @@ jobs:
         sshpass -p "$SERVER_PASSWORD" ssh -o StrictHostKeyChecking=no root@$SERVER_IP << 'ENDSSH'
           set -e
           
-          echo "🚀 Starting deployment..."
-          
-          # Navigate to project directory
           cd /var/www/anocab
-          
-          # Pull latest code
-          echo "📥 Pulling latest code..."
           git pull origin main
           
-          # Install dependencies for all services
-          echo "📦 Installing backend dependencies..."
           cd backend && npm ci --production && cd ..
-          
-          echo "📦 Installing admin panel dependencies..."
           cd admin_panel && npm ci --production && cd ..
-          
-          echo "📦 Installing apply_now dependencies..."
           cd apply_now && npm ci --production && cd ..
           
-          # Reload PM2 processes (zero downtime)
-          echo "🔄 Reloading services..."
           pm2 reload ecosystem.config.js --update-env
-          
-          # Save PM2 configuration
           pm2 save
-          
-          echo "✅ Deployment completed successfully!"
-          
-          # Show status
           pm2 status
         ENDSSH
 
     - name: Health Check
       run: |
         sleep 15
-        echo "⏳ Waiting for services to start..."
-        # Check if server responds (use IP if domain not configured yet)
-        curl -f http://${{ secrets.SERVER_IP }}/api/prices || echo "⚠️ Health check failed - services may still be starting"
-        echo "✅ Deployment completed!"
+        curl -f http://${{ secrets.SERVER_IP }}/api/prices || echo "Services starting..."
 
-    - name: Notify on Success
-      if: success()
-      run: echo "✅ Deployment successful!"
 
-    - name: Notify on Failure
-      if: failure()
-      run: echo "❌ Deployment failed!"
