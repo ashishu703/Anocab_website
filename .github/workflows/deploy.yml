@@ -34,9 +34,9 @@ jobs:
             mkdir -p /var/www/anocab
             cd /var/www/anocab
             git clone https://github.com/ashishu703/Anocab_website.git .
-            cd backend && npm ci --production && cd ..
-            cd admin_panel && npm ci --production && cd ..
-            cd apply_now && npm ci --production && cd ..
+            cd backend && npm install --production && cd ..
+            cd admin_panel && npm install --production && cd ..
+            cd apply_now && npm install --production && cd ..
             if [ ! -f '/etc/nginx/sites-available/anocab' ]; then
               cp /var/www/anocab/nginx.conf /etc/nginx/sites-available/anocab
               ln -sf /etc/nginx/sites-available/anocab /etc/nginx/sites-enabled/
@@ -47,9 +47,9 @@ jobs:
           else
             cd /var/www/anocab
             git pull origin main
-            cd backend && npm ci --production && cd ..
-            cd admin_panel && npm ci --production && cd ..
-            cd apply_now && npm ci --production && cd ..
+            cd backend && npm install --production && cd ..
+            cd admin_panel && npm install --production && cd ..
+            cd apply_now && npm install --production && cd ..
           fi
           
           echo 'PORT=1111' > /var/www/anocab/backend/.env
