@@ -35,7 +35,7 @@ jobs:
         ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
         SESSION_SECRET: ${{ secrets.SESSION_SECRET }}
       run: |
-        sshpass -p "$SERVER_PASSWORD" ssh -o StrictHostKeyChecking=no root@$SERVER_IP << 'ENDSSH'
+        sshpass -p "$SERVER_PASSWORD" ssh -o StrictHostKeyChecking=no root@$SERVER_IP bash << 'EOF'
           set -e
           
           if [ ! -d "/var/www/anocab" ]; then
@@ -47,43 +47,6 @@ jobs:
             cd admin_panel && npm ci --production && cd ..
             cd apply_now && npm ci --production && cd ..
             
-            cat > /var/www/anocab/backend/.env << 'ENVEOF'
-PORT=1111
-NODE_ENV=production
-API_BASE_URL=http://SERVER_IP_PLACEHOLDER
-CORS_ORIGIN=*
-ADMIN_EMAIL=ADMIN_EMAIL_PLACEHOLDER
-ADMIN_PASSWORD=ADMIN_PASSWORD_PLACEHOLDER
-SESSION_SECRET=SESSION_SECRET_PLACEHOLDER
-MONGODB_URI=MONGODB_URI_PLACEHOLDER
-MAIL_USER=MAIL_USER_PLACEHOLDER
-MAIL_PASS=MAIL_PASS_PLACEHOLDER
-MAIL_HOST=smtp.gmail.com
-MAIL_PORT=587
-NOTIFICATION_EMAIL=ADMIN_EMAIL_PLACEHOLDER
-ENVEOF
-
-            cat > /var/www/anocab/admin_panel/.env << 'ENVEOF'
-PORT=1112
-NODE_ENV=production
-ADMIN_EMAIL=ADMIN_EMAIL_PLACEHOLDER
-ADMIN_PASSWORD=ADMIN_PASSWORD_PLACEHOLDER
-SESSION_SECRET=SESSION_SECRET_PLACEHOLDER
-ENVEOF
-
-            cat > /var/www/anocab/apply_now/.env << 'ENVEOF'
-PORT=1113
-NODE_ENV=production
-MONGODB_URI=MONGODB_URI_PLACEHOLDER
-MAIL_USER=MAIL_USER_PLACEHOLDER
-MAIL_PASS=MAIL_PASS_PLACEHOLDER
-MAIL_HOST=smtp.gmail.com
-MAIL_PORT=587
-ADMIN_EMAIL=ADMIN_EMAIL_PLACEHOLDER
-ENVEOF
-
-            chmod 600 /var/www/anocab/*/.env
-            
             if [ ! -f "/etc/nginx/sites-available/anocab" ]; then
               cp /var/www/anocab/nginx.conf /etc/nginx/sites-available/anocab
               ln -sf /etc/nginx/sites-available/anocab /etc/nginx/sites-enabled/
@@ -92,9 +55,6 @@ ENVEOF
             fi
             
             mkdir -p /var/log/pm2
-            cd /var/www/anocab
-            pm2 start ecosystem.config.js
-            pm2 save
           else
             cd /var/www/anocab
             git pull origin main
@@ -102,37 +62,61 @@ ENVEOF
             cd backend && npm ci --production && cd ..
             cd admin_panel && npm ci --production && cd ..
             cd apply_now && npm ci --production && cd ..
-            
-            pm2 reload ecosystem.config.js --update-env
-            pm2 save
           fi
-          
-          pm2 status
-        ENDSSH
+        EOF
         
-        # Replace placeholders with actual secrets
-        sshpass -p "$SERVER_PASSWORD" ssh -o StrictHostKeyChecking=no root@$SERVER_IP << ENDSSH
-          sed -i "s|SERVER_IP_PLACEHOLDER|$SERVER_IP|g" /var/www/anocab/backend/.env
-          sed -i "s|MONGODB_URI_PLACEHOLDER|$MONGODB_URI|g" /var/www/anocab/backend/.env
-          sed -i "s|MONGODB_URI_PLACEHOLDER|$MONGODB_URI|g" /var/www/anocab/apply_now/.env
-          sed -i "s|MAIL_USER_PLACEHOLDER|$MAIL_USER|g" /var/www/anocab/backend/.env
-          sed -i "s|MAIL_USER_PLACEHOLDER|$MAIL_USER|g" /var/www/anocab/apply_now/.env
-          sed -i "s|MAIL_PASS_PLACEHOLDER|$MAIL_PASS|g" /var/www/anocab/backend/.env
-          sed -i "s|MAIL_PASS_PLACEHOLDER|$MAIL_PASS|g" /var/www/anocab/apply_now/.env
-          sed -i "s|ADMIN_EMAIL_PLACEHOLDER|$ADMIN_EMAIL|g" /var/www/anocab/backend/.env
-          sed -i "s|ADMIN_EMAIL_PLACEHOLDER|$ADMIN_EMAIL|g" /var/www/anocab/admin_panel/.env
-          sed -i "s|ADMIN_EMAIL_PLACEHOLDER|$ADMIN_EMAIL|g" /var/www/anocab/apply_now/.env
-          sed -i "s|ADMIN_PASSWORD_PLACEHOLDER|$ADMIN_PASSWORD|g" /var/www/anocab/backend/.env
-          sed -i "s|ADMIN_PASSWORD_PLACEHOLDER|$ADMIN_PASSWORD|g" /var/www/anocab/admin_panel/.env
-          sed -i "s|SESSION_SECRET_PLACEHOLDER|$SESSION_SECRET|g" /var/www/anocab/backend/.env
-          sed -i "s|SESSION_SECRET_PLACEHOLDER|$SESSION_SECRET|g" /var/www/anocab/admin_panel/.env
+        # Create .env files with secrets
+        sshpass -p "$SERVER_PASSWORD" ssh -o StrictHostKeyChecking=no root@$SERVER_IP bash << EOF
+          cat > /var/www/anocab/backend/.env << 'ENVFILE'
+PORT=1111
+NODE_ENV=production
+API_BASE_URL=http://$SERVER_IP
+CORS_ORIGIN=*
+ADMIN_EMAIL=$ADMIN_EMAIL
+ADMIN_PASSWORD=$ADMIN_PASSWORD
+SESSION_SECRET=$SESSION_SECRET
+MONGODB_URI=$MONGODB_URI
+MAIL_USER=$MAIL_USER
+MAIL_PASS=$MAIL_PASS
+MAIL_HOST=smtp.gmail.com
+MAIL_PORT=587
+NOTIFICATION_EMAIL=$ADMIN_EMAIL
+ENVFILE
+
+          cat > /var/www/anocab/admin_panel/.env << 'ENVFILE'
+PORT=1112
+NODE_ENV=production
+ADMIN_EMAIL=$ADMIN_EMAIL
+ADMIN_PASSWORD=$ADMIN_PASSWORD
+SESSION_SECRET=$SESSION_SECRET
+ENVFILE
+
+          cat > /var/www/anocab/apply_now/.env << 'ENVFILE'
+PORT=1113
+NODE_ENV=production
+MONGODB_URI=$MONGODB_URI
+MAIL_USER=$MAIL_USER
+MAIL_PASS=$MAIL_PASS
+MAIL_HOST=smtp.gmail.com
+MAIL_PORT=587
+ADMIN_EMAIL=$ADMIN_EMAIL
+ENVFILE
+
+          chmod 600 /var/www/anocab/backend/.env
+          chmod 600 /var/www/anocab/admin_panel/.env
+          chmod 600 /var/www/anocab/apply_now/.env
           
-          pm2 restart all
-        ENDSSH
+          cd /var/www/anocab
+          if pm2 list | grep -q "anocab-backend"; then
+            pm2 reload ecosystem.config.js --update-env
+          else
+            pm2 start ecosystem.config.js
+          fi
+          pm2 save
+          pm2 status
+        EOF
 
     - name: Health Check
       run: |
         sleep 15
         curl -f http://${{ secrets.SERVER_IP }}/api/prices || echo "Services starting..."
-
-
