@@ -51,9 +51,9 @@ jobs:
             cd apply_now && npm install --production && cd ..
           fi
           
-          echo "PORT=1111" > /var/www/anocab/backend/.env
+          echo "PORT=1114" > /var/www/anocab/backend/.env
           echo "NODE_ENV=production" >> /var/www/anocab/backend/.env
-          echo "API_BASE_URL=http://${SERVER_IP}" >> /var/www/anocab/backend/.env
+          echo "API_BASE_URL=http://${SERVER_IP}:8080" >> /var/www/anocab/backend/.env
           echo "CORS_ORIGIN=*" >> /var/www/anocab/backend/.env
           echo "ADMIN_EMAIL=${ADMIN_EMAIL}" >> /var/www/anocab/backend/.env
           echo "ADMIN_PASSWORD=${ADMIN_PASSWORD}" >> /var/www/anocab/backend/.env
@@ -65,13 +65,13 @@ jobs:
           echo "MAIL_PORT=587" >> /var/www/anocab/backend/.env
           echo "NOTIFICATION_EMAIL=${ADMIN_EMAIL}" >> /var/www/anocab/backend/.env
           
-          echo "PORT=1112" > /var/www/anocab/admin_panel/.env
+          echo "PORT=1115" > /var/www/anocab/admin_panel/.env
           echo "NODE_ENV=production" >> /var/www/anocab/admin_panel/.env
           echo "ADMIN_EMAIL=${ADMIN_EMAIL}" >> /var/www/anocab/admin_panel/.env
           echo "ADMIN_PASSWORD=${ADMIN_PASSWORD}" >> /var/www/anocab/admin_panel/.env
           echo "SESSION_SECRET=${SESSION_SECRET}" >> /var/www/anocab/admin_panel/.env
           
-          echo "PORT=1113" > /var/www/anocab/apply_now/.env
+          echo "PORT=1116" > /var/www/anocab/apply_now/.env
           echo "NODE_ENV=production" >> /var/www/anocab/apply_now/.env
           echo "MONGODB_URI=${MONGODB_URI}" >> /var/www/anocab/apply_now/.env
           echo "MAIL_USER=${MAIL_USER}" >> /var/www/anocab/apply_now/.env
