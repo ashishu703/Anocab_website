@@ -5,9 +5,6 @@ on:
     branches: [ main ]
   workflow_dispatch:
 
-env:
-  NODE_VERSION: '18.x'
-
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -15,11 +12,6 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v3
-
-    - name: Setup Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: ${{ env.NODE_VERSION }}
 
     - name: Install sshpass
       run: sudo apt-get install -y sshpass
@@ -35,88 +27,74 @@ jobs:
         ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
         SESSION_SECRET: ${{ secrets.SESSION_SECRET }}
       run: |
-        sshpass -p "$SERVER_PASSWORD" ssh -o StrictHostKeyChecking=no root@$SERVER_IP bash << 'EOF'
+        sshpass -p "$SERVER_PASSWORD" ssh -o StrictHostKeyChecking=no root@$SERVER_IP "
           set -e
           
-          if [ ! -d "/var/www/anocab" ]; then
+          if [ ! -d '/var/www/anocab' ]; then
             mkdir -p /var/www/anocab
             cd /var/www/anocab
             git clone https://github.com/ashishu703/Anocab_website.git .
-            
             cd backend && npm ci --production && cd ..
             cd admin_panel && npm ci --production && cd ..
             cd apply_now && npm ci --production && cd ..
-            
-            if [ ! -f "/etc/nginx/sites-available/anocab" ]; then
+            if [ ! -f '/etc/nginx/sites-available/anocab' ]; then
               cp /var/www/anocab/nginx.conf /etc/nginx/sites-available/anocab
               ln -sf /etc/nginx/sites-available/anocab /etc/nginx/sites-enabled/
               rm -f /etc/nginx/sites-enabled/default
               nginx -t && systemctl restart nginx
             fi
-            
             mkdir -p /var/log/pm2
           else
             cd /var/www/anocab
             git pull origin main
-            
             cd backend && npm ci --production && cd ..
             cd admin_panel && npm ci --production && cd ..
             cd apply_now && npm ci --production && cd ..
           fi
-        EOF
-        
-        # Create .env files with secrets
-        sshpass -p "$SERVER_PASSWORD" ssh -o StrictHostKeyChecking=no root@$SERVER_IP bash << EOF
-          cat > /var/www/anocab/backend/.env << 'ENVFILE'
-PORT=1111
-NODE_ENV=production
-API_BASE_URL=http://$SERVER_IP
-CORS_ORIGIN=*
-ADMIN_EMAIL=$ADMIN_EMAIL
-ADMIN_PASSWORD=$ADMIN_PASSWORD
-SESSION_SECRET=$SESSION_SECRET
-MONGODB_URI=$MONGODB_URI
-MAIL_USER=$MAIL_USER
-MAIL_PASS=$MAIL_PASS
-MAIL_HOST=smtp.gmail.com
-MAIL_PORT=587
-NOTIFICATION_EMAIL=$ADMIN_EMAIL
-ENVFILE
-
-          cat > /var/www/anocab/admin_panel/.env << 'ENVFILE'
-PORT=1112
-NODE_ENV=production
-ADMIN_EMAIL=$ADMIN_EMAIL
-ADMIN_PASSWORD=$ADMIN_PASSWORD
-SESSION_SECRET=$SESSION_SECRET
-ENVFILE
-
-          cat > /var/www/anocab/apply_now/.env << 'ENVFILE'
-PORT=1113
-NODE_ENV=production
-MONGODB_URI=$MONGODB_URI
-MAIL_USER=$MAIL_USER
-MAIL_PASS=$MAIL_PASS
-MAIL_HOST=smtp.gmail.com
-MAIL_PORT=587
-ADMIN_EMAIL=$ADMIN_EMAIL
-ENVFILE
-
+          
+          echo 'PORT=1111' > /var/www/anocab/backend/.env
+          echo 'NODE_ENV=production' >> /var/www/anocab/backend/.env
+          echo 'API_BASE_URL=http://$SERVER_IP' >> /var/www/anocab/backend/.env
+          echo 'CORS_ORIGIN=*' >> /var/www/anocab/backend/.env
+          echo 'ADMIN_EMAIL=$ADMIN_EMAIL' >> /var/www/anocab/backend/.env
+          echo 'ADMIN_PASSWORD=$ADMIN_PASSWORD' >> /var/www/anocab/backend/.env
+          echo 'SESSION_SECRET=$SESSION_SECRET' >> /var/www/anocab/backend/.env
+          echo 'MONGODB_URI=$MONGODB_URI' >> /var/www/anocab/backend/.env
+          echo 'MAIL_USER=$MAIL_USER' >> /var/www/anocab/backend/.env
+          echo 'MAIL_PASS=$MAIL_PASS' >> /var/www/anocab/backend/.env
+          echo 'MAIL_HOST=smtp.gmail.com' >> /var/www/anocab/backend/.env
+          echo 'MAIL_PORT=587' >> /var/www/anocab/backend/.env
+          echo 'NOTIFICATION_EMAIL=$ADMIN_EMAIL' >> /var/www/anocab/backend/.env
+          
+          echo 'PORT=1112' > /var/www/anocab/admin_panel/.env
+          echo 'NODE_ENV=production' >> /var/www/anocab/admin_panel/.env
+          echo 'ADMIN_EMAIL=$ADMIN_EMAIL' >> /var/www/anocab/admin_panel/.env
+          echo 'ADMIN_PASSWORD=$ADMIN_PASSWORD' >> /var/www/anocab/admin_panel/.env
+          echo 'SESSION_SECRET=$SESSION_SECRET' >> /var/www/anocab/admin_panel/.env
+          
+          echo 'PORT=1113' > /var/www/anocab/apply_now/.env
+          echo 'NODE_ENV=production' >> /var/www/anocab/apply_now/.env
+          echo 'MONGODB_URI=$MONGODB_URI' >> /var/www/anocab/apply_now/.env
+          echo 'MAIL_USER=$MAIL_USER' >> /var/www/anocab/apply_now/.env
+          echo 'MAIL_PASS=$MAIL_PASS' >> /var/www/anocab/apply_now/.env
+          echo 'MAIL_HOST=smtp.gmail.com' >> /var/www/anocab/apply_now/.env
+          echo 'MAIL_PORT=587' >> /var/www/anocab/apply_now/.env
+          echo 'ADMIN_EMAIL=$ADMIN_EMAIL' >> /var/www/anocab/apply_now/.env
+          
           chmod 600 /var/www/anocab/backend/.env
           chmod 600 /var/www/anocab/admin_panel/.env
           chmod 600 /var/www/anocab/apply_now/.env
           
           cd /var/www/anocab
-          if pm2 list | grep -q "anocab-backend"; then
+          if pm2 list | grep -q 'anocab-backend'; then
             pm2 reload ecosystem.config.js --update-env
           else
             pm2 start ecosystem.config.js
           fi
           pm2 save
-          pm2 status
-        EOF
+        "
 
     - name: Health Check
       run: |
         sleep 15
-        curl -f http://${{ secrets.SERVER_IP }}/api/prices || echo "Services starting..."
+        curl -f http://${{ secrets.SERVER_IP }}/api/prices || echo "Services starting"
