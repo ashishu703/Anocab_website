@@ -1,0 +1,112 @@
+╔══════════════════════════════════════════════════════════════╗
+║                  🚨 URGENT SESSION FIX 🚨                    ║
+║                     Anocab Backend                           ║
+╚══════════════════════════════════════════════════════════════╝
+
+PROBLEM:
+--------
+✅ Login successful
+❌ API calls return 401 Unauthorized
+❌ Logs show: isAuthenticated: undefined
+❌ Session not being saved to MongoDB
+
+ROOT CAUSE:
+-----------
+PM2 not loading updated code properly OR session.save() failing
+
+SOLUTION:
+---------
+
+1️⃣ UPLOAD THESE FILES TO SERVER:
+   📁 /var/www/anocab/backend/server.js (UPDATED)
+   📁 /var/www/anocab/backend/.env (UPDATED)
+   📁 /var/www/anocab/nginx.conf (UPDATED)
+   📁 /var/www/anocab/complete-fix.sh (NEW)
+
+2️⃣ SSH TO SERVER:
+   ssh root@srv802965.hstgr.cloud
+   cd /var/www/anocab
+
+3️⃣ RUN FIX SCRIPT:
+   chmod +x complete-fix.sh
+   ./complete-fix.sh
+
+4️⃣ VERIFY IN BROWSER:
+   → Open: https://anocab.com/login_panel/login.html
+   → Login: anocab07@gmail.com / Anocab@6262
+   → Go to Blog Management
+   → Should work without 401 error ✅
+
+═══════════════════════════════════════════════════════════════
+
+WHAT THE SCRIPT DOES:
+----------------------
+✅ Verifies updated files
+✅ Installs connect-mongo (if needed)
+✅ Reloads nginx
+✅ Deletes old PM2 process
+✅ Starts fresh from ecosystem.config.js
+✅ Tests MongoDB connection
+✅ Tests login & session
+✅ Tests protected routes
+✅ Tests cluster mode
+
+═══════════════════════════════════════════════════════════════
+
+EXPECTED OUTPUT:
+----------------
+✅ MongoDB connected successfully
+✅ No MemoryStore warning
+✅ Login successful
+✅ Session saved to MongoDB
+✅ Authentication check passed
+✅ Protected route accessible!
+✅ All cluster mode tests passed!
+
+═══════════════════════════════════════════════════════════════
+
+IF STILL NOT WORKING:
+---------------------
+
+Check logs:
+  pm2 logs anocab-website-backend --lines 50
+
+Manual test:
+  curl -c cookies.txt -X POST https://anocab.com/login \
+    -H "Content-Type: application/json" \
+    -d '{"email":"anocab07@gmail.com","password":"Anocab@6262"}'
+  
+  curl -b cookies.txt https://anocab.com/api/admin/blogs
+
+Manual restart:
+  pm2 delete anocab-website-backend
+  pm2 start ecosystem.config.js --only anocab-website-backend
+  pm2 save
+
+═══════════════════════════════════════════════════════════════
+
+QUICK ONE-LINER:
+----------------
+cd /var/www/anocab && chmod +x complete-fix.sh && ./complete-fix.sh
+
+═══════════════════════════════════════════════════════════════
+
+FILES TO REVIEW:
+----------------
+📖 RUN-THIS-ON-SERVER.md - Detailed instructions
+📖 SESSION-FIX-README.md - Technical explanation
+📖 DEPLOYMENT-CHECKLIST.md - Step-by-step checklist
+📖 QUICK-START.md - Quick reference
+
+═══════════════════════════════════════════════════════════════
+
+SUPPORT:
+--------
+If issues persist, share:
+1. Output of: pm2 logs anocab-website-backend --lines 100
+2. Output of: curl -v https://anocab.com/check-auth
+3. Browser console errors (F12)
+
+╔══════════════════════════════════════════════════════════════╗
+║              Ready to fix? Run: ./complete-fix.sh            ║
+╚══════════════════════════════════════════════════════════════╝
