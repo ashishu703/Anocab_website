@@ -55,8 +55,8 @@ jobs:
           echo "NODE_ENV=production" >> /var/www/anocab/backend/.env
           echo "API_BASE_URL=https://anocab.com" >> /var/www/anocab/backend/.env
           echo "CORS_ORIGIN=*" >> /var/www/anocab/backend/.env
-          echo "ADMIN_EMAIL=admin@anocab.com" >> /var/www/anocab/backend/.env
-          echo "ADMIN_PASSWORD=yourSecurePassword123" >> /var/www/anocab/backend/.env
+          echo "ADMIN_EMAIL=${ADMIN_EMAIL}" >> /var/www/anocab/backend/.env
+          echo "ADMIN_PASSWORD=${ADMIN_PASSWORD}" >> /var/www/anocab/backend/.env
           echo "SESSION_SECRET=${SESSION_SECRET}" >> /var/www/anocab/backend/.env
           echo "MONGODB_URI=${MONGODB_URI}" >> /var/www/anocab/backend/.env
           echo "MAIL_USER=${MAIL_USER}" >> /var/www/anocab/backend/.env
@@ -68,8 +68,8 @@ jobs:
           echo "PORT=1112" > /var/www/anocab/admin_panel/.env
           echo "NODE_ENV=production" >> /var/www/anocab/admin_panel/.env
           echo "APP_URL=https://anocab.com" >> /var/www/anocab/admin_panel/.env
-          echo "ADMIN_EMAIL=admin@anocab.com" >> /var/www/anocab/admin_panel/.env
-          echo "ADMIN_PASSWORD=yourSecurePassword123" >> /var/www/anocab/admin_panel/.env
+          echo "ADMIN_EMAIL=${ADMIN_EMAIL}" >> /var/www/anocab/admin_panel/.env
+          echo "ADMIN_PASSWORD=${ADMIN_PASSWORD}" >> /var/www/anocab/admin_panel/.env
           echo "SESSION_SECRET=${SESSION_SECRET}" >> /var/www/anocab/admin_panel/.env
           
           echo "PORT=1113" > /var/www/anocab/apply_now/.env
