@@ -45,6 +45,7 @@ jobs:
             mkdir -p /var/log/pm2
           else
             cd /var/www/anocab
+            git stash
             git pull origin main
             cd backend && npm install --production && cd ..
             cd admin_panel && npm install --production && cd ..
