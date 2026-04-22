@@ -228,10 +228,23 @@ app.post('/login', (req, res) => {
     req.session.userEmail = email;
     req.session.role = 'admin';
     req.session.loginTime = new Date();
-    return res.json({ 
-      status: 'success', 
-      message: 'Login successful',
-      role: 'admin'
+    
+    // Save session to MongoDB before sending response
+    req.session.save((err) => {
+      if (err) {
+        console.error('Session save error:', err);
+        return res.status(500).json({ 
+          status: 'error', 
+          message: 'Login failed. Please try again.' 
+        });
+      }
+      
+      console.log('✅ Session saved successfully:', req.sessionID);
+      return res.json({ 
+        status: 'success', 
+        message: 'Login successful',
+        role: 'admin'
+      });
     });
   } else {
     return res.status(401).json({ 
