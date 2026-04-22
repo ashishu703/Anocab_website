@@ -11,7 +11,9 @@ module.exports = {
         ADMIN_EMAIL: 'anocab07@gmail.com',
         ADMIN_PASSWORD: 'Anocab@6262',
         API_BASE_URL: 'https://anocab.com',
-        CORS_ORIGIN: '*'
+        CORS_ORIGIN: '*',
+        SESSION_SECRET: 'anocab-production-secret-key-2026-secure',
+        MONGODB_URI: 'mongodb+srv://ashishu703_db_user:Ashish7870@cluster0.rlc2rg5.mongodb.net/monzo?authSource=admin&retryWrites=true&w=majority'
       },
       error_file: '/var/log/pm2/anocab-website-backend-error.log',
       out_file: '/var/log/pm2/anocab-website-backend-out.log',
