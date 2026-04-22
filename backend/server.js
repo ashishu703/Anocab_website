@@ -59,11 +59,14 @@ app.use(session({
   resave: false,
   saveUninitialized: false,
   name: 'anocab.sid', // Custom session name
+  proxy: true, // Trust proxy (nginx)
   cookie: { 
     secure: process.env.NODE_ENV === 'production',
     httpOnly: true,
     maxAge: 24 * 60 * 60 * 1000, // 24 hours
-    sameSite: 'lax' // Prevent CSRF
+    sameSite: 'lax', // Prevent CSRF
+    domain: process.env.NODE_ENV === 'production' ? '.anocab.com' : undefined,
+    path: '/'
   }
 }));
 
@@ -189,6 +192,13 @@ const upload = multer({
 // ==================== AUTHENTICATION MIDDLEWARE ====================
 
 function isAuthenticated(req, res, next) {
+  console.log('🔐 Auth check:', {
+    hasSession: !!req.session,
+    isAuthenticated: req.session?.isAuthenticated,
+    sessionID: req.sessionID,
+    cookies: req.headers.cookie
+  });
+  
   if (req.session && req.session.isAuthenticated) {
     return next();
   }
@@ -294,6 +304,20 @@ app.post('/update-prices', isAuthenticated, (req, res) => {
 
 // Get approved prices (protected)
 app.get('/api/prices/approved', isAuthenticated, (req, res) => {
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 20;
+  
+  // For now, return empty array since we don't have a price approval system yet
+  res.json({
+    prices: [],
+    total: 0,
+    page,
+    totalPages: 0
+  });
+});
+
+// Get pending prices (protected)
+app.get('/api/prices/pending', isAuthenticated, (req, res) => {
   const page = parseInt(req.query.page) || 1;
   const limit = parseInt(req.query.limit) || 20;
   
