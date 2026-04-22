@@ -59,7 +59,7 @@ app.use(session({
   secret: process.env.SESSION_SECRET || 'fallback-secret-key',
   resave: false,
   saveUninitialized: false,
-  name: 'anocab.sid', // Custom session name
+  name: 'connect.sid', // Use default session name for compatibility
   proxy: true, // Trust proxy (nginx)
   store: MongoStore.create({
     mongoUrl: process.env.MONGODB_URI,
@@ -72,8 +72,7 @@ app.use(session({
     secure: process.env.NODE_ENV === 'production',
     httpOnly: true,
     maxAge: 24 * 60 * 60 * 1000, // 24 hours
-    sameSite: 'lax', // Prevent CSRF
-    domain: process.env.NODE_ENV === 'production' ? '.anocab.com' : undefined,
+    sameSite: 'lax',
     path: '/'
   }
 }));
