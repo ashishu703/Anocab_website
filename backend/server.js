@@ -18,6 +18,27 @@ const PORT = process.env.PORT || 3000;
 // Mongoose settings
 mongoose.set('strictQuery', false);
 
+// MongoDB Connection FIRST (before session middleware)
+const mongoOptions = {
+  serverSelectionTimeoutMS: 30000,
+  socketTimeoutMS: 45000,
+  maxPoolSize: 10,
+  minPoolSize: 2,
+};
+
+// Connect to MongoDB and wait for connection
+let mongooseConnection;
+mongoose.connect(process.env.MONGODB_URI, mongoOptions)
+  .then(() => {
+    console.log("✅ MongoDB Atlas connected successfully");
+    mongooseConnection = mongoose.connection;
+  })
+  .catch(err => {
+    console.error("❌ MongoDB connection error:", err.message);
+    console.log("💡 Check your MongoDB Atlas credentials and network access");
+    process.exit(1); // Exit if DB connection fails
+  });
+
 // Security Middleware
 app.use(helmet({
   contentSecurityPolicy: false,
@@ -55,44 +76,45 @@ app.use(cors({
 app.use(bodyParser.urlencoded({ extended: true, limit: '10mb' }));
 app.use(bodyParser.json({ limit: '10mb' }));
 
-// Session middleware
+// Session middleware with MongoDB store (fixes cluster mode issue)
+const sessionStore = MongoStore.create({
+  mongoUrl: process.env.MONGODB_URI,
+  touchAfter: 24 * 3600, // lazy session update (24 hours)
+  ttl: 24 * 60 * 60, // Session TTL (24 hours)
+  autoRemove: 'native', // Let MongoDB handle expired sessions
+  crypto: {
+    secret: process.env.SESSION_SECRET || 'fallback-secret-key'
+  },
+  mongoOptions: {
+    serverSelectionTimeoutMS: 30000,
+    socketTimeoutMS: 45000,
+  }
+});
+
+// Handle session store errors
+sessionStore.on('error', (error) => {
+  console.error('❌ Session store error:', error);
+});
+
 app.use(session({
   secret: process.env.SESSION_SECRET || 'fallback-secret-key',
   resave: false,
   saveUninitialized: false,
-  name: 'connect.sid', // Use default session name for compatibility
+  name: 'anocab.sid', // Custom session name
   proxy: true, // Trust proxy (nginx)
-  store: MongoStore.create({
-    mongoUrl: process.env.MONGODB_URI,
-    touchAfter: 24 * 3600, // lazy session update
-    crypto: {
-      secret: process.env.SESSION_SECRET || 'fallback-secret-key'
-    }
-  }),
+  store: sessionStore,
   cookie: { 
-    secure: process.env.NODE_ENV === 'production',
+    secure: process.env.NODE_ENV === 'production', // HTTPS only in production
     httpOnly: true,
     maxAge: 24 * 60 * 60 * 1000, // 24 hours
-    sameSite: 'none', // Required for cross-origin cookies in production
-    path: '/'
+    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax', // 'none' for cross-origin in production
+    path: '/',
+    domain: process.env.NODE_ENV === 'production' ? '.anocab.com' : undefined // Share across subdomains
   }
 }));
 
 // Serve static files from parent directory
 app.use(express.static(path.join(__dirname, '..')));
-
-// MongoDB Connection (MongoDB Atlas)
-const mongoOptions = {
-  serverSelectionTimeoutMS: 30000,
-  socketTimeoutMS: 45000,
-};
-
-mongoose.connect(process.env.MONGODB_URI, mongoOptions)
-  .then(() => console.log("✅ MongoDB Atlas connected successfully"))
-  .catch(err => {
-    console.error("❌ MongoDB connection error:", err.message);
-    console.log("💡 Check your MongoDB Atlas credentials and network access");
-  });
 
 // ==================== SCHEMAS ====================
 
@@ -204,13 +226,23 @@ function isAuthenticated(req, res, next) {
     hasSession: !!req.session,
     isAuthenticated: req.session?.isAuthenticated,
     sessionID: req.sessionID,
-    cookies: req.headers.cookie
+    userEmail: req.session?.userEmail,
+    cookies: req.headers.cookie?.substring(0, 50) + '...' // Log only first 50 chars
   });
   
-  if (req.session && req.session.isAuthenticated) {
-    return next();
+  // Check if session exists and is authenticated
+  if (!req.session) {
+    console.error('❌ No session object found');
+    return res.status(401).json({ status: 'error', message: 'Session not found. Please login again.' });
   }
-  return res.status(401).json({ status: 'error', message: 'Unauthorized. Please login.' });
+  
+  if (!req.session.isAuthenticated) {
+    console.error('❌ Session not authenticated');
+    return res.status(401).json({ status: 'error', message: 'Unauthorized. Please login.' });
+  }
+  
+  console.log('✅ Authentication successful for:', req.session.userEmail);
+  return next();
 }
 
 // ==================== AUTH ROUTES ====================
