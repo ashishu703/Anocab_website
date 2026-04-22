@@ -663,7 +663,8 @@ app.get('/api/blogs', async (req, res) => {
     res.json(blogs);
   } catch (error) {
     console.error('Error fetching blogs:', error);
-    res.status(500).json({ error: 'Error fetching blogs' });
+    // Return empty array instead of error to prevent frontend crash
+    res.json([]);
   }
 });
 
@@ -797,7 +798,8 @@ app.get('/api/clients', async (req, res) => {
     res.json(clients);
   } catch (error) {
     console.error('Error fetching clients:', error);
-    res.status(500).json({ error: 'Error fetching clients' });
+    // Return empty array instead of error to prevent frontend crash
+    res.json([]);
   }
 });
 
