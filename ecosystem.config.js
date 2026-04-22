@@ -7,7 +7,7 @@ module.exports = {
       exec_mode: 'cluster',
       env: {
         NODE_ENV: 'production',
-        PORT: 1114
+        PORT: 1111
       },
       error_file: '/var/log/pm2/anocab-website-backend-error.log',
       out_file: '/var/log/pm2/anocab-website-backend-out.log',
@@ -30,7 +30,7 @@ module.exports = {
       exec_mode: 'fork',
       env: {
         NODE_ENV: 'production',
-        PORT: 1115
+        PORT: 1112
       },
       error_file: '/var/log/pm2/anocab-website-admin-error.log',
       out_file: '/var/log/pm2/anocab-website-admin-out.log',
@@ -49,7 +49,7 @@ module.exports = {
       exec_mode: 'fork',
       env: {
         NODE_ENV: 'production',
-        PORT: 1116
+        PORT: 1113
       },
       error_file: '/var/log/pm2/anocab-website-careers-error.log',
       out_file: '/var/log/pm2/anocab-website-careers-out.log',
