@@ -100,7 +100,7 @@ app.use(session({
   secret: process.env.SESSION_SECRET || 'fallback-secret-key',
   resave: false,
   saveUninitialized: false,
-  name: 'anocab.sid', // Custom session name
+  name: 'connect.sid', // Keep default name for compatibility with existing cookies
   proxy: true, // Trust proxy (nginx)
   store: sessionStore,
   cookie: { 
