@@ -87,20 +87,31 @@ jobs:
           
           cd /var/www/anocab
           
-          # Update nginx configuration
-          if [ -f '/var/www/anocab/nginx.conf' ]; then
-            cp /var/www/anocab/nginx.conf /etc/nginx/sites-available/anocab-website
-            nginx -t && systemctl reload nginx
-            echo '✅ Nginx configuration updated and reloaded'
+          # Force update nginx configuration
+          echo '🔧 Updating Nginx configuration...'
+          sudo cp -f /var/www/anocab/nginx.conf /etc/nginx/sites-available/anocab-website
+          
+          # Test nginx config
+          if sudo nginx -t; then
+            echo '✅ Nginx config test passed'
+            sudo systemctl reload nginx
+            echo '✅ Nginx reloaded successfully'
+          else
+            echo '❌ Nginx config test failed'
+            exit 1
           fi
           
           # Restart PM2 services
+          echo '🔄 Restarting PM2 services...'
           if pm2 list | grep -q 'anocab-website-backend'; then
-            pm2 reload ecosystem.config.js --update-env
+            pm2 delete all
+            pm2 start ecosystem.config.js
           else
             pm2 start ecosystem.config.js
           fi
           pm2 save
+          
+          echo '✅ Deployment completed successfully'
         "
 
     - name: Health Check
