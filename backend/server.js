@@ -292,6 +292,34 @@ app.post('/update-prices', isAuthenticated, (req, res) => {
   });
 });
 
+// Get approved prices (protected)
+app.get('/api/prices/approved', isAuthenticated, (req, res) => {
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 20;
+  
+  // For now, return empty array since we don't have a price approval system yet
+  res.json({
+    prices: [],
+    total: 0,
+    page,
+    totalPages: 0
+  });
+});
+
+// Get rejected prices (protected)
+app.get('/api/prices/rejected', isAuthenticated, (req, res) => {
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 20;
+  
+  // For now, return empty array since we don't have a price approval system yet
+  res.json({
+    prices: [],
+    total: 0,
+    page,
+    totalPages: 0
+  });
+});
+
 // ==================== MRP ROUTES ====================
 
 // Get latest MRP data
