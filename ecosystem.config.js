@@ -7,7 +7,11 @@ module.exports = {
       exec_mode: 'cluster',
       env: {
         NODE_ENV: 'production',
-        PORT: 1111
+        PORT: 1111,
+        ADMIN_EMAIL: 'anocab07@gmail.com',
+        ADMIN_PASSWORD: 'Anocab@6262',
+        API_BASE_URL: 'https://anocab.com',
+        CORS_ORIGIN: '*'
       },
       error_file: '/var/log/pm2/anocab-website-backend-error.log',
       out_file: '/var/log/pm2/anocab-website-backend-out.log',
@@ -30,7 +34,10 @@ module.exports = {
       exec_mode: 'fork',
       env: {
         NODE_ENV: 'production',
-        PORT: 1112
+        PORT: 1112,
+        ADMIN_EMAIL: 'anocab07@gmail.com',
+        ADMIN_PASSWORD: 'Anocab@6262',
+        APP_URL: 'https://anocab.com'
       },
       error_file: '/var/log/pm2/anocab-website-admin-error.log',
       out_file: '/var/log/pm2/anocab-website-admin-out.log',
