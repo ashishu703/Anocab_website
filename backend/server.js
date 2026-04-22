@@ -96,6 +96,20 @@ sessionStore.on('error', (error) => {
   console.error('❌ Session store error:', error);
 });
 
+// Log when session store is connected
+sessionStore.on('connected', () => {
+  console.log('✅ Session store connected to MongoDB');
+});
+
+// Log session operations for debugging
+sessionStore.on('create', (sessionId) => {
+  console.log('📝 Session created:', sessionId);
+});
+
+sessionStore.on('set', (sessionId) => {
+  console.log('💾 Session saved:', sessionId);
+});
+
 app.use(session({
   secret: process.env.SESSION_SECRET || 'fallback-secret-key',
   resave: false,
