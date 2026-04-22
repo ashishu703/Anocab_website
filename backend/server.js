@@ -5,6 +5,7 @@ const nodemailer = require('nodemailer');
 const bodyParser = require('body-parser');
 const multer = require('multer');
 const session = require('express-session');
+const MongoStore = require('connect-mongo');
 const cors = require('cors');
 const helmet = require('helmet');
 const crypto = require('crypto');
@@ -60,6 +61,13 @@ app.use(session({
   saveUninitialized: false,
   name: 'anocab.sid', // Custom session name
   proxy: true, // Trust proxy (nginx)
+  store: MongoStore.create({
+    mongoUrl: process.env.MONGODB_URI,
+    touchAfter: 24 * 3600, // lazy session update
+    crypto: {
+      secret: process.env.SESSION_SECRET || 'fallback-secret-key'
+    }
+  }),
   cookie: { 
     secure: process.env.NODE_ENV === 'production',
     httpOnly: true,
