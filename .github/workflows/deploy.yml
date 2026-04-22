@@ -63,13 +63,13 @@ jobs:
           echo "MAIL_PASS=${MAIL_PASS}" >> /var/www/anocab/backend/.env
           echo "MAIL_HOST=smtp.gmail.com" >> /var/www/anocab/backend/.env
           echo "MAIL_PORT=587" >> /var/www/anocab/backend/.env
-          echo "NOTIFICATION_EMAIL=${ADMIN_EMAIL}" >> /var/www/anocab/backend/.env
+          echo "NOTIFICATION_EMAIL=admin@anocab.in" >> /var/www/anocab/backend/.env
           
           echo "PORT=1112" > /var/www/anocab/admin_panel/.env
           echo "NODE_ENV=production" >> /var/www/anocab/admin_panel/.env
           echo "APP_URL=https://anocab.com" >> /var/www/anocab/admin_panel/.env
-          echo "ADMIN_EMAIL=${ADMIN_EMAIL}" >> /var/www/anocab/admin_panel/.env
-          echo "ADMIN_PASSWORD=${ADMIN_PASSWORD}" >> /var/www/anocab/admin_panel/.env
+          echo "ADMIN_EMAIL=admin@anocab.com" >> /var/www/anocab/admin_panel/.env
+          echo "ADMIN_PASSWORD=yourSecurePassword123" >> /var/www/anocab/admin_panel/.env
           echo "SESSION_SECRET=${SESSION_SECRET}" >> /var/www/anocab/admin_panel/.env
           
           echo "PORT=1113" > /var/www/anocab/apply_now/.env
