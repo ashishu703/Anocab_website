@@ -83,56 +83,160 @@
   </div>
 
   <script src="/config.js"></script>
-<script>
+  <script>
+    // Check authentication
+    (async function checkAuth() {
+      const token = localStorage.getItem('authToken');
+      
+      if (!token) {
+        window.location.href = '/login_panel/login.html';
+        return;
+      }
+      
+      try {
+        const response = await fetch('/check-auth', {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        const data = await response.json();
+        
+        if (!data.authenticated) {
+          localStorage.clear();
+          window.location.href = '/login_panel/login.html';
+        }
+      } catch (error) {
+        console.error('Auth check failed:', error);
+        localStorage.clear();
+        window.location.href = '/login_panel/login.html';
+      }
+    })();
     
     async function loadPrices() {
-      const res = await fetch(`${API_BASE_URL}/api/prices/pending`);
-      const data = await res.json();
-      const tbody = document.querySelector('#priceTable tbody');
-      tbody.innerHTML = '';
+      const token = localStorage.getItem('authToken');
+      if (!token) {
+        window.location.href = '/login_panel/login.html';
+        return;
+      }
+      
+      try {
+        const res = await fetch(`${API_BASE_URL}/api/prices/pending`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        
+        if (!res.ok) {
+          if (res.status === 401) {
+            localStorage.clear();
+            window.location.href = '/login_panel/login.html';
+            return;
+          }
+          throw new Error('Failed to load prices');
+        }
+        
+        const data = await res.json();
+        const tbody = document.querySelector('#priceTable tbody');
+        tbody.innerHTML = '';
 
-      data.forEach(item => {
-        const row = `
-          <tr>
-            <td><input type="checkbox" value="${item._id}"></td>
-            <td>${item.item}</td>
-            <td>${item.basePrice}</td>
-            <td>${item.gst}</td>
-            <td>${(item.basePrice + item.basePrice * item.gst / 100).toFixed(2)}</td>
-          </tr>
-        `;
-        tbody.innerHTML += row;
-      });
+        if (data.prices && data.prices.length > 0) {
+          data.prices.forEach(item => {
+            const row = `
+              <tr>
+                <td><input type="checkbox" value="${item._id}"></td>
+                <td>${item.item}</td>
+                <td>${item.basePrice}</td>
+                <td>${item.gst}</td>
+                <td>${(item.basePrice + item.basePrice * item.gst / 100).toFixed(2)}</td>
+              </tr>
+            `;
+            tbody.innerHTML += row;
+          });
+        } else {
+          tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">No pending prices</td></tr>';
+        }
+      } catch (error) {
+        console.error('Error loading prices:', error);
+        document.querySelector('#priceTable tbody').innerHTML = '<tr><td colspan="5" style="text-align:center;">Error loading prices</td></tr>';
+      }
     }
 
     async function approveSelected() {
       const selectedIds = getSelectedIds();
       if (!selectedIds.length) return alert("No items selected");
 
-      const res = await fetch(`${API_BASE_URL}/api/prices/approve-selected`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ selectedIds }),
-      });
+      const token = localStorage.getItem('authToken');
+      if (!token) {
+        window.location.href = '/login_panel/login.html';
+        return;
+      }
 
-      const result = await res.json();
-      alert(result.message || "Approved!");
-      loadPrices();
+      try {
+        const res = await fetch(`${API_BASE_URL}/api/prices/approve-selected`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({ selectedIds }),
+        });
+
+        if (!res.ok) {
+          if (res.status === 401) {
+            localStorage.clear();
+            alert('Session expired. Please login again.');
+            window.location.href = '/login_panel/login.html';
+            return;
+          }
+          throw new Error('Failed to approve');
+        }
+
+        const result = await res.json();
+        alert(result.message || "Approved!");
+        loadPrices();
+      } catch (error) {
+        console.error('Error approving:', error);
+        alert('Error approving prices');
+      }
     }
 
     async function rejectSelected() {
       const selectedIds = getSelectedIds();
       if (!selectedIds.length) return alert("No items selected");
 
-      const res = await fetch(`${API_BASE_URL}/api/prices/reject-selected`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ selectedIds }),
-      });
+      const token = localStorage.getItem('authToken');
+      if (!token) {
+        window.location.href = '/login_panel/login.html';
+        return;
+      }
 
-      const result = await res.json();
-      alert(result.message || "Rejected!");
-      loadPrices();
+      try {
+        const res = await fetch(`${API_BASE_URL}/api/prices/reject-selected`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({ selectedIds }),
+        });
+
+        if (!res.ok) {
+          if (res.status === 401) {
+            localStorage.clear();
+            alert('Session expired. Please login again.');
+            window.location.href = '/login_panel/login.html';
+            return;
+          }
+          throw new Error('Failed to reject');
+        }
+
+        const result = await res.json();
+        alert(result.message || "Rejected!");
+        loadPrices();
+      } catch (error) {
+        console.error('Error rejecting:', error);
+        alert('Error rejecting prices');
+      }
     }
 
     function getSelectedIds() {
@@ -145,23 +249,4 @@
   </script>
 
 </body>
-<script src="/config.js"></script>
-<script>
-// Inactivity auto-logout (30s)
-(function() {
-  let timer;
-  function resetTimer() {
-    clearTimeout(timer);
-    timer = setTimeout(logout, 30000);
-  }
-  function logout() {
-    fetch('/logout', {method:'POST'}).then(()=>{
-      window.location.href = '/login_panel/login.html';
-    });
-  }
-  ['mousemove','keydown','mousedown','touchstart'].forEach(evt =>
-    window.addEventListener(evt, resetTimer, true));
-  resetTimer();
-})();
-</script>
 </html>

@@ -406,13 +406,28 @@
   <script>
     // Check authentication
     (async function checkAuth() {
+      const token = localStorage.getItem('authToken');
+      
+      if (!token) {
+        window.location.href = '/login_panel/login.html';
+        return;
+      }
+      
       try {
-        const response = await fetch('/check-auth', { credentials: 'include' });
+        const response = await fetch('/check-auth', {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
         const data = await response.json();
+        
         if (!data.authenticated) {
+          localStorage.clear();
           window.location.href = '/login_panel/login.html';
         }
       } catch (error) {
+        console.error('Auth check failed:', error);
+        localStorage.clear();
         window.location.href = '/login_panel/login.html';
       }
     })();
@@ -497,11 +512,26 @@
     // Load subscribers
     async function loadSubscribers() {
       try {
+        const token = localStorage.getItem('authToken');
+        if (!token) {
+          window.location.href = '/login_panel/login.html';
+          return;
+        }
+        
         const response = await fetch(API_BASE_URL + '/api/newsletter', {
-          credentials: 'include'
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
         });
         
-        if (!response.ok) throw new Error('Failed to load');
+        if (!response.ok) {
+          if (response.status === 401) {
+            localStorage.clear();
+            window.location.href = '/login_panel/login.html';
+            return;
+          }
+          throw new Error('Failed to load');
+        }
         
         subscribers = await response.json();
         displaySubscribers();
@@ -649,10 +679,19 @@
       sendBtn.textContent = 'Sending...';
       
       try {
+        const token = localStorage.getItem('authToken');
+        if (!token) {
+          alert('❌ Please login again');
+          window.location.href = '/login_panel/login.html';
+          return;
+        }
+        
         const response = await fetch(API_BASE_URL + '/api/newsletter/send-bulk', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
           body: JSON.stringify({
             subject: subject,
             htmlContent: content,
@@ -666,7 +705,13 @@
           alert('✅ ' + result.message);
           closeEmailModal();
         } else {
-          alert('❌ Error: ' + result.error);
+          if (response.status === 401) {
+            localStorage.clear();
+            alert('❌ Session expired. Please login again.');
+            window.location.href = '/login_panel/login.html';
+          } else {
+            alert('❌ Error: ' + result.error);
+          }
         }
       } catch (error) {
         console.error('Error:', error);

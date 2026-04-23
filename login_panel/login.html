@@ -226,21 +226,28 @@
         });
         
         const data = await response.json();
+        console.log('✅ Login response:', data);
         
         if (data.status === "success" && data.token) {
+          console.log('🎫 Token received:', data.token.substring(0, 50) + '...');
+          
           // Store JWT token in localStorage
           localStorage.setItem('authToken', data.token);
           localStorage.setItem('userEmail', data.email);
           localStorage.setItem('userRole', data.role);
+          
+          console.log('💾 Token stored in localStorage');
           
           loginBtn.innerHTML = '✓ Success!';
           setTimeout(() => {
             window.location.href = "dashboard.html";
           }, 500);
         } else {
+          console.error('❌ No token in response:', data);
           throw new Error(data.message || "Invalid credentials");
         }
       } catch (err) {
+        console.error('❌ Login error:', err);
         errorMsg.textContent = err.message || "Login failed. Please try again.";
         errorMsg.classList.add('show');
         loginBtn.disabled = false;
