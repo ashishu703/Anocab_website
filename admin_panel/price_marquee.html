@@ -220,18 +220,40 @@
   </div>
 
   <script>
+    // JWT Helper Functions
+    function getAuthHeaders() {
+      const token = localStorage.getItem('authToken');
+      return {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      };
+    }
+
+    function getAuthToken() {
+      return localStorage.getItem('authToken');
+    }
+
     // Check authentication on page load
     (async function checkAuth() {
+      const token = getAuthToken();
+      
+      if (!token) {
+        window.location.href = '/login_panel/login.html';
+        return;
+      }
+      
       try {
         const response = await fetch('/check-auth', {
-          credentials: 'include'
+          headers: { 'Authorization': `Bearer ${token}` }
         });
         const data = await response.json();
         if (!data.authenticated) {
+          localStorage.clear();
           window.location.href = '/login_panel/login.html';
         }
       } catch (error) {
         console.error('Auth check failed:', error);
+        localStorage.clear();
         window.location.href = '/login_panel/login.html';
       }
     })();
@@ -245,9 +267,7 @@
     // Load current prices
     async function loadPrices() {
       try {
-        const response = await fetch(`${API_BASE_URL}/api/prices`, {
-          credentials: 'include'
-        });
+        const response = await fetch(`${API_BASE_URL}/api/prices`);
         const prices = await response.json();
         
         document.getElementById('price_copper').value = prices.copper;
@@ -283,10 +303,7 @@
       try {
         const response = await fetch(`${API_BASE_URL}/update-prices`, {
           method: 'POST',
-          headers: { 
-            'Content-Type': 'application/json'
-          },
-          credentials: 'include', // Include cookies for session
+          headers: getAuthHeaders(),
           body: JSON.stringify(formData)
         });
 

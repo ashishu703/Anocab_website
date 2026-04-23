@@ -286,39 +286,45 @@
   <script>
     // Check authentication on page load
     (async function checkAuth() {
+      const token = localStorage.getItem('authToken');
+      
+      if (!token) {
+        window.location.href = '/login_panel/login.html';
+        return;
+      }
+      
       try {
         const response = await fetch('/check-auth', {
-          credentials: 'include'
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
         });
         const data = await response.json();
         
         if (!data.authenticated) {
+          localStorage.clear();
           window.location.href = '/login_panel/login.html';
         } else {
           // Display user email
-          if (data.email) {
-            document.getElementById('userEmail').textContent = data.email;
-            document.querySelector('.user-avatar').textContent = data.email.charAt(0).toUpperCase();
+          const userEmail = data.email || localStorage.getItem('userEmail');
+          if (userEmail) {
+            document.getElementById('userEmail').textContent = userEmail;
+            document.querySelector('.user-avatar').textContent = userEmail.charAt(0).toUpperCase();
           }
         }
       } catch (error) {
         console.error('Auth check failed:', error);
+        localStorage.clear();
         window.location.href = '/login_panel/login.html';
       }
     })();
 
     // Logout function
-    async function logout() {
-      try {
-        await fetch('/logout', { 
-          method: 'POST',
-          credentials: 'include'
-        });
-        window.location.href = '/login_panel/login.html';
-      } catch (error) {
-        console.error('Logout failed:', error);
-        window.location.href = '/login_panel/login.html';
-      }
+    function logout() {
+      localStorage.removeItem('authToken');
+      localStorage.removeItem('userEmail');
+      localStorage.removeItem('userRole');
+      window.location.href = '/login_panel/login.html';
     }
   </script>
 </body>

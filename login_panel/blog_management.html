@@ -382,15 +382,39 @@
 </head>
 <body>
   <script>
+    // JWT Helper Functions
+    function getAuthHeaders() {
+      const token = localStorage.getItem('authToken');
+      return {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      };
+    }
+
+    function getAuthToken() {
+      return localStorage.getItem('authToken');
+    }
+
     // Check authentication
     (async function checkAuth() {
+      const token = getAuthToken();
+      
+      if (!token) {
+        window.location.href = '/login_panel/login.html';
+        return;
+      }
+      
       try {
-        const response = await fetch('/check-auth', { credentials: 'include' });
+        const response = await fetch('/check-auth', {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
         const data = await response.json();
         if (!data.authenticated) {
+          localStorage.clear();
           window.location.href = '/login_panel/login.html';
         }
       } catch (error) {
+        localStorage.clear();
         window.location.href = '/login_panel/login.html';
       }
     })();
@@ -549,7 +573,9 @@
       try {
         const response = await fetch(API_BASE_URL + '/api/admin/blogs/upload-image', {
           method: 'POST',
-          credentials: 'include',
+          headers: {
+            'Authorization': `Bearer ${getAuthToken()}`
+          },
           body: formData
         });
 
@@ -571,7 +597,7 @@
     async function loadBlogs() {
       try {
         const response = await fetch(API_BASE_URL + '/api/admin/blogs', {
-          credentials: 'include'
+          headers: getAuthHeaders()
         });
         
         if (!response.ok) throw new Error('Failed to load');
@@ -668,8 +694,7 @@
 
         const response = await fetch(url, {
           method: method,
-          headers: { 'Content-Type': 'application/json' },
-          credentials: 'include',
+          headers: getAuthHeaders(),
           body: JSON.stringify({
             title: title,
             category: category,
@@ -706,7 +731,7 @@
       try {
         const response = await fetch(API_BASE_URL + '/api/admin/blogs/' + id, {
           method: 'DELETE',
-          credentials: 'include'
+          headers: { 'Authorization': `Bearer ${getAuthToken()}` }
         });
 
         const result = await response.json();
