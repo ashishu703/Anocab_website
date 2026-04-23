@@ -76,34 +76,44 @@ app.use(cors({
 app.use(bodyParser.urlencoded({ extended: true, limit: '10mb' }));
 app.use(bodyParser.json({ limit: '10mb' }));
 
-// Session Store Setup - Simple configuration
-const sessionStore = MongoStore.create({
-  mongoUrl: process.env.MONGODB_URI,
-  collectionName: 'sessions',
-  ttl: 24 * 60 * 60, // 1 day
-  autoRemove: 'native'
+// Wait for MongoDB connection, then setup session
+mongoose.connection.once('open', () => {
+  console.log('✅ MongoDB connection ready for session store');
+  
+  // Session Store Setup - Use existing mongoose connection
+  const sessionStore = MongoStore.create({
+    client: mongoose.connection.getClient(),
+    collectionName: 'sessions',
+    ttl: 24 * 60 * 60, // 1 day
+    autoRemove: 'native',
+    touchAfter: 24 * 3600 // Lazy session update
+  });
+
+  sessionStore.on('error', (error) => {
+    console.error('❌ Session store error:', error);
+  });
+
+  console.log('✅ Session store initialized');
+
+  // Setup session middleware BEFORE routes
+  app.use(session({
+    secret: process.env.SESSION_SECRET || 'fallback-secret-key-change-in-production',
+    resave: false,
+    saveUninitialized: false,
+    name: 'connect.sid', // Keep standard name for compatibility
+    store: sessionStore,
+    proxy: true, // Trust proxy for production
+    cookie: { 
+      secure: process.env.NODE_ENV === 'production', // Auto-detect based on environment
+      httpOnly: true,
+      maxAge: 24 * 60 * 60 * 1000, // 1 day
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax', // 'none' required for cross-origin with secure
+      path: '/'
+    }
+  }));
+
+  console.log('✅ Session middleware configured');
 });
-
-console.log('✅ Session store initialized');
-
-// Setup session middleware BEFORE routes
-app.use(session({
-  secret: process.env.SESSION_SECRET || 'fallback-secret-key-change-in-production',
-  resave: false,
-  saveUninitialized: false,
-  name: 'connect.sid', // Keep standard name for compatibility
-  store: sessionStore,
-  proxy: true, // Trust proxy for production
-  cookie: { 
-    secure: process.env.NODE_ENV === 'production', // Auto-detect based on environment
-    httpOnly: true,
-    maxAge: 24 * 60 * 60 * 1000, // 1 day
-    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax', // 'none' required for cross-origin with secure
-    path: '/'
-  }
-}));
-
-console.log('✅ Session middleware configured');
 
 // Serve static files from parent directory
 app.use(express.static(path.join(__dirname, '..')));
@@ -246,13 +256,25 @@ app.post('/login', (req, res) => {
   const adminEmail = process.env.ADMIN_EMAIL;
   const adminPassword = process.env.ADMIN_PASSWORD;
   
-  console.log('Login attempt:', { email, adminEmail, passwordMatch: password === adminPassword });
+  console.log('Login attempt:', { 
+    email, 
+    adminEmail, 
+    passwordMatch: password === adminPassword,
+    hasSession: !!req.session,
+    sessionID: req.sessionID 
+  });
   
   if (email === adminEmail && password === adminPassword) {
     req.session.isAuthenticated = true;
     req.session.userEmail = email;
     req.session.role = 'admin';
     req.session.loginTime = new Date();
+    
+    console.log('Setting session data:', {
+      isAuthenticated: req.session.isAuthenticated,
+      userEmail: req.session.userEmail,
+      sessionID: req.sessionID
+    });
     
     // Save session to MongoDB before sending response
     req.session.save((err) => {
@@ -264,11 +286,17 @@ app.post('/login', (req, res) => {
         });
       }
       
-      console.log('✅ Session saved successfully:', req.sessionID);
+      console.log('✅ Session saved successfully:', {
+        sessionID: req.sessionID,
+        isAuthenticated: req.session.isAuthenticated,
+        userEmail: req.session.userEmail
+      });
+      
       return res.json({ 
         status: 'success', 
         message: 'Login successful',
-        role: 'admin'
+        role: 'admin',
+        sessionID: req.sessionID // For debugging
       });
     });
   } else {

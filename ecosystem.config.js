@@ -3,8 +3,8 @@ module.exports = {
     {
       name: 'anocab-website-backend',
       script: './backend/server.js',
-      instances: 2,
-      exec_mode: 'cluster',
+      instances: 1, // Changed from 2 to 1 - cluster mode causes session issues
+      exec_mode: 'fork', // Changed from cluster to fork for session consistency
       env: {
         NODE_ENV: 'production',
         PORT: 1111,
