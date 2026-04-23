@@ -113,7 +113,34 @@
   </table>
 
   <script src="/config.js"></script>
-<script>
+  <script>
+    // Check authentication
+    (async function checkAuth() {
+      const token = localStorage.getItem('authToken');
+      
+      if (!token) {
+        window.location.href = '/login_panel/login.html';
+        return;
+      }
+      
+      try {
+        const response = await fetch('/check-auth', {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        const data = await response.json();
+        
+        if (!data.authenticated) {
+          localStorage.clear();
+          window.location.href = '/login_panel/login.html';
+        }
+      } catch (error) {
+        console.error('Auth check failed:', error);
+        localStorage.clear();
+        window.location.href = '/login_panel/login.html';
+      }
+    })();
     
     // Pagination variables
     let currentPage = 1;
@@ -121,19 +148,42 @@
     const PAGE_LIMIT = 20;
 
     async function loadPrices(page = 1) {
+      const token = localStorage.getItem('authToken');
+      if (!token) {
+        window.location.href = '/login_panel/login.html';
+        return;
+      }
+      
       try {
         // Fetch both approved and rejected prices with pagination
         const [approvedRes, rejectedRes] = await Promise.all([
-          fetch(`${API_BASE_URL}/api/prices/approved?page=${page}&limit=${PAGE_LIMIT}`),
-          fetch(`${API_BASE_URL}/api/prices/rejected?page=${page}&limit=${PAGE_LIMIT}`)
+          fetch(`${API_BASE_URL}/api/prices/approved?page=${page}&limit=${PAGE_LIMIT}`, {
+            headers: {
+              'Authorization': `Bearer ${token}`
+            }
+          }),
+          fetch(`${API_BASE_URL}/api/prices/rejected?page=${page}&limit=${PAGE_LIMIT}`, {
+            headers: {
+              'Authorization': `Bearer ${token}`
+            }
+          })
         ]);
+        
+        // Check for 401 errors
+        if (!approvedRes.ok || !rejectedRes.ok) {
+          if (approvedRes.status === 401 || rejectedRes.status === 401) {
+            localStorage.clear();
+            window.location.href = '/login_panel/login.html';
+            return;
+          }
+        }
         
         const approvedData = await approvedRes.json();
         const rejectedData = await rejectedRes.json();
 
         // Combine data and calculate total pages (using max of both)
-        const approved = approvedData.data || [];
-        const rejected = rejectedData.data || [];
+        const approved = approvedData.prices || approvedData.data || [];
+        const rejected = rejectedData.prices || rejectedData.data || [];
         totalPages = Math.max(approvedData.totalPages || 1, rejectedData.totalPages || 1);
         currentPage = page;
 
@@ -171,6 +221,8 @@
         renderPagination();
       } catch (error) {
         console.error('Error loading prices:', error);
+        const tbody = document.querySelector('#priceListTable tbody');
+        tbody.innerHTML = '<tr><td colspan="6">Error loading prices</td></tr>';
       }
     }
 
@@ -206,23 +258,4 @@
     };
   </script>
 </body>
-<script src="/config.js"></script>
-<script>
-// Inactivity auto-logout (30s)
-(function() {
-  let timer;
-  function resetTimer() {
-    clearTimeout(timer);
-    timer = setTimeout(logout, 30000);
-  }
-  function logout() {
-    fetch('/logout', {method:'POST'}).then(()=>{
-      window.location.href = '/login_panel/login.html';
-    });
-  }
-  ['mousemove','keydown','mousedown','touchstart'].forEach(evt =>
-    window.addEventListener(evt, resetTimer, true));
-  resetTimer();
-})();
-</script>
 </html>
