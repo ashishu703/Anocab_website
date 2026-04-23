@@ -35,8 +35,6 @@ jobs:
             cd /var/www/anocab
             git clone https://github.com/ashishu703/Anocab_website.git .
             cd backend && npm install --production && cd ..
-            cd admin_panel && npm install --production && cd ..
-            cd apply_now && npm install --production && cd ..
             if [ ! -f '/etc/nginx/sites-available/anocab-website' ]; then
               cp /var/www/anocab/nginx.conf /etc/nginx/sites-available/anocab-website
               ln -sf /etc/nginx/sites-available/anocab-website /etc/nginx/sites-enabled/
@@ -48,10 +46,9 @@ jobs:
             git stash
             git pull origin main
             cd backend && npm install --production && cd ..
-            cd admin_panel && npm install --production && cd ..
-            cd apply_now && npm install --production && cd ..
           fi
           
+          # Configure unified backend .env
           echo "PORT=1111" > /var/www/anocab/backend/.env
           echo "NODE_ENV=production" >> /var/www/anocab/backend/.env
           echo "API_BASE_URL=https://anocab.com" >> /var/www/anocab/backend/.env
@@ -65,33 +62,27 @@ jobs:
           echo "MAIL_PASS=${MAIL_PASS}" >> /var/www/anocab/backend/.env
           echo "MAIL_HOST=smtp.gmail.com" >> /var/www/anocab/backend/.env
           echo "MAIL_PORT=587" >> /var/www/anocab/backend/.env
-          echo "NOTIFICATION_EMAIL=admin@anocab.in" >> /var/www/anocab/backend/.env
-          
-          echo "PORT=1112" > /var/www/anocab/admin_panel/.env
-          echo "NODE_ENV=production" >> /var/www/anocab/admin_panel/.env
-          echo "APP_URL=https://anocab.com" >> /var/www/anocab/admin_panel/.env
-          echo "ADMIN_EMAIL=${ADMIN_EMAIL}" >> /var/www/anocab/admin_panel/.env
-          echo "ADMIN_PASSWORD=${ADMIN_PASSWORD}" >> /var/www/anocab/admin_panel/.env
-          echo "JWT_SECRET=${JWT_SECRET}" >> /var/www/anocab/admin_panel/.env
-          
-          echo "PORT=1113" > /var/www/anocab/apply_now/.env
-          echo "NODE_ENV=production" >> /var/www/anocab/apply_now/.env
-          echo "MONGODB_URI=${MONGODB_URI}" >> /var/www/anocab/apply_now/.env
-          echo "MAIL_USER=${MAIL_USER}" >> /var/www/anocab/apply_now/.env
-          echo "MAIL_PASS=${MAIL_PASS}" >> /var/www/anocab/apply_now/.env
-          echo "MAIL_HOST=smtp.gmail.com" >> /var/www/anocab/apply_now/.env
-          echo "MAIL_PORT=587" >> /var/www/anocab/apply_now/.env
-          echo "ADMIN_EMAIL=${ADMIN_EMAIL}" >> /var/www/anocab/apply_now/.env
+          echo "NOTIFICATION_EMAIL=${ADMIN_EMAIL}" >> /var/www/anocab/backend/.env
           
           chmod 600 /var/www/anocab/backend/.env
-          chmod 600 /var/www/anocab/admin_panel/.env
-          chmod 600 /var/www/anocab/apply_now/.env
           
           cd /var/www/anocab
           
           # Force update nginx configuration
           echo '🔧 Updating Nginx configuration...'
           sudo cp -f /var/www/anocab/nginx.conf /etc/nginx/sites-available/anocab-website
+          
+          # Remove old conflicting configs if they exist
+          if [ -f '/etc/nginx/sites-enabled/anocab' ]; then
+            sudo rm /etc/nginx/sites-enabled/anocab
+            echo '🗑️  Removed old anocab config'
+          fi
+          
+          # Ensure symlink exists
+          if [ ! -L '/etc/nginx/sites-enabled/anocab-website' ]; then
+            sudo ln -sf /etc/nginx/sites-available/anocab-website /etc/nginx/sites-enabled/anocab-website
+            echo '🔗 Created nginx symlink'
+          fi
           
           # Test nginx config
           if sudo nginx -t; then
@@ -103,24 +94,19 @@ jobs:
             exit 1
           fi
           
-          # Restart PM2 services
-          echo '🔄 Restarting PM2 services...'
-          if pm2 list | grep -q 'anocab-website-backend'; then
-            pm2 delete all
-            pm2 start ecosystem.config.js
-            pm2 save
-          else
-            pm2 start ecosystem.config.js
-            pm2 save
-          fi
+          # Stop and remove old PM2 processes
+          echo '🔄 Managing PM2 services...'
+          pm2 delete all || true
           
-          # Force reload to pick up new environment variables
-          pm2 reload all --update-env
+          # Start unified backend only
+          pm2 start ecosystem.config.js
+          pm2 save
           
-          echo '✅ Deployment completed successfully'
+          echo '✅ Deployment completed - Unified backend running on port 1111'
+          pm2 list
         "
 
     - name: Health Check
       run: |
         sleep 15
-        curl -f http://${{ secrets.SERVER_IP }}/api/prices || echo "Services starting"
+        curl -f https://${{ secrets.SERVER_IP }}/api/prices || echo "Services starting"

@@ -280,6 +280,14 @@ app.post('/login', (req, res) => {
     });
     
     console.log('✅ Login successful, token generated for:', email);
+    console.log('🎫 Token preview:', token.substring(0, 50) + '...');
+    
+    // Set CORS headers explicitly
+    res.setHeader('Access-Control-Allow-Origin', req.headers.origin || '*');
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
+    res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, private');
+    res.setHeader('Pragma', 'no-cache');
+    res.setHeader('Expires', '0');
     
     return res.json({ 
       status: 'success', 
