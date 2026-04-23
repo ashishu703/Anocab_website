@@ -76,56 +76,32 @@ app.use(cors({
 app.use(bodyParser.urlencoded({ extended: true, limit: '10mb' }));
 app.use(bodyParser.json({ limit: '10mb' }));
 
-// Session middleware with MongoDB store (fixes cluster mode issue)
+// Session Store Setup - Simple configuration
 const sessionStore = MongoStore.create({
   mongoUrl: process.env.MONGODB_URI,
-  touchAfter: 24 * 3600, // lazy session update (24 hours)
-  ttl: 24 * 60 * 60, // Session TTL (24 hours)
-  autoRemove: 'native', // Let MongoDB handle expired sessions
-  crypto: {
-    secret: process.env.SESSION_SECRET || 'fallback-secret-key'
-  },
-  mongoOptions: {
-    serverSelectionTimeoutMS: 30000,
-    socketTimeoutMS: 45000,
-  }
+  collectionName: 'sessions',
+  ttl: 24 * 60 * 60, // 1 day
+  autoRemove: 'native'
 });
 
-// Handle session store errors
-sessionStore.on('error', (error) => {
-  console.error('❌ Session store error:', error);
-});
+console.log('✅ Session store initialized');
 
-// Log when session store is connected
-sessionStore.on('connected', () => {
-  console.log('✅ Session store connected to MongoDB');
-});
-
-// Log session operations for debugging
-sessionStore.on('create', (sessionId) => {
-  console.log('📝 Session created:', sessionId);
-});
-
-sessionStore.on('set', (sessionId) => {
-  console.log('💾 Session saved:', sessionId);
-});
-
+// Setup session middleware BEFORE routes
 app.use(session({
-  secret: process.env.SESSION_SECRET || 'fallback-secret-key',
+  secret: process.env.SESSION_SECRET || 'fallback-secret-key-change-in-production',
   resave: false,
   saveUninitialized: false,
-  name: 'connect.sid', // Keep default name for compatibility with existing cookies
-  proxy: true, // Trust proxy (nginx)
+  name: 'anocab.sid',
   store: sessionStore,
   cookie: { 
-    secure: process.env.NODE_ENV === 'production', // HTTPS only in production
+    secure: false, // Set to true only with HTTPS
     httpOnly: true,
-    maxAge: 24 * 60 * 60 * 1000, // 24 hours
-    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax', // 'none' for cross-origin in production
-    path: '/',
-    domain: process.env.NODE_ENV === 'production' ? '.anocab.com' : undefined // Share across subdomains
+    maxAge: 24 * 60 * 60 * 1000, // 1 day
+    sameSite: 'lax'
   }
 }));
+
+console.log('✅ Session middleware configured');
 
 // Serve static files from parent directory
 app.use(express.static(path.join(__dirname, '..')));

@@ -25,6 +25,3 @@
   console.log('🌐 API Base URL:', window.API_BASE_URL);
   console.log('📍 Environment:', hostname === 'localhost' ? 'Development' : 'Production');
 })();
-
-// Also define as const for backward compatibility
-const API_BASE_URL = window.API_BASE_URL;
