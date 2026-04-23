@@ -99,7 +99,7 @@ app.use(session({
   secret: process.env.SESSION_SECRET || 'fallback-secret-key-change-in-production',
   resave: false,
   saveUninitialized: false,
-  name: 'connect.sid',
+  name: 'anocab.sid',
   store: sessionStore,
   proxy: true,
   cookie: { 

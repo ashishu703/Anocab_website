@@ -269,6 +269,45 @@
       background: #fee2e2;
       color: #991b1b;
     }
+
+    .inline-row {
+      display: flex;
+      gap: 20px;
+      margin-bottom: 15px;
+    }
+
+    .inline-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+    }
+
+    .preview-container {
+      margin-top: 15px;
+      display: none;
+    }
+
+    .preview-img {
+      max-width: 200px;
+      max-height: 100px;
+      border-radius: 8px;
+      border: 2px solid #e5e7eb;
+    }
+
+    .url-section-hidden {
+      display: none;
+    }
+
+    .checkbox-inline {
+      margin-right: 8px;
+    }
+
+    .error-hint {
+      font-size: 12px;
+      color: #999;
+      margin-top: 10px;
+    }
   </style>
 </head>
 <body>
@@ -294,12 +333,12 @@
         
         <div class="form-group">
           <label class="form-label">Logo Upload Method</label>
-          <div style="display: flex; gap: 20px; margin-bottom: 15px;">
-            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+          <div class="inline-row">
+            <label class="inline-label">
               <input type="radio" name="uploadMethod" value="file" checked onchange="toggleUploadMethod()">
               <span>Upload File</span>
             </label>
-            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+            <label class="inline-label">
               <input type="radio" name="uploadMethod" value="url" onchange="toggleUploadMethod()">
               <span>Use URL</span>
             </label>
@@ -309,18 +348,18 @@
         <div class="form-group" id="fileUploadSection">
           <label class="form-label">Upload Logo Image *</label>
           <input type="file" class="form-input" id="clientLogoFile" accept="image/*" onchange="previewLogo(this)">
-          <small style="color: #6b7280; font-size: 12px; display: block; margin-top: 5px;">
+          <small class="error-hint">
             📁 Supported: JPG, PNG, SVG (Max 2MB)
           </small>
-          <div id="logoPreview" style="margin-top: 15px; display: none;">
-            <img id="previewImage" style="max-width: 200px; max-height: 100px; border-radius: 8px; border: 2px solid #e5e7eb;">
+          <div id="logoPreview" class="preview-container">
+            <img id="previewImage" class="preview-img" alt="Logo preview">
           </div>
         </div>
 
-        <div class="form-group" id="urlUploadSection" style="display: none;">
+        <div class="form-group url-section-hidden" id="urlUploadSection">
           <label class="form-label">Logo URL (Cloudinary recommended) *</label>
           <input type="url" class="form-input" id="clientLogoUrl" placeholder="https://res.cloudinary.com/...">
-          <small style="color: #6b7280; font-size: 12px; display: block; margin-top: 5px;">
+          <small class="error-hint">
             💡 Paste Cloudinary or any image URL here
           </small>
         </div>
@@ -331,7 +370,7 @@
         </div>
         <div class="form-group">
           <label class="form-label">
-            <input type="checkbox" id="clientActive" checked style="margin-right: 8px;">
+            <input type="checkbox" id="clientActive" checked class="checkbox-inline">
             Active (Show on website)
           </label>
         </div>
@@ -365,12 +404,12 @@
         
         <div class="form-group">
           <label class="form-label">Logo Upload Method</label>
-          <div style="display: flex; gap: 20px; margin-bottom: 15px;">
-            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+          <div class="inline-row">
+            <label class="inline-label">
               <input type="radio" name="editUploadMethod" value="file" checked onchange="toggleEditUploadMethod()">
               <span>Upload File</span>
             </label>
-            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+            <label class="inline-label">
               <input type="radio" name="editUploadMethod" value="url" onchange="toggleEditUploadMethod()">
               <span>Use URL</span>
             </label>
@@ -380,12 +419,12 @@
         <div class="form-group" id="editFileUploadSection">
           <label class="form-label">Upload New Logo Image</label>
           <input type="file" class="form-input" id="editClientLogoFile" accept="image/*" onchange="previewEditLogo(this)">
-          <div id="editLogoPreview" style="margin-top: 15px; display: none;">
-            <img id="editPreviewImage" style="max-width: 200px; max-height: 100px; border-radius: 8px; border: 2px solid #e5e7eb;">
+          <div id="editLogoPreview" class="preview-container">
+            <img id="editPreviewImage" class="preview-img" alt="Logo preview">
           </div>
         </div>
 
-        <div class="form-group" id="editUrlUploadSection" style="display: none;">
+        <div class="form-group url-section-hidden" id="editUrlUploadSection">
           <label class="form-label">Logo URL *</label>
           <input type="url" class="form-input" id="editClientLogoUrl">
         </div>
@@ -396,7 +435,7 @@
         </div>
         <div class="form-group">
           <label class="form-label">
-            <input type="checkbox" id="editClientActive" style="margin-right: 8px;">
+            <input type="checkbox" id="editClientActive" class="checkbox-inline">
             Active (Show on website)
           </label>
         </div>

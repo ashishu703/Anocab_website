@@ -8,6 +8,9 @@ const session = require('express-session');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Trust proxy - required for correct req.secure/req.protocol behind nginx
+app.set('trust proxy', 1);
+
 // Middleware
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -17,8 +20,9 @@ app.use(session({
   secret: process.env.SESSION_SECRET || 'fallback-secret-key',
   resave: false,
   saveUninitialized: false,
+  name: 'anocab.admin.sid',
   cookie: { 
-    secure: false, // Set to true if using HTTPS
+    secure: process.env.NODE_ENV === 'production',
     httpOnly: true,
     maxAge: 24 * 60 * 60 * 1000 // 24 hours
   }
@@ -123,9 +127,9 @@ app.post('/update-prices', isAuthenticated, express.json(), (req, res) => {
   fs.writeFile(PRICES_FILE, JSON.stringify(newPrices, null, 2), (err) => {
     if (err) {
       console.error('Error saving prices:', err);
-      return res.status(500).send('Error saving prices');
+      return res.status(500).json({ status: 'error', message: 'Error saving prices' });
     }
-    res.redirect('/admin_panel/price_marquee.html');
+    return res.json({ status: 'success', message: 'Prices updated successfully', prices: newPrices });
   });
 });
 
