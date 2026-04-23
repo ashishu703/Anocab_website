@@ -76,44 +76,39 @@ app.use(cors({
 app.use(bodyParser.urlencoded({ extended: true, limit: '10mb' }));
 app.use(bodyParser.json({ limit: '10mb' }));
 
-// Wait for MongoDB connection, then setup session
-mongoose.connection.once('open', () => {
-  console.log('✅ MongoDB connection ready for session store');
-  
-  // Session Store Setup - Use existing mongoose connection
-  const sessionStore = MongoStore.create({
-    client: mongoose.connection.getClient(),
-    collectionName: 'sessions',
-    ttl: 24 * 60 * 60, // 1 day
-    autoRemove: 'native',
-    touchAfter: 24 * 3600 // Lazy session update
-  });
-
-  sessionStore.on('error', (error) => {
-    console.error('❌ Session store error:', error);
-  });
-
-  console.log('✅ Session store initialized');
-
-  // Setup session middleware BEFORE routes
-  app.use(session({
-    secret: process.env.SESSION_SECRET || 'fallback-secret-key-change-in-production',
-    resave: false,
-    saveUninitialized: false,
-    name: 'connect.sid', // Keep standard name for compatibility
-    store: sessionStore,
-    proxy: true, // Trust proxy for production
-    cookie: { 
-      secure: process.env.NODE_ENV === 'production', // Auto-detect based on environment
-      httpOnly: true,
-      maxAge: 24 * 60 * 60 * 1000, // 1 day
-      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax', // 'none' required for cross-origin with secure
-      path: '/'
-    }
-  }));
-
-  console.log('✅ Session middleware configured');
+// Session Store Setup - Create immediately, don't wait for connection
+const sessionStore = MongoStore.create({
+  mongoUrl: process.env.MONGODB_URI,
+  collectionName: 'sessions',
+  ttl: 24 * 60 * 60, // 1 day
+  autoRemove: 'native',
+  touchAfter: 24 * 3600 // Lazy session update
 });
+
+sessionStore.on('error', (error) => {
+  console.error('❌ Session store error:', error);
+});
+
+console.log('✅ Session store initialized');
+
+// Setup session middleware IMMEDIATELY - don't wait for MongoDB
+app.use(session({
+  secret: process.env.SESSION_SECRET || 'fallback-secret-key-change-in-production',
+  resave: false,
+  saveUninitialized: false,
+  name: 'connect.sid',
+  store: sessionStore,
+  proxy: true,
+  cookie: { 
+    secure: process.env.NODE_ENV === 'production',
+    httpOnly: true,
+    maxAge: 24 * 60 * 60 * 1000,
+    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+    path: '/'
+  }
+}));
+
+console.log('✅ Session middleware configured');
 
 // Serve static files from parent directory
 app.use(express.static(path.join(__dirname, '..')));
