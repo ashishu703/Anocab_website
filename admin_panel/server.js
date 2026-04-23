@@ -3,7 +3,7 @@ const express = require('express');
 const fs = require('fs');
 const path = require('path');
 const bodyParser = require('body-parser');
-const session = require('express-session');
+const jwt = require('jsonwebtoken');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -15,74 +15,35 @@ app.set('trust proxy', 1);
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-// Session middleware
-app.use(session({
-  secret: process.env.SESSION_SECRET || 'fallback-secret-key',
-  resave: false,
-  saveUninitialized: false,
-  name: 'anocab.admin.sid',
-  cookie: { 
-    secure: process.env.NODE_ENV === 'production' ? 'auto' : false,
-    httpOnly: true,
-    maxAge: 24 * 60 * 60 * 1000 // 24 hours
-  }
-}));
-
 app.use(express.static(path.join(__dirname, '..'))); // Serve static files from the root directory
+
+// JWT Helper Functions
+function verifyToken(token) {
+  try {
+    return jwt.verify(token, process.env.JWT_SECRET || 'fallback-jwt-secret');
+  } catch (error) {
+    return null;
+  }
+}
 
 // Authentication middleware
 function isAuthenticated(req, res, next) {
-  if (req.session && req.session.isAuthenticated) {
-    return next();
+  const authHeader = req.headers.authorization;
+  
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return res.status(401).json({ status: 'error', message: 'Unauthorized. Please login.' });
   }
-  return res.status(401).json({ status: 'error', message: 'Unauthorized. Please login.' });
+  
+  const token = authHeader.substring(7);
+  const decoded = verifyToken(token);
+  
+  if (!decoded) {
+    return res.status(401).json({ status: 'error', message: 'Invalid or expired token.' });
+  }
+  
+  req.user = decoded;
+  return next();
 }
-
-// Login endpoint
-app.post('/login', (req, res) => {
-  const { email, password } = req.body;
-  
-  const adminEmail = process.env.ADMIN_EMAIL;
-  const adminPassword = process.env.ADMIN_PASSWORD;
-  
-  if (email === adminEmail && password === adminPassword) {
-    req.session.isAuthenticated = true;
-    req.session.userEmail = email;
-    req.session.role = 'admin';
-    return res.json({ 
-      status: 'success', 
-      message: 'Login successful',
-      role: 'admin'
-    });
-  } else {
-    return res.status(401).json({ 
-      status: 'error', 
-      message: 'Invalid email or password' 
-    });
-  }
-});
-
-// Logout endpoint
-app.post('/logout', (req, res) => {
-  req.session.destroy((err) => {
-    if (err) {
-      return res.status(500).json({ status: 'error', message: 'Logout failed' });
-    }
-    res.json({ status: 'success', message: 'Logged out successfully' });
-  });
-});
-
-// Check authentication status
-app.get('/check-auth', (req, res) => {
-  if (req.session && req.session.isAuthenticated) {
-    return res.json({ 
-      authenticated: true, 
-      role: req.session.role,
-      email: req.session.userEmail 
-    });
-  }
-  return res.json({ authenticated: false });
-});
 
 // Serve index.html on root route
 app.get('/', (req, res) => {
