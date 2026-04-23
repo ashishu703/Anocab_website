@@ -39,7 +39,9 @@ module.exports = {
         PORT: 1112,
         ADMIN_EMAIL: 'anocab07@gmail.com',
         ADMIN_PASSWORD: 'Anocab@6262',
-        APP_URL: 'https://anocab.com'
+        APP_URL: 'https://anocab.com',
+        SESSION_SECRET: 'anocab-production-secret-key-2026-secure',
+        MONGODB_URI: 'mongodb+srv://ashishu703_db_user:Ashish7870@cluster0.rlc2rg5.mongodb.net/monzo?authSource=admin&retryWrites=true&w=majority'
       },
       error_file: '/var/log/pm2/anocab-website-admin-error.log',
       out_file: '/var/log/pm2/anocab-website-admin-out.log',

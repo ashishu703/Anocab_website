@@ -406,7 +406,7 @@
   </div>
 
   <script>
-    const API_URL = window.API_BASE_URL || 'http://localhost:3000';
+    const API_URL = window.API_BASE_URL || window.location.origin;
 
     // Toggle upload method
     function toggleUploadMethod() {

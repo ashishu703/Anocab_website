@@ -505,7 +505,7 @@
     
     // Wait for API_BASE_URL to be available
     if (typeof API_BASE_URL === 'undefined') {
-      window.API_BASE_URL = 'http://localhost:3000';
+      window.API_BASE_URL = window.location.origin;
     }
 
     // Handle URL input (Cloudinary)

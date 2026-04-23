@@ -15,6 +15,9 @@ const path = require('path');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Trust proxy - required for correct req.secure/req.protocol behind nginx
+app.set('trust proxy', 1);
+
 // Mongoose settings
 mongoose.set('strictQuery', false);
 
@@ -103,9 +106,9 @@ app.use(session({
     secure: process.env.NODE_ENV === 'production',
     httpOnly: true,
     maxAge: 24 * 60 * 60 * 1000,
-    sameSite: 'lax', // Changed from 'none' to 'lax' - same domain
-    path: '/',
-    domain: process.env.NODE_ENV === 'production' ? 'anocab.com' : undefined
+    sameSite: 'lax',
+    path: '/'
+    // No explicit domain - browser defaults to request host, works correctly behind proxy
   }
 }));
 
