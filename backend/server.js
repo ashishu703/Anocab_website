@@ -238,6 +238,30 @@ function isAuthenticated(req, res, next) {
 
 // ==================== AUTH ROUTES ====================
 
+// Test endpoint to verify JWT is working
+app.get('/test-jwt', (req, res) => {
+  try {
+    const testToken = generateToken({ test: 'data', timestamp: Date.now() });
+    res.json({ 
+      status: 'success',
+      message: 'JWT is working',
+      hasJWT: !!jwt,
+      hasGenerateToken: typeof generateToken === 'function',
+      testToken: testToken.substring(0, 50) + '...',
+      env: {
+        hasJwtSecret: !!process.env.JWT_SECRET,
+        jwtExpiresIn: process.env.JWT_EXPIRES_IN
+      }
+    });
+  } catch (error) {
+    res.status(500).json({ 
+      status: 'error',
+      message: error.message,
+      stack: error.stack
+    });
+  }
+});
+
 // Login endpoint
 app.post('/login', (req, res) => {
   const { email, password } = req.body;
