@@ -91,13 +91,15 @@ app.use(session({
   secret: process.env.SESSION_SECRET || 'fallback-secret-key-change-in-production',
   resave: false,
   saveUninitialized: false,
-  name: 'anocab.sid',
+  name: 'connect.sid', // Keep standard name for compatibility
   store: sessionStore,
+  proxy: true, // Trust proxy for production
   cookie: { 
-    secure: false, // Set to true only with HTTPS
+    secure: process.env.NODE_ENV === 'production', // Auto-detect based on environment
     httpOnly: true,
     maxAge: 24 * 60 * 60 * 1000, // 1 day
-    sameSite: 'lax'
+    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax', // 'none' required for cross-origin with secure
+    path: '/'
   }
 }));
 
