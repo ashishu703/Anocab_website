@@ -15,7 +15,7 @@ const path = require('path');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Trust proxy - required for correct req.secure/req.protocol behind nginx
+// Trust nginx reverse proxy (needed for correct secure cookie handling)
 app.set('trust proxy', 1);
 
 // Mongoose settings
@@ -107,6 +107,7 @@ app.use(session({
     httpOnly: true,
     maxAge: 24 * 60 * 60 * 1000,
     sameSite: 'lax',
+    domain: process.env.NODE_ENV === 'production' ? '.anocab.com' : undefined,
     path: '/'
     // No explicit domain - browser defaults to request host, works correctly behind proxy
   }
