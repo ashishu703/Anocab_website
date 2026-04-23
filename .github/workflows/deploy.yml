@@ -25,7 +25,7 @@ jobs:
         MAIL_PASS: ${{ secrets.MAIL_PASS }}
         ADMIN_EMAIL: ${{ secrets.ADMIN_EMAIL }}
         ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
-        SESSION_SECRET: ${{ secrets.SESSION_SECRET }}
+        JWT_SECRET: ${{ secrets.JWT_SECRET }}
       run: |
         sshpass -p "$SERVER_PASSWORD" ssh -o StrictHostKeyChecking=no root@$SERVER_IP "
           set -e
@@ -58,7 +58,8 @@ jobs:
           echo "CORS_ORIGIN=*" >> /var/www/anocab/backend/.env
           echo "ADMIN_EMAIL=${ADMIN_EMAIL}" >> /var/www/anocab/backend/.env
           echo "ADMIN_PASSWORD=${ADMIN_PASSWORD}" >> /var/www/anocab/backend/.env
-          echo "SESSION_SECRET=${SESSION_SECRET}" >> /var/www/anocab/backend/.env
+          echo "JWT_SECRET=${JWT_SECRET}" >> /var/www/anocab/backend/.env
+          echo "JWT_EXPIRES_IN=24h" >> /var/www/anocab/backend/.env
           echo "MONGODB_URI=${MONGODB_URI}" >> /var/www/anocab/backend/.env
           echo "MAIL_USER=${MAIL_USER}" >> /var/www/anocab/backend/.env
           echo "MAIL_PASS=${MAIL_PASS}" >> /var/www/anocab/backend/.env
@@ -71,7 +72,7 @@ jobs:
           echo "APP_URL=https://anocab.com" >> /var/www/anocab/admin_panel/.env
           echo "ADMIN_EMAIL=${ADMIN_EMAIL}" >> /var/www/anocab/admin_panel/.env
           echo "ADMIN_PASSWORD=${ADMIN_PASSWORD}" >> /var/www/anocab/admin_panel/.env
-          echo "SESSION_SECRET=${SESSION_SECRET}" >> /var/www/anocab/admin_panel/.env
+          echo "JWT_SECRET=${JWT_SECRET}" >> /var/www/anocab/admin_panel/.env
           
           echo "PORT=1113" > /var/www/anocab/apply_now/.env
           echo "NODE_ENV=production" >> /var/www/anocab/apply_now/.env

@@ -4,8 +4,7 @@ const mongoose = require('mongoose');
 const nodemailer = require('nodemailer');
 const bodyParser = require('body-parser');
 const multer = require('multer');
-const session = require('express-session');
-const MongoStore = require('connect-mongo');
+const jwt = require('jsonwebtoken');
 const cors = require('cors');
 const helmet = require('helmet');
 const crypto = require('crypto');
@@ -49,7 +48,7 @@ app.use(helmet({
   crossOriginResourcePolicy: { policy: "cross-origin" }
 }));
 
-// CORS Middleware with credentials
+// CORS Middleware - JWT doesn't need credentials
 app.use(cors({
   origin: function(origin, callback) {
     // Allow requests with no origin (like mobile apps or curl requests)
@@ -69,51 +68,16 @@ app.use(cors({
       callback(null, true); // Allow all for now
     }
   },
-  credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'Cookie'],
-  exposedHeaders: ['Set-Cookie']
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  exposedHeaders: ['Authorization']
 }));
 
 // Body Parser Middleware (increased limit for image uploads)
 app.use(bodyParser.urlencoded({ extended: true, limit: '10mb' }));
 app.use(bodyParser.json({ limit: '10mb' }));
 
-// Session Store Setup - Create immediately, don't wait for connection
-const sessionStore = MongoStore.create({
-  mongoUrl: process.env.MONGODB_URI,
-  collectionName: 'sessions',
-  ttl: 24 * 60 * 60, // 1 day
-  autoRemove: 'native',
-  touchAfter: 24 * 3600 // Lazy session update
-});
-
-sessionStore.on('error', (error) => {
-  console.error('❌ Session store error:', error);
-});
-
-console.log('✅ Session store initialized');
-
-// Setup session middleware IMMEDIATELY - don't wait for MongoDB
-app.use(session({
-  secret: process.env.SESSION_SECRET || 'fallback-secret-key-change-in-production',
-  resave: false,
-  saveUninitialized: false,
-  name: 'connect.sid',
-  store: sessionStore,
-  proxy: true,
-  cookie: { 
-    secure: process.env.NODE_ENV === 'production' ? 'auto' : false,
-    httpOnly: true,
-    maxAge: 24 * 60 * 60 * 1000,
-    sameSite: 'lax',
-    domain: process.env.NODE_ENV === 'production' ? '.anocab.com' : undefined,
-    path: '/'
-    // No explicit domain - browser defaults to request host, works correctly behind proxy
-  }
-}));
-
-console.log('✅ Session middleware configured');
+console.log('✅ JWT authentication configured');
 
 // Serve static files from parent directory
 app.use(express.static(path.join(__dirname, '..')));
@@ -221,29 +185,54 @@ const upload = multer({
   }
 });
 
+// ==================== JWT HELPER FUNCTIONS ====================
+
+function generateToken(payload) {
+  return jwt.sign(payload, process.env.JWT_SECRET || 'fallback-jwt-secret', {
+    expiresIn: process.env.JWT_EXPIRES_IN || '24h'
+  });
+}
+
+function verifyToken(token) {
+  try {
+    return jwt.verify(token, process.env.JWT_SECRET || 'fallback-jwt-secret');
+  } catch (error) {
+    return null;
+  }
+}
+
 // ==================== AUTHENTICATION MIDDLEWARE ====================
 
 function isAuthenticated(req, res, next) {
+  const authHeader = req.headers.authorization;
+  
   console.log('🔐 Auth check:', {
-    hasSession: !!req.session,
-    isAuthenticated: req.session?.isAuthenticated,
-    sessionID: req.sessionID,
-    userEmail: req.session?.userEmail,
-    cookies: req.headers.cookie?.substring(0, 50) + '...' // Log only first 50 chars
+    hasAuthHeader: !!authHeader,
+    authHeaderPreview: authHeader?.substring(0, 20) + '...'
   });
   
-  // Check if session exists and is authenticated
-  if (!req.session) {
-    console.error('❌ No session object found');
-    return res.status(401).json({ status: 'error', message: 'Session not found. Please login again.' });
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    console.error('❌ No authorization header or invalid format');
+    return res.status(401).json({ 
+      status: 'error', 
+      message: 'Unauthorized. Please login.' 
+    });
   }
   
-  if (!req.session.isAuthenticated) {
-    console.error('❌ Session not authenticated');
-    return res.status(401).json({ status: 'error', message: 'Unauthorized. Please login.' });
+  const token = authHeader.substring(7); // Remove 'Bearer ' prefix
+  const decoded = verifyToken(token);
+  
+  if (!decoded) {
+    console.error('❌ Invalid or expired token');
+    return res.status(401).json({ 
+      status: 'error', 
+      message: 'Invalid or expired token. Please login again.' 
+    });
   }
   
-  console.log('✅ Authentication successful for:', req.session.userEmail);
+  // Attach user info to request
+  req.user = decoded;
+  console.log('✅ Authentication successful for:', decoded.email);
   return next();
 }
 
@@ -256,50 +245,27 @@ app.post('/login', (req, res) => {
   const adminEmail = process.env.ADMIN_EMAIL;
   const adminPassword = process.env.ADMIN_PASSWORD;
   
-  console.log('Login attempt:', { 
-    email, 
-    adminEmail, 
-    passwordMatch: password === adminPassword,
-    hasSession: !!req.session,
-    sessionID: req.sessionID 
-  });
+  console.log('🔑 Login attempt:', { email, adminEmail });
   
   if (email === adminEmail && password === adminPassword) {
-    req.session.isAuthenticated = true;
-    req.session.userEmail = email;
-    req.session.role = 'admin';
-    req.session.loginTime = new Date();
-    
-    console.log('Setting session data:', {
-      isAuthenticated: req.session.isAuthenticated,
-      userEmail: req.session.userEmail,
-      sessionID: req.sessionID
+    // Generate JWT token
+    const token = generateToken({
+      email: email,
+      role: 'admin',
+      loginTime: new Date().toISOString()
     });
     
-    // Save session to MongoDB before sending response
-    req.session.save((err) => {
-      if (err) {
-        console.error('Session save error:', err);
-        return res.status(500).json({ 
-          status: 'error', 
-          message: 'Login failed. Please try again.' 
-        });
-      }
-      
-      console.log('✅ Session saved successfully:', {
-        sessionID: req.sessionID,
-        isAuthenticated: req.session.isAuthenticated,
-        userEmail: req.session.userEmail
-      });
-      
-      return res.json({ 
-        status: 'success', 
-        message: 'Login successful',
-        role: 'admin',
-        sessionID: req.sessionID // For debugging
-      });
+    console.log('✅ Login successful, token generated for:', email);
+    
+    return res.json({ 
+      status: 'success', 
+      message: 'Login successful',
+      token: token,
+      role: 'admin',
+      email: email
     });
   } else {
+    console.error('❌ Invalid credentials');
     return res.status(401).json({ 
       status: 'error', 
       message: 'Invalid email or password' 
@@ -307,26 +273,33 @@ app.post('/login', (req, res) => {
   }
 });
 
-// Logout endpoint
+// Logout endpoint (JWT is stateless, so just return success)
 app.post('/logout', (req, res) => {
-  req.session.destroy((err) => {
-    if (err) {
-      return res.status(500).json({ status: 'error', message: 'Logout failed' });
-    }
-    res.json({ status: 'success', message: 'Logged out successfully' });
-  });
+  console.log('🚪 Logout request received');
+  // With JWT, logout is handled client-side by removing the token
+  res.json({ status: 'success', message: 'Logged out successfully' });
 });
 
 // Check authentication status
 app.get('/check-auth', (req, res) => {
-  if (req.session && req.session.isAuthenticated) {
-    return res.json({ 
-      authenticated: true, 
-      role: req.session.role,
-      email: req.session.userEmail 
-    });
+  const authHeader = req.headers.authorization;
+  
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return res.json({ authenticated: false });
   }
-  return res.json({ authenticated: false });
+  
+  const token = authHeader.substring(7);
+  const decoded = verifyToken(token);
+  
+  if (!decoded) {
+    return res.json({ authenticated: false });
+  }
+  
+  return res.json({ 
+    authenticated: true, 
+    role: decoded.role,
+    email: decoded.email 
+  });
 });
 
 // ==================== PRICE MARQUEE ROUTES ====================

@@ -12,7 +12,8 @@ module.exports = {
         ADMIN_PASSWORD: 'Anocab@6262',
         API_BASE_URL: 'https://anocab.com',
         CORS_ORIGIN: '*',
-        SESSION_SECRET: 'anocab-production-secret-key-2026-secure',
+        JWT_SECRET: 'anocab-jwt-secret-key-2026-super-secure-change-this',
+        JWT_EXPIRES_IN: '24h',
         MONGODB_URI: 'mongodb+srv://ashishu703_db_user:Ashish7870@cluster0.rlc2rg5.mongodb.net/monzo?authSource=admin&retryWrites=true&w=majority'
       },
       error_file: '/var/log/pm2/anocab-website-backend-error.log',
@@ -40,7 +41,7 @@ module.exports = {
         ADMIN_EMAIL: 'anocab07@gmail.com',
         ADMIN_PASSWORD: 'Anocab@6262',
         APP_URL: 'https://anocab.com',
-        SESSION_SECRET: 'anocab-production-secret-key-2026-secure',
+        JWT_SECRET: 'anocab-jwt-secret-key-2026-super-secure-change-this',
         MONGODB_URI: 'mongodb+srv://ashishu703_db_user:Ashish7870@cluster0.rlc2rg5.mongodb.net/monzo?authSource=admin&retryWrites=true&w=majority'
       },
       error_file: '/var/log/pm2/anocab-website-admin-error.log',
