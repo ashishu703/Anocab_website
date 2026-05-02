@@ -385,7 +385,7 @@
   </div>
 
   <script>
-    const API_BASE_URL = window.location.origin || "http://localhost:3000";
+    const API_BASE_URL = window.API_BASE_URL || "https://anocab.com";
     
     // Image storage
     let images = {
@@ -640,10 +640,14 @@
         }
         
         if (images.jeoLogo) {
-          // Calculate width maintaining aspect ratio
+          // JEO logo: 30% width increase, 10% height increase
+          const jeoHeight = logoHeight * 1.10; // 10% height increase
           const aspectRatio = images.jeoLogo.width / images.jeoLogo.height;
-          const logoWidth = logoHeight * aspectRatio;
-          ctx.drawImage(images.jeoLogo, canvas.width - logoWidth - 60, logoY, logoWidth, logoHeight);
+          const jeoWidth = (jeoHeight * aspectRatio) * 1.30; // 30% width increase
+          
+          // Shift left by 100px from right edge (was 60px)
+          const jeoX = canvas.width - jeoWidth - 100;
+          ctx.drawImage(images.jeoLogo, jeoX, logoY, jeoWidth, jeoHeight);
         }
         
         yPos += logoHeight + 50; // Increased spacing

@@ -1008,7 +1008,7 @@
         // Load blog function
         async function loadBlog() {
             try {
-                const apiUrl = window.API_BASE_URL || 'http://localhost:3000';
+                const apiUrl = window.API_BASE_URL || 'https://anocab.com';
                 const response = await fetch(`${apiUrl}/api/blogs/${slug}`);
                 
                 if (!response.ok) {

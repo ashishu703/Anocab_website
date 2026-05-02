@@ -208,7 +208,7 @@
             submitBtn.disabled = true;
 
             // Send to backend API
-            const apiUrl = window.API_BASE_URL || 'http://localhost:3000';
+            const apiUrl = window.API_BASE_URL || 'https://anocab.com';
             
             fetch(`${apiUrl}/api/enquiries`, {
                 method: 'POST',

@@ -49,10 +49,10 @@
   let approvedPVC = null;
   let approvedCopper = null;
 
-  const API_BASE_URL = "http://localhost:3000";
+  const API_BASE_URL = window.API_BASE_URL || "https://anocab.com";
   async function fetchApprovedRates() {
   try {
-    const response = await fetch('http://localhost:3000/api/prices/approved');
+    const response = await fetch(`${API_BASE_URL}/api/prices/approved`);
     const apiResponse = await response.json();
     
     // Check if we have the data array

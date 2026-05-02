@@ -524,7 +524,7 @@
     </div>
 
     <script>
-        const API_URL = window.location.hostname === 'localhost' ? 'http://localhost:3000' : 'https://api.anocab.com';
+        const API_URL = window.API_BASE_URL || 'https://anocab.com';
         let allSubscribers = [];
         let selectedEmails = [];
 

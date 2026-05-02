@@ -122,7 +122,7 @@
     button.disabled = true;
     
     try {
-      const apiUrl = window.API_BASE_URL || 'http://localhost:3000';
+      const apiUrl = window.API_BASE_URL || 'https://anocab.com';
       const response = await fetch(`${apiUrl}/api/newsletter`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

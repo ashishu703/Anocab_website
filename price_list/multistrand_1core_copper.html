@@ -70,7 +70,7 @@
     [3, 6, 160.02, 49.23, 101.19, 0, 0, 90]
   ];
 
-  const API_BASE_URL = "http://localhost:3000";
+  const API_BASE_URL = window.API_BASE_URL || "https://anocab.com";
   async function fetchRates() {
     try {
       console.log('Fetching rates from API...');
