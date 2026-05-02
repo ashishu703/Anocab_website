@@ -1,0 +1,17 @@
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://anocab.com/sitemap.xml
+
+# Disallow admin areas
+Disallow: /admin_panel/
+Disallow: /backend/
+Disallow: /apply_now/
+
+# Allow all other pages
+Allow: /products/
+Allow: /about_us/
+Allow: /contact_us/
+Allow: /media/
+Allow: /certificates/

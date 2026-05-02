@@ -19,16 +19,26 @@
 .slider-carousel {
     position: relative;
     overflow: hidden;
+    background: #000;
 }
 
 .slide-item {
-    display: none;
-    position: relative;
+    position: absolute;
+    top: 0;
+    left: 0;
     width: 100%;
+    height: auto;
+    opacity: 0;
+    transition: opacity 0.8s ease-in-out;
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    will-change: opacity;
 }
 
 .slide-item.active {
-    display: block;
+    opacity: 1;
+    z-index: 2;
+    position: relative;
 }
 
 .slide-bg {
@@ -36,16 +46,18 @@
     height: auto;
     object-fit: cover;
     display: block;
+    transform: translateZ(0);
 }
 
 .content-container {
     position: absolute;
     top: 50%;
     right: 10%;
-    transform: translateY(-50%);
+    transform: translateY(-50%) translateZ(0);
     color: white;
     text-align: right;
     text-shadow: 1px 1px 2px rgba(0,0,0,0.6);
+    will-change: transform, opacity;
 }
 
 .animate-text {

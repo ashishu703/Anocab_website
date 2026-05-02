@@ -28,7 +28,7 @@
       <div class="newsletter-modal">
         <button class="newsletter-close" onclick="closeNewsletterPopup()">&times;</button>
         <div class="newsletter-content">
-          <img src="https://res.cloudinary.com/dngojnptn/image/upload/v1776765224/WhatsApp_Image_2026-04-21_at_3.09.29_PM-removebg-preview_yj9ryu.png" alt="Anocab" class="newsletter-logo">
+          <img src="https://res.cloudinary.com/drpbrn2ax/image/upload/f_auto,q_auto/v1742800560/prealoader2_zqp42i.gif" alt="Anocab" class="newsletter-logo">
           <h2>Subscribe to Our Newsletter</h2>
           <p>Get the latest updates on products, prices, and special offers!</p>
           <form id="newsletter-form" onsubmit="submitNewsletter(event)">
@@ -39,8 +39,8 @@
           
           <div class="app-promotion">
             <div class="app-divider"><span>Also Available On</span></div>
-            <a href="https://play.google.com/store/apps/details?id=com.anocab" target="_blank" class="app-link">
-              <img src="https://res.cloudinary.com/dngojnptn/image/upload/v1776765224/WhatsApp_Image_2026-04-21_at_3.09.29_PM-removebg-preview_yj9ryu.png" alt="Anocab App" class="app-icon">
+            <a href="https://play.google.com/store/apps/details?id=com.company.anocab" target="_blank" class="app-link">
+              <img src="https://res.cloudinary.com/drpbrn2ax/image/upload/f_auto,q_auto/v1742800560/prealoader2_zqp42i.gif" alt="Anocab App" class="app-icon">
               <div class="app-text">
                 <span class="app-title">Anocab App</span>
                 <span class="app-subtitle">Available on Google Play Store</span>

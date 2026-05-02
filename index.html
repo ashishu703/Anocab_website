@@ -16,36 +16,78 @@
     <meta property="og:description" content="anode elctric is one of the leading and largest Electric cables company across India with more than 5yrs of experience. We produce quality Cables, Wires.">
     <meta property="og:type" content="business.business">
     <meta property="og:image" content="anocab.com">
+    
+    <!-- Preconnect to external domains for faster loading -->
+    <link rel="preconnect" href="https://res.cloudinary.com">
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+    <link rel="preconnect" href="https://cdn.jsdelivr.net">
+    <link rel="dns-prefetch" href="https://res.cloudinary.com">
+    <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
+    <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
+    
     <!-- Global site tag (gtag.js) - Google Analytics -->
     <!-- Favicon and Touch Icons -->
-    <link href="https://res.cloudinary.com/drpbrn2ax/image/upload/v1742800584/anocab1_uavzrx.webp" rel="shortcut icon"    type="image/png">
-    <link href="https://res.cloudinary.com/drpbrn2ax/image/upload/v1742800584/anocab1_uavzrx.webp" rel="apple-touch-icon" sizes="57x57">
-    <link href="https://res.cloudinary.com/drpbrn2ax/image/upload/v1742800584/anocab1_uavzrx.webp" rel="apple-touch-icon" sizes="72x72">
-    <link href="https://res.cloudinary.com/drpbrn2ax/image/upload/v1742800584/anocab1_uavzrx.webp" rel="apple-touch-icon" sizes="114x114">
-    <link href="https://res.cloudinary.com/drpbrn2ax/image/upload/v1742800584/anocab1_uavzrx.webp" rel="apple-touch-icon" sizes="144x144">
+    <link href="https://res.cloudinary.com/drpbrn2ax/image/upload/f_auto,q_auto,w_auto/v1742800584/anocab1_uavzrx.webp" rel="shortcut icon"    type="image/png">
+    <link href="https://res.cloudinary.com/drpbrn2ax/image/upload/f_auto,q_auto,w_auto/v1742800584/anocab1_uavzrx.webp" rel="apple-touch-icon" sizes="57x57">
+    <link href="https://res.cloudinary.com/drpbrn2ax/image/upload/f_auto,q_auto,w_auto/v1742800584/anocab1_uavzrx.webp" rel="apple-touch-icon" sizes="72x72">
+    <link href="https://res.cloudinary.com/drpbrn2ax/image/upload/f_auto,q_auto,w_auto/v1742800584/anocab1_uavzrx.webp" rel="apple-touch-icon" sizes="114x114">
+    <link href="https://res.cloudinary.com/drpbrn2ax/image/upload/f_auto,q_auto,w_auto/v1742800584/anocab1_uavzrx.webp" rel="apple-touch-icon" sizes="144x144">
     <!-- Icon fonts -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
-    <link href="CSS/flaticon.css" rel="stylesheet">
+    
+    <!-- Critical CSS - Inline for fast render -->
+    <style>
+        body{margin:0;padding:0;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;overflow-x:hidden}
+        .preloader{position:fixed;top:0;left:0;width:100%;height:100%;background:#fff;z-index:99999;display:flex;justify-content:center;align-items:center}
+        .preloader-inner img{width:auto;height:auto;max-width:300px;max-height:300px}
+        .site-header{position:relative;z-index:1000}
+        .site-logo img{max-width:200px;height:auto}
+        .hero-slider{position:relative;width:100%;height:600px;overflow:hidden}
+        .slide-item{position:absolute;width:100%;height:100%;opacity:0;transition:opacity 1s ease-in-out}
+        .slide-item.active{opacity:1}
+        .slide-bg{width:100%;height:100%;object-fit:cover}
+    </style>
+    
+    <!-- Non-critical CSS - Deferred -->
+    <link href="CSS/flaticon.css" rel="stylesheet" media="print" onload="this.media='all'">
     <!-- Bootstrap core CSS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.4.1/dist/css/bootstrap.min.css">
-    <link href="CSS/animate.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.4.1/dist/css/bootstrap.min.css" media="print" onload="this.media='all'">
+    <link href="CSS/animate.min.css" rel="stylesheet" media="print" onload="this.media='all'">
     <!-- Plugins for this template -->
-    <link href="CSS/animate.css" rel="stylesheet">
-    <link href="CSS/owl.carousel.css" rel="stylesheet">
-    <link href="CSS/owl.theme.css" rel="stylesheet">
-    <link href="CSS/slick.css" rel="stylesheet">
-    <link href="CSS/slick-theme.css" rel="stylesheet">
-    <link href="CSS/owl.transitions.css" rel="stylesheet">
-    <link href="CSS/jquery.fancybox.css" rel="stylesheet">
-    <link href="CSS/jquery.mCustomScrollbar.min.css" rel="stylesheet">
+    <link href="CSS/animate.css" rel="stylesheet" media="print" onload="this.media='all'">
+    <link href="CSS/owl.carousel.css" rel="stylesheet" media="print" onload="this.media='all'">
+    <link href="CSS/owl.theme.css" rel="stylesheet" media="print" onload="this.media='all'">
+    <link href="CSS/slick.css" rel="stylesheet" media="print" onload="this.media='all'">
+    <link href="CSS/slick-theme.css" rel="stylesheet" media="print" onload="this.media='all'">
+    <link href="CSS/owl.transitions.css" rel="stylesheet" media="print" onload="this.media='all'">
+    <link href="CSS/jquery.fancybox.css" rel="stylesheet" media="print" onload="this.media='all'">
+    <link href="CSS/jquery.mCustomScrollbar.min.css" rel="stylesheet" media="print" onload="this.media='all'">
     <!-- Custom styles for this template -->
     <link href="style.css" rel="stylesheet">
     <link href="CSS/index.css" rel="stylesheet">
-    <link href="CSS/toastr.min.css" rel="stylesheet"/>
+    <link href="CSS/toastr.min.css" rel="stylesheet" media="print" onload="this.media='all'"/>
+    <noscript>
+        <link href="CSS/flaticon.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.4.1/dist/css/bootstrap.min.css">
+        <link href="CSS/animate.min.css" rel="stylesheet">
+        <link href="CSS/animate.css" rel="stylesheet">
+        <link href="CSS/owl.carousel.css" rel="stylesheet">
+        <link href="CSS/owl.theme.css" rel="stylesheet">
+        <link href="CSS/slick.css" rel="stylesheet">
+        <link href="CSS/slick-theme.css" rel="stylesheet">
+        <link href="CSS/owl.transitions.css" rel="stylesheet">
+        <link href="CSS/jquery.fancybox.css" rel="stylesheet">
+        <link href="CSS/jquery.mCustomScrollbar.min.css" rel="stylesheet">
+        <link href="CSS/toastr.min.css" rel="stylesheet">
+    </noscript>
     <!-- API Configuration - MUST load before any API calls -->
-    <script src="/config.js"></script>
-    <script src="js/jquery.min.js"></script>
-    <script src="js/toastr.min.js"></script>
+    <script src="/config.js" defer></script>
+    <script src="js/jquery.min.js" defer></script>
+    <script src="js/toastr.min.js" defer></script>
+    
+    <!-- Quick Actions Component -->
+    <link href="CSS/quick-actions.css" rel="stylesheet">
+    <script src="js/quick-actions.js" defer></script>
     <!-- Google Tag Manager -->
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-CPVPDB7RKW"></script>
@@ -93,7 +135,7 @@
         <!-- start preloader -->
         <div class="preloader">
             <div class="preloader-inner">
-               <img src="https://res.cloudinary.com/drpbrn2ax/image/upload/v1742800560/prealoader2_zqp42i.gif" alt="Loader" style="background:transparent">
+               <img fetchpriority="high" src="https://res.cloudinary.com/drpbrn2ax/image/upload/f_auto,q_auto/v1742800560/prealoader2_zqp42i.gif" alt="Loader" style="background:transparent">
             </div>
         </div>
         <!-- end preloader -->
@@ -107,8 +149,6 @@
                                 <div class="topbar-contact-info" style="margin-top:0px;">
                                     <a href="#" data-toggle="modal" data-target="#myModal" style="color:#fff;font-size:14px;">
                                     <i class="fa fa-book"></i>DOWNLOAD BROCHURE</a>
-                                    <script src="https://platform.linkedin.com/in.js" type="text/javascript"> lang: en_US</script>
-                                    <script type="IN/FollowCompany" data-id="102325911" data-counter="right" class="linkedin-follow-button"></script>
                                 </div>
                             </div>
                         </div>
@@ -116,11 +156,12 @@
                             <div class="social">
                                 <span style="color:white;">FOLLOW: </span>
                                 <ul class="social-links">
-                                    <li><a href="https://www.facebook.com/anocab/" target="_blank"><img src="https://res.cloudinary.com/drpbrn2ax/image/upload/v1742800597/facebook_ctsmsr.webp" alt="facebook" style="width:15px;"></a></li>
-                                    <li><a href="https://x.com/AnodeLtd58778/" target="_blank"><img src="https://res.cloudinary.com/drpbrn2ax/image/upload/v1742800557/x_psxppw.webp" alt="X" style="width:20px;"></a></li>
-                                    <li><a href="https://www.linkedin.com/company/anode-electric-private-limited/" target="_blank"><img src="https://res.cloudinary.com/drpbrn2ax/image/upload/v1742800576/linkedin_wdrdgc.webp" alt="linkedin" style="width:25px;"></a></li>
-                                    <li><a href="https://www.instagram.com/anocabwires/" target="_blank"><img src="https://res.cloudinary.com/drpbrn2ax/image/upload/v1742800569/instagram_siznpc.webp" alt="instagram" style="width:20px;"></a></li>
-                                    <li><a href="https://www.youtube.com/@anocab" target="_blank"><img src="https://res.cloudinary.com/drpbrn2ax/image/upload/v1742800558/yt_xs7fp9.webp" alt="youtube" style="width:20px;"></a></li>
+                                    <li><a href="https://www.facebook.com/anocab/" target="_blank" style="background: #1877F2; color: white; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 50%; transition: transform 0.3s ease;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'"><i class="fab fa-facebook-f" style="font-size: 16px;"></i></a></li>
+                                    <li><a href="https://x.com/AnodeLtd58778/" target="_blank" style="background: #000000; color: white; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 50%; transition: transform 0.3s ease;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'"><i class="fab fa-x-twitter" style="font-size: 16px;"></i></a></li>
+                                    <li><a href="https://www.linkedin.com/company/anode-electric-private-limited/" target="_blank" style="background: #0A66C2; color: white; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 50%; transition: transform 0.3s ease;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'"><i class="fab fa-linkedin-in" style="font-size: 16px;"></i></a></li>
+                                    <li><a href="https://www.instagram.com/anocabwires/" target="_blank" style="background: linear-gradient(45deg, #F58529, #DD2A7B, #8134AF, #515BD4); color: white; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 50%; transition: transform 0.3s ease;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'"><i class="fab fa-instagram" style="font-size: 16px;"></i></a></li>
+                                    <li><a href="https://www.youtube.com/@anocab" target="_blank" style="background: #FF0000; color: white; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 50%; transition: transform 0.3s ease;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'"><i class="fab fa-youtube" style="font-size: 16px;"></i></a></li>
+                                    <li><a href="https://play.google.com/store/apps/details?id=com.company.anocab" target="_blank" style="background: white; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 50%; transition: transform 0.3s ease; padding: 4px;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'"><img src="https://res.cloudinary.com/dngojnptn/image/upload/v1776683252/Screenshot_2026-04-20_163707_tkvpph.png" alt="Anocab App" style="width: 100%; height: 100%; object-fit: contain; border-radius: 50%;"></a></li>
                                 </ul>
                             </div>
                         </div>
@@ -139,7 +180,7 @@
                     <div class="row">
                         <div class="col col-sm-3">
                             <div class="site-logo">
-                                <a class="logo-main" href="https://anocab.com"><img src="https://res.cloudinary.com/drpbrn2ax/image/upload/v1742800577/logo2_kpbkwm.webp" alt="Anocab Electric Logo" style="max-width: 200px;"></a>
+                                <a class="logo-main" href="https://anocab.com"><img src="https://res.cloudinary.com/drpbrn2ax/image/upload/f_auto,q_auto,w_200/v1742800577/logo2_kpbkwm.webp" alt="Anocab Electric Logo" width="200" height="80" fetchpriority="high"></a>
                             </div>
                         </div>
                          <div class="col col-sm-9">
@@ -148,7 +189,7 @@
                                      <a href="https://anocab.com/certificates/certificate/ISO%2014001_2015.html">
                                         <div class="icon">
                                             <!-- <i class="fi flaticon-title"></i> -->
-                                            <img src="https://res.cloudinary.com/drpbrn2ax/image/upload/v1742800590/certificate_ldm9fz.webp" style="width:22%" alt="Certificate">
+                                            <img loading="lazy" src="https://res.cloudinary.com/drpbrn2ax/image/upload/f_auto,q_auto,w_auto/v1742800590/certificate_ldm9fz.webp" style="width:22%" alt="Certificate">
                                         </div>
                                         <div class="award-info">
                                             <h4 style="border-bottom: 2px dotted #FDC900;">Certificates</h4>
@@ -160,7 +201,7 @@
                                     <a href="https://anocab.com/Calculator/index.html">
                                         <div class="icon">
                                             <!-- <i class="fi flaticon-medal"></i> -->
-                                            <img src="https://res.cloudinary.com/drpbrn2ax/image/upload/v1743491456/calc_nz1ne9.png" style="width:22%" alt="Award">
+                                            <img loading="lazy" src="https://res.cloudinary.com/drpbrn2ax/image/upload/f_auto,q_auto,w_auto/v1743491456/calc_nz1ne9.png" style="width:22%" alt="Award">
                                         </div>
                                         <div class="award-info">
                                             <h4 style="border-bottom: 2px dotted #FDC900;">Calculator</h4>
@@ -271,37 +312,68 @@
             <div class="marquee-content">
                 <span class="marquee-text" id="dynamic-prices">Loading prices...</span>
                 <a href="https://wa.me/916262002116" target="_blank" class="whatsapp-chat-btn-inline">
-                    <img src="https://res.cloudinary.com/drpbrn2ax/image/upload/v1742800558/whatsapp_s7si1c.webp" alt="Chat with us on WhatsApp" style="width: 30px; height: 30px; margin-left: 10px; vertical-align: middle;">
+                    <img loading="lazy" src="https://res.cloudinary.com/drpbrn2ax/image/upload/f_auto,q_auto,w_auto/v1742800558/whatsapp_s7si1c.webp" alt="Chat with us on WhatsApp" style="width: 30px; height: 30px; margin-left: 10px; vertical-align: middle;">
                 </a>
             </div>
         </div>
         
         <script>
-            // Function to update marquee prices
-            function updateMarqueePrices() {
+            // Function to update marquee prices with comparison
+            async function updateMarqueePrices() {
                 const apiUrl = window.API_BASE_URL || 'http://localhost:3000';
-                fetch(`${apiUrl}/api/prices`)
-                    .then(response => response.json())
-                    .then(prices => {
-                        const priceText = `
-                            <b>Aluminum EC (Balco) Rs: ${prices.aluminum_ec.toFixed(2)}</b>  | 
-                            <b>Aluminum Alloy (Balco) Rs: ${prices.aluminum_alloy.toFixed(2)}</b>  | 
-                            <b>Copper (LME) Rs: ${prices.copper.toFixed(2)}</b>  | 
-                            <b>PVC - 67GER01F (Reliance) Rs: ${prices.pvc.toFixed(2)}</b>  | 
-                            <b>LLDPE - X24065 (Reliance) Rs: ${prices.lldpe.toFixed(2)}</b>
-                        `;
-                        document.getElementById('dynamic-prices').innerHTML = priceText;
-                    })
-                    .catch(error => {
-                        console.error('Error fetching prices:', error);
-                        document.getElementById('dynamic-prices').innerHTML = 
-                            'Current prices unavailable. Please check back later.';
-                    });
+                
+                try {
+                    // Fetch current prices
+                    const pricesResponse = await fetch(`${apiUrl}/api/prices`);
+                    const prices = await pricesResponse.json();
+                    
+                    // Fetch price history for comparison
+                    const historyResponse = await fetch(`${apiUrl}/api/price-history`);
+                    const priceHistory = await historyResponse.json();
+                    
+                    // Get yesterday's prices (last entry in history)
+                    const yesterdayPrices = priceHistory.length > 0 ? priceHistory[priceHistory.length - 1].prices : {};
+                    
+                    // Function to get trend indicator
+                    function getTrendIndicator(current, previous) {
+                        if (!previous || current === previous) {
+                            return '<span style="color: #ffc107;">●</span>'; // Yellow dot for no change
+                        }
+                        if (current > previous) {
+                            return '<span style="color: #dc3545;">▲</span>'; // Red up arrow (bad for buyers)
+                        }
+                        return '<span style="color: #28a745;">▼</span>'; // Green down arrow (good for buyers)
+                    }
+                    
+                    // Function to format price change
+                    function getPriceChange(current, previous) {
+                        if (!previous || current === previous) return '';
+                        const change = current - previous;
+                        const changeStr = change >= 0 ? `+${change.toFixed(2)}` : change.toFixed(2);
+                        return ` <small>(${changeStr})</small>`;
+                    }
+                    
+                    const priceText = `
+                        <b>Aluminum EC (Balco) Rs: ${prices.aluminum_ec.toFixed(2)}</b> ${getTrendIndicator(prices.aluminum_ec, yesterdayPrices.aluminum_ec)}${getPriceChange(prices.aluminum_ec, yesterdayPrices.aluminum_ec)}  | 
+                        <b>Aluminum Alloy (Balco) Rs: ${prices.aluminum_alloy.toFixed(2)}</b> ${getTrendIndicator(prices.aluminum_alloy, yesterdayPrices.aluminum_alloy)}${getPriceChange(prices.aluminum_alloy, yesterdayPrices.aluminum_alloy)}  | 
+                        <b>Copper (LME) Rs: ${prices.copper.toFixed(2)}</b> ${getTrendIndicator(prices.copper, yesterdayPrices.copper)}${getPriceChange(prices.copper, yesterdayPrices.copper)}  | 
+                        <b>PVC - 67GER01F (Reliance) Rs: ${prices.pvc.toFixed(2)}</b> ${getTrendIndicator(prices.pvc, yesterdayPrices.pvc)}${getPriceChange(prices.pvc, yesterdayPrices.pvc)}  | 
+                        <b>LLDPE - X24065 (Reliance) Rs: ${prices.lldpe.toFixed(2)}</b> ${getTrendIndicator(prices.lldpe, yesterdayPrices.lldpe)}${getPriceChange(prices.lldpe, yesterdayPrices.lldpe)}
+                    `;
+                    document.getElementById('dynamic-prices').innerHTML = priceText;
+                } catch (error) {
+                    console.error('Error fetching prices:', error);
+                    document.getElementById('dynamic-prices').innerHTML = 
+                        'Current prices unavailable. Please check back later.';
+                }
             }
+            
             // Update immediately
             updateMarqueePrices();
+            
             // Update every 5 minutes (300000 ms)
             setInterval(updateMarqueePrices, 300000);
+            
             // Marquee control functions
             function stopMarquee() {
                 document.querySelector('.marquee-content').style.animationPlayState = 'paused';
@@ -310,46 +382,8 @@
                 document.querySelector('.marquee-content').style.animationPlayState = 'running';
             }
         </script>
+
 <style>
-    .whatsapp-chat-btn {
-    position: fixed;
-    bottom: 50px;
-    /* Position it 20px from the bottom */
-    right: 30px;
-    /* Position it 20px from the right */
-    z-index: 1000;
-    animation: popEffect 1s infinite;
-    /* Add pop effect animation */
-}
-.whatsapp-chat-btn a {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 60px;
-    height: 60px;
-    background-color: #25D366;
-    /* WhatsApp green color */
-    border-radius: 50%;
-    /* Make it a circle */
-    transition: background-color 0.3s ease;
-} 
-.whatsapp-chat-btn a:hover {
-    background-color: #ebeef2;
-    /* WhatsApp blue color */
-}
-.whatsapp-chat-btn img {
-    width: 100%;
-    height: 100%;
-}
-@keyframes popEffect {
-    0%,
-    100% {
-        transform: scale(1);
-    }
-    50% {
-        transform: scale(1.1);
-    }
-}
 .price-marquee {
     background-color: #013A5B;
     padding: 8px; 
@@ -361,13 +395,11 @@
     display: flex;
     align-items: center;
 }
-.price-marquee:hover {
-    transform: scale(1.02);
-}
 .marquee-content {
     display: flex;
     align-items: center;
     animation: marquee 35s linear infinite;
+    will-change: transform;
 }
 .marquee-text {
     color: #f3f2eb; 
@@ -385,24 +417,9 @@
         transform: translateX(-100%);
     }
 }
-        </style>
-        <script>
-            function stopMarquee() {
-                document.querySelector('.marquee-content').style.animationPlayState = 'paused';
-            }
-            function startMarquee() {
-                document.querySelector('.marquee-content').style.animationPlayState = 'running';
-            }
-        </script>
+</style>
         
-        <!-- Start whatsapp Section -->
-        <div class="whatsapp-chat-btn">
-            <a href="https://wa.me/916262002116" target="_blank">
-                <img src="https://res.cloudinary.com/drpbrn2ax/image/upload/v1742800558/whatsapp_s7si1c.webp" alt="WhatsApp">
-            </a>
-        </div>
-        
-</header>
+        <!-- Start header --></header>
     <!-- end of header -->
 <style>
     .slider_heading {
@@ -422,13 +439,13 @@
     }
 </style><!--line 3824-->
 <link  href="CSS/animate.min.css" rel="stylesheet">
-<script src="js/wow.min.js"></script>
+<script src="js/wow.min.js" defer></script>
 <section class="cable-showcase">
     <div class="showcase-wrapper">
         <div class="slider-wrapper">
             <div class="slider-carousel">
                 <div class="slide-item active">
-                    <img src="https://res.cloudinary.com/drpbrn2ax/image/upload/v1742799709/Industrial_Cables_ys8ak3.png" alt="industrial cable" class="slide-bg">
+                    <img fetchpriority="high" src="https://res.cloudinary.com/drpbrn2ax/image/upload/f_auto,q_auto,w_auto/v1742799709/Industrial_Cables_ys8ak3.png" alt="industrial cable" class="slide-bg" width="1200" height="600">
                     <div class="content-container animate-text">
                         <div class="slide-text">
                             <p class="slide-title"><a href="#">Industrial Cables</a></p>
@@ -437,7 +454,7 @@
                     </div>
                 </div>
                 <div class="slide-item">
-                    <img src="https://res.cloudinary.com/ddtqh4u2x/image/upload/v1746602126/Infrastructure_t4zknw.jpg" alt="Infrastructure" class="slide-bg">
+                    <img loading="lazy" src="https://res.cloudinary.com/ddtqh4u2x/image/upload/f_auto,q_auto,w_auto/v1746602126/Infrastructure_t4zknw.jpg" alt="Infrastructure" class="slide-bg" width="1200" height="600">
                     <div class="content-container">
                         <div class="slide-text">
                             <p class="slide-title"><a href="#">Infrastructure Cables</a></p>
@@ -446,7 +463,7 @@
                     </div>
                 </div>
                 <div class="slide-item">
-                    <img src="https://res.cloudinary.com/ddtqh4u2x/image/upload/v1746602126/Mining_Cable_lj1nmr.jpg" alt="Mining Cable" class="slide-bg">
+                    <img loading="lazy" src="https://res.cloudinary.com/ddtqh4u2x/image/upload/f_auto,q_auto,w_auto/v1746602126/Mining_Cable_lj1nmr.jpg" alt="Mining Cable" class="slide-bg" width="1200" height="600">
                     <div class="content-container">
                         <div class="slide-text">
                             <p class="slide-title"><a href="#">Mining Cables</a></p>
@@ -455,7 +472,7 @@
                     </div>
                 </div>
                 <div class="slide-item">
-                    <img src="https://res.cloudinary.com/ddtqh4u2x/image/upload/v1746602127/Telecommunication_data_communication_j0ykw3.jpg" alt="Telecommunication" class="slide-bg">
+                    <img loading="lazy" src="https://res.cloudinary.com/ddtqh4u2x/image/upload/f_auto,q_auto,w_auto/v1746602127/Telecommunication_data_communication_j0ykw3.jpg" alt="Telecommunication" class="slide-bg" width="1200" height="600">
                     <div class="content-container">
                         <div class="slide-text">
                             <p class="slide-title"><a href="#">Telecommunication Wires</a></p>
@@ -464,7 +481,7 @@
                     </div>
                 </div>
                 <div class="slide-item">
-                    <img src="https://res.cloudinary.com/ddtqh4u2x/image/upload/v1746602126/Oil_and_gas_ofqsat.jpg" alt="Oil and gas" class="slide-bg">
+                    <img loading="lazy" src="https://res.cloudinary.com/ddtqh4u2x/image/upload/f_auto,q_auto,w_auto/v1746602126/Oil_and_gas_ofqsat.jpg" alt="Oil and gas" class="slide-bg" width="1200" height="600">
                     <div class="content-container">
                         <div class="slide-text">
                             <p class="slide-title"><a href="#">Oil and gas Cables</a></p>
@@ -473,7 +490,7 @@
                     </div>
                 </div>
                 <div class="slide-item">
-                    <img src="https://res.cloudinary.com/ddtqh4u2x/image/upload/v1746602126/Power_distribution_dihqna.jpg" alt="Power distribution" class="slide-bg">
+                    <img loading="lazy" src="https://res.cloudinary.com/ddtqh4u2x/image/upload/f_auto,q_auto,w_auto/v1746602126/Power_distribution_dihqna.jpg" alt="Power distribution" class="slide-bg" width="1200" height="600">
                     <div class="content-container">
                         <div class="slide-text">
                             <p class="slide-title"><a href="#">Power distribution Cables</a></p>
@@ -482,7 +499,7 @@
                     </div>
                 </div>
                 <div class="slide-item">
-                    <img src="https://res.cloudinary.com/ddtqh4u2x/image/upload/v1746602127/Solar_cables_p4fj0x.jpg" alt="Solar Cable" class="slide-bg">
+                    <img loading="lazy" src="https://res.cloudinary.com/ddtqh4u2x/image/upload/f_auto,q_auto,w_auto/v1746602127/Solar_cables_p4fj0x.jpg" alt="Solar Cable" class="slide-bg" width="1200" height="600">
                     <div class="content-container">
                         <div class="slide-text">
                             <p class="slide-title"><a href="#">Solar Cable</a></p>
@@ -491,7 +508,7 @@
                     </div>
                 </div>
                 <div class="slide-item">
-                    <img src="https://res.cloudinary.com/ddtqh4u2x/image/upload/v1746602126/Railways_aabbpj.jpg" alt="Railways Wires" class="slide-bg">
+                    <img loading="lazy" src="https://res.cloudinary.com/ddtqh4u2x/image/upload/f_auto,q_auto,w_auto/v1746602126/Railways_aabbpj.jpg" alt="Railways Wires" class="slide-bg" width="1200" height="600">
                     <div class="content-container">
                         <div class="slide-text">
                             <p class="slide-title"><a href="#">Railways Wires</a></p>
@@ -500,7 +517,7 @@
                     </div>
                 </div>
                 <div class="slide-item">
-                    <img src="https://res.cloudinary.com/ddtqh4u2x/image/upload/v1746602127/power_transmission_u6o6z4.jpg" alt="Power transmission" class="slide-bg">
+                    <img loading="lazy" src="https://res.cloudinary.com/ddtqh4u2x/image/upload/f_auto,q_auto,w_auto/v1746602127/power_transmission_u6o6z4.jpg" alt="Power transmission" class="slide-bg" width="1200" height="600">
                     <div class="content-container">
                         <div class="slide-text">
                             <p class="slide-title"><a href="#">Power transmission Cables</a></p>
@@ -509,7 +526,7 @@
                     </div>
                 </div>
                 <div class="slide-item">
-                    <img src="https://res.cloudinary.com/ddtqh4u2x/image/upload/v1746602127/Sub-sea_iaxr3y.jpg" alt="Sub-sea Cables" class="slide-bg">
+                    <img loading="lazy" src="https://res.cloudinary.com/ddtqh4u2x/image/upload/f_auto,q_auto,w_auto/v1746602127/Sub-sea_iaxr3y.jpg" alt="Sub-sea Cables" class="slide-bg" width="1200" height="600">
                     <div class="content-container">
                         <div class="slide-text">
                             <p class="slide-title"><a href="#">Sub-sea Cables</a></p>
@@ -518,7 +535,7 @@
                     </div>
                 </div>
                 <div class="slide-item">
-                    <img src="https://res.cloudinary.com/ddtqh4u2x/image/upload/v1746602127/Wind_farm_dcpoea.jpg" alt="Wind-Farm Cables" class="slide-bg">
+                    <img loading="lazy" src="https://res.cloudinary.com/ddtqh4u2x/image/upload/f_auto,q_auto,w_auto/v1746602127/Wind_farm_dcpoea.jpg" alt="Wind-Farm Cables" class="slide-bg" width="1200" height="600">
                     <div class="content-container">
                         <div class="slide-text">
                             <p class="slide-title"><a href="#">Wind-Farm Cables</a></p>
@@ -532,124 +549,228 @@
         </div>
         <div class="requirement-cta">
             <a href="https://anocab.com/products/0.All%20Products.html" class="cta-link">
-                <img src="https://res.cloudinary.com/drpbrn2ax/image/upload/v1742800562/reqrmnt_tgqxp6.gif" class="cta-image" alt="Requirementtool">
+                <img loading="lazy" src="https://res.cloudinary.com/drpbrn2ax/image/upload/v1742800562/reqrmnt_tgqxp6.gif" class="cta-image" alt="Requirementtool" width="400" height="600">
                 <button type="submit" class="cta-button">Choose Your Requirement</button>
             </a>
         </div>
     </div>
 </section>
 <script>
+// Optimized Slider with Crossfade Effect
 let slideIndex = 0;
+let isTransitioning = false;
 const slides = document.querySelectorAll('.slide-item');
 const nextBtn = document.querySelector('.next');
 const prevBtn = document.querySelector('.prev');
 
+// Initialize first slide
+if (slides.length > 0) {
+    slides[0].classList.add('active');
+}
+
 function showSlide(index) {
-    slides.forEach((slide, i) => {
-        slide.classList.remove('active');
-        slide.querySelector('.content-container')?.classList.remove('animate-text');
+    if (isTransitioning) return;
+    isTransitioning = true;
+    
+    requestAnimationFrame(() => {
+        // Remove active from all slides
+        slides.forEach((slide) => {
+            slide.classList.remove('active');
+            slide.querySelector('.content-container')?.classList.remove('animate-text');
+        });
+        
+        // Add active to current slide
+        slides[index].classList.add('active');
+        slides[index].querySelector('.content-container')?.classList.add('animate-text');
+        
+        setTimeout(() => {
+            isTransitioning = false;
+        }, 800);
     });
-    slides[index].classList.add('active');
-    slides[index].querySelector('.content-container')?.classList.add('animate-text');
 }
 
 function nextSlide() {
-    slideIndex = (slideIndex + 1) % slides.length;
-    showSlide(slideIndex);
+    if (!isTransitioning) {
+        slideIndex = (slideIndex + 1) % slides.length;
+        showSlide(slideIndex);
+    }
 }
 
 function prevSlide() {
-    slideIndex = (slideIndex - 1 + slides.length) % slides.length;
-    showSlide(slideIndex);
+    if (!isTransitioning) {
+        slideIndex = (slideIndex - 1 + slides.length) % slides.length;
+        showSlide(slideIndex);
+    }
 }
 
-nextBtn.addEventListener('click', nextSlide);
-prevBtn.addEventListener('click', prevSlide);
+nextBtn?.addEventListener('click', nextSlide);
+prevBtn?.addEventListener('click', prevSlide);
 
-setInterval(nextSlide, 5000);
+// Auto-slide with pause on hover
+let autoSlideInterval = setInterval(nextSlide, 5000);
+
+document.querySelector('.cable-showcase')?.addEventListener('mouseenter', () => {
+    clearInterval(autoSlideInterval);
+});
+
+document.querySelector('.cable-showcase')?.addEventListener('mouseleave', () => {
+    autoSlideInterval = setInterval(nextSlide, 5000);
+});
 </script>
 
-<section class="about-us-faq" style="background-image: url(prodimg/background\ 1.jpg); background-repeat: no-repeat; background-size: cover; background-attachment: fixed; padding: 30px 0; margin-top: 10px;">
+<section class="about-us-faq" style="background-image: url(prodimg/background\ 1.jpg); background-repeat: no-repeat; background-size: cover; background-attachment: fixed; padding: 25px 0; margin-top: 10px;">
     <div class="container">
         <div class="row" style="padding:0px;">
-            <div class="col col-md-4" style="vertical-align:middle;">
-                <p style="color:#f5f6f7;padding:100px 0 0px;font-size:35px;font-weight:bold;line-height: 1.3;">
-                   <b> ONE OF INDIA'S LARGEST MANUFACTURER OF WIRES AND CABLES </b>
-                </p>
-            </div>
-            <div class="col col-md-6">
-                <div class="row">
-                    <div class="col-md-6" style="padding: 2px !important;margin: 0 !important;">
-                        <a href="products/0.All Products.html">
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-2 col-xs-6" style="padding: 10px; ">
-                <a href="#">
-                    <div class="box">
-                        <img class="product_icon" src="https://res.cloudinary.com/drpbrn2ax/image/upload/v1742800599/a1raw_nqnshj.png" alt="Domestic Cables" style="width:100%;">
-                        <img class="hover-img" src="https://res.cloudinary.com/drpbrn2ax/image/upload/v1742979340/WhatsApp_Image_2025-03-26_at_14.23.08_c2wnrs.jpg" alt="domestic cables" style="width:100%;">
+            <div class="col col-md-12">
+                <!-- Product Showcase Section -->
+                <div class="product-showcase-section">
+                    <h2 class="showcase-title">EXPLORE OUR CABLE SOLUTIONS</h2>
+                    <div class="product-showcase-container">
+                        <button class="showcase-nav-btn showcase-prev" aria-label="Previous">
+                            <i class="fa fa-chevron-left"></i>
+                        </button>
+                        <div class="product-showcase-slider" id="productShowcaseSlider">
+                            <div class="product-category-card" data-category="domestic">
+                                <a href="products/1.Domestic%20Products.html">
+                                    <div class="category-image-wrapper">
+                                        <img loading="lazy" src="https://res.cloudinary.com/dngojnptn/image/upload/f_auto,q_auto,w_auto/v1777028132/ChatGPT_Image_Apr_24_2026_04_25_20_PM_adrmrc.png" alt="Domestic Cables" class="category-image">
+                                        <div class="card-overlay">
+                                            <button class="explore-btn" onclick="event.preventDefault(); window.location.href='products/1.Domestic%20Products.html';">
+                                                <i class="fa fa-info-circle"></i> Know More
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="category-info">
+                                        <h3 class="category-title">DOMESTIC</h3>
+                                        <p class="category-desc">House Wires & Cables</p>
+                                    </div>
+                                </a>
+                            </div>
+                            <div class="product-category-card" data-category="industrial">
+                                <a href="products/2.Industrial%20Products.html">
+                                    <div class="category-image-wrapper">
+                                        <img loading="lazy" src="https://res.cloudinary.com/drpbrn2ax/image/upload/f_auto,q_auto,w_auto/v1742979335/WhatsApp_Image_2025-03-26_at_14.23.07_1_k80koz.jpg" alt="Industrial Cables" class="category-image">
+                                        <div class="card-overlay">
+                                            <button class="explore-btn" onclick="event.preventDefault(); window.location.href='products/2.Industrial%20Products.html';">
+                                                <i class="fa fa-info-circle"></i> Know More
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="category-info">
+                                        <h3 class="category-title">INDUSTRIAL</h3>
+                                        <p class="category-desc">Power & Control Cables</p>
+                                    </div>
+                                </a>
+                            </div>
+                            <div class="product-category-card" data-category="agricultural">
+                                <a href="products/3.Agricultural%20products.html">
+                                    <div class="category-image-wrapper">
+                                        <img loading="lazy" src="https://res.cloudinary.com/drpbrn2ax/image/upload/f_auto,q_auto,w_auto/v1742979335/WhatsApp_Image_2025-03-26_at_14.23.07_2_x7bjd6.jpg" alt="Agricultural Cables" class="category-image">
+                                        <div class="card-overlay">
+                                            <button class="explore-btn" onclick="event.preventDefault(); window.location.href='products/3.Agricultural%20products.html';">
+                                                <i class="fa fa-info-circle"></i> Know More
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="category-info">
+                                        <h3 class="category-title">AGRICULTURAL</h3>
+                                        <p class="category-desc">Submersible & Farm Cables</p>
+                                    </div>
+                                </a>
+                            </div>
+                            <div class="product-category-card" data-category="networking">
+                                <a href="products/4.Networking%20products.html">
+                                    <div class="category-image-wrapper">
+                                        <img loading="lazy" src="https://res.cloudinary.com/drpbrn2ax/image/upload/f_auto,q_auto,w_auto/v1742979336/WhatsApp_Image_2025-03-26_at_14.23.08_1_ppn0vi.jpg" alt="Networking Cables" class="category-image">
+                                        <div class="card-overlay">
+                                            <button class="explore-btn" onclick="event.preventDefault(); window.location.href='products/4.Networking%20products.html';">
+                                                <i class="fa fa-info-circle"></i> Know More
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="category-info">
+                                        <h3 class="category-title">NETWORKING</h3>
+                                        <p class="category-desc">LAN, CCTV & Data Cables</p>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                        <button class="showcase-nav-btn showcase-next" aria-label="Next">
+                            <i class="fa fa-chevron-right"></i>
+                        </button>
                     </div>
-                </a>
-            </div>
-            <div class="col-lg-2 col-xs-6" style="padding: 10px;">
-                <a href="#">
-                    <div class="box">
-                        <img class="product_icon" src="https://res.cloudinary.com/drpbrn2ax/image/upload/v1742979335/WhatsApp_Image_2025-03-26_at_14.23.07_1_k80koz.jpg" alt="" style="width:100%;">
-                        <img class="hover-img" src="https://res.cloudinary.com/drpbrn2ax/image/upload/v1742979334/WhatsApp_Image_2025-03-26_at_14.23.06_1_s39nry.jpg" alt="" style="width:100%;">
-                    </div>
-                </a>
-            </div>
-            <div class="col-lg-2 col-xs-6" style="padding: 10px;">
-                <a href="#">
-                    <div class="box">
-                        <img class="product_icon" src="https://res.cloudinary.com/drpbrn2ax/image/upload/v1742979335/WhatsApp_Image_2025-03-26_at_14.23.07_2_x7bjd6.jpg" alt="" style="width:100%;">
-                        <img class="hover-img" src="https://res.cloudinary.com/drpbrn2ax/image/upload/v1742979335/WhatsApp_Image_2025-03-26_at_14.23.06_g91hom.jpg" alt="" style="width:100%;">
-                    </div>
-                </a>
-            </div>
-            <div class="col-lg-2 col-xs-6" style="padding: 10px;">
-                <a href="#">
-                    <div class="box">
-                        <img class="product_icon" src="https://res.cloudinary.com/drpbrn2ax/image/upload/v1742979336/WhatsApp_Image_2025-03-26_at_14.23.08_1_ppn0vi.jpg" alt="" style="width:100%;">
-                        <img class="hover-img" src="https://res.cloudinary.com/drpbrn2ax/image/upload/v1742979335/WhatsApp_Image_2025-03-26_at_14.23.07_yedoai.jpg" alt="" style="width:100%;">
-                    </div>
-                </a>
-            </div>
-        </div>
-    </div>
-    <div class="container">
-        <div class="row" >
-            <div class="col-lg-2 col-xs-6" style="padding: 10px;">
-                <a href="#">
-                    <div class="box">
-                        <img class="product_icon" src="https://res.cloudinary.com/drpbrn2ax/image/upload/v1742889543/9_n2ivhx.jpg" alt="" style="width:100%;">
-                        <img class="hover-img" src="https://res.cloudinary.com/drpbrn2ax/image/upload/v1742979341/WhatsApp_Image_2025-03-26_at_14.23.09_1_xgk9dw.jpg" alt="" style="width:100%;">
-                    </div>
-                </a>
-            </div>
-            <div class="col-lg-2 col-xs-6" style="padding: 10px;">
-                <a href="#">
-                    <div class="box">
-                        <img class="product_icon" src="https://res.cloudinary.com/drpbrn2ax/image/upload/v1742889546/11_srr0lc.jpg" alt="" style="width:100%;">
-                        <img class="hover-img" src="https://res.cloudinary.com/drpbrn2ax/image/upload/v1742979341/WhatsApp_Image_2025-03-26_at_14.23.09_2_fjxiba.jpg" alt="" style="width:100%;">
-                    </div>
-                </a>
-            </div>
-            <div class="col-lg-2 col-xs-6" style="padding: 10px;">
-                <a href="#">
-                    <div class="box">
-                        <img class="product_icon" src="https://res.cloudinary.com/drpbrn2ax/image/upload/v1742889547/13_t1meyq.jpg" alt="" style="width:100%;">
-                        <img class="hover-img" src="https://res.cloudinary.com/drpbrn2ax/image/upload/v1742979341/WhatsApp_Image_2025-03-26_at_14.23.09_wmakab.jpg" alt="" style="width:100%;">
-                    </div>
-                </a>
-            </div>
-            <div class="col-lg-2 col-xs-6" style="padding: 10px;">
-                <a href="#">
-                    <div class="box">
-                        <img class="product_icon" src="https://res.cloudinary.com/drpbrn2ax/image/upload/v1742889547/15_ck1wmt.jpg" alt="" style="width:100%;">
-                        <img class="hover-img" src="https://res.cloudinary.com/drpbrn2ax/image/upload/v1742979322/WhatsApp_Image_2025-03-26_at_14.23.10_1_xkowxx.jpg" alt="" style="width:100%;">
-                    </div>
-                </a>
+                </div>
+                <script>
+                    // Product Showcase Navigation with Auto Slider
+                    document.addEventListener('DOMContentLoaded', function() {
+                        const slider = document.getElementById('productShowcaseSlider');
+                        const prevBtn = document.querySelector('.showcase-prev');
+                        const nextBtn = document.querySelector('.showcase-next');
+                        
+                        if (slider && prevBtn && nextBtn) {
+                            const cardWidth = 325; // 300px card + 25px gap
+                            let autoScrollInterval;
+                            
+                            // Next button click
+                            nextBtn.addEventListener('click', function() {
+                                slider.scrollBy({
+                                    left: cardWidth,
+                                    behavior: 'smooth'
+                                });
+                            });
+                            
+                            // Previous button click
+                            prevBtn.addEventListener('click', function() {
+                                slider.scrollBy({
+                                    left: -cardWidth,
+                                    behavior: 'smooth'
+                                });
+                            });
+                            
+                            // Auto scroll function
+                            function startAutoScroll() {
+                                autoScrollInterval = setInterval(function() {
+                                    // Check if we're at the end
+                                    if (slider.scrollLeft >= slider.scrollWidth - slider.clientWidth - 10) {
+                                        // Reset to beginning
+                                        slider.scrollTo({
+                                            left: 0,
+                                            behavior: 'smooth'
+                                        });
+                                    } else {
+                                        // Scroll to next card
+                                        slider.scrollBy({
+                                            left: cardWidth,
+                                            behavior: 'smooth'
+                                        });
+                                    }
+                                }, 3000); // Auto scroll every 3 seconds
+                            }
+                            
+                            // Stop auto scroll
+                            function stopAutoScroll() {
+                                clearInterval(autoScrollInterval);
+                            }
+                            
+                            // Start auto scroll on page load
+                            startAutoScroll();
+                            
+                            // Pause auto scroll on hover
+                            slider.addEventListener('mouseenter', stopAutoScroll);
+                            
+                            // Resume auto scroll when mouse leaves
+                            slider.addEventListener('mouseleave', startAutoScroll);
+                            
+                            // Pause on button hover
+                            prevBtn.addEventListener('mouseenter', stopAutoScroll);
+                            nextBtn.addEventListener('mouseenter', stopAutoScroll);
+                            
+                            // Resume when button hover ends
+                            prevBtn.addEventListener('mouseleave', startAutoScroll);
+                            nextBtn.addEventListener('mouseleave', startAutoScroll);
+                        }
+                    });
+                </script>
             </div>
         </div>
     </div>
@@ -710,52 +831,106 @@ setInterval(nextSlide, 5000);
     </style>
 </section>
         <br>
-        <div class="col col-md-9 col-md-push-2">
-            <div class="row" style="margin-left:24px;">
-                <h3 style="text-align:justify;font-size:28px;">Anode Electric Private Limited is a Jabalpur-based cable manufacturer since 2015, specializing in power, control, 
-                    and flexible cables with reliable solutions & Customer Requirements.</h3>
-                <div class="col-md-4">
-                    <div class="row">
-                        <div class="col-md-12 box_AG">
-                            <div class="plant_video" id="">
-                            <img class="plant_intro_video" onclick="openPopup3()" src="https://res.cloudinary.com/drpbrn2ax/image/upload/v1742800576/loc_xpx83z.webp" alt="Click to play video">
-                                <h2 style="cursor: pointer;" onclick="openPopup3()" class="plant_video_text">IT Park, Jabalpur</h2></a>
-                            </div>
-                        </div>
-                        <div class="col-md-12 box_AG" style="margin-top:10px;">
-                            <div class="plant_video" id="">
-                            <img class="plant_intro_video" onclick="openPopup2()" src="https://res.cloudinary.com/drpbrn2ax/image/upload/v1742800561/samridhi_odzurj.webp" alt="Click to play video">
-                                <h2 style="cursor: pointer;" onclick="openPopup2()" class="plant_video_text">KARMETA  ROAD, DADDA NAGAR</h2>
+        <!-- Organisation Section - Optimized -->
+        <section class="organisation-section" style="background: linear-gradient(135deg, #f0f4f8 0%, #e8eef5 100%); padding: 40px 0;">
+            <div class="container" style="max-width: 1300px; margin: 0 auto; padding: 0 20px;">
+                <h3 style="text-align: center; font-size: 32px; color: #013A5B; font-weight: 700; margin-bottom: 35px; letter-spacing: 1px;">
+                    Anode Electric Private Limited is a Jabalpur-based cable manufacturer since 2015, specializing in power, control, and flexible cables with reliable solutions & Customer Requirements.
+                </h3>
+                
+                <!-- Row 1: Anode Electric Image + Text -->
+                <div style="display: flex; align-items: center; gap: 50px; margin-bottom: 50px; flex-wrap: wrap;">
+                    <!-- Anode Electric Image -->
+                    <div style="flex: 0 0 45%; max-width: 45%;">
+                        <div class="organisation-image-wrapper" style="border-radius: 24px; overflow: hidden; box-shadow: 0 20px 60px rgba(1, 58, 91, 0.2); background: #f8f9fa; position: relative; transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.4s ease;">
+                            <img loading="lazy" src="https://res.cloudinary.com/dngojnptn/image/upload/f_auto,q_auto,w_auto/v1777446002/WhatsApp_Image_2026-04-29_at_12.14.08_PM_1_nbpswv.jpg" 
+                                 alt="Anode Electric Manufacturing" 
+                                 style="width: 100%; height: 320px; object-fit: cover; display: block;">
+                            <div class="image-overlay" style="position: absolute; bottom: 0; left: 0; width: 100%; background: linear-gradient(to top, rgba(1, 58, 91, 0.95) 0%, rgba(1, 58, 91, 0.6) 60%, transparent 100%); padding: 28px; transition: opacity 0.4s ease;">
+                                <h5 style="font-size: 19px; font-weight: 700; margin: 0; color: white; text-shadow: 2px 2px 8px rgba(0,0,0,0.5); letter-spacing: 0.8px;">IT Park, Jabalpur</h5>
                             </div>
                         </div>
                     </div>
-                    <!-- ..............both video row ends ........... -->
-                </div>
-                <div class="col-md-5">
-                    <p class="plant_video_text1" style="line-height: 1.3;text-align:justify; font-size:20px; margin-bottom: 5%;">Anode electric<BR>
-                        Founded in 2015, Anode Electric Pvt. Ltd. is a pioneering force in the wire and cable industry. Known for its ISO 9001:2008 certification, 
-                        the company manufactures a wide range of cables, including power cables, control cables, and copper flexible cables under the renowned 'AnoCab' brand.</p>
                     
-                    <p class="plant_video_text2" style="line-height: 1.2;text-align:justify; font-size:20px;"Samriddhi Industries<BR>
-                        A strategic acquisition by Anode Electric Private Limited in 2022, Samriddhi Industries is a trusted name in the cable manufacturing sector. 
-                        This integration strengthened Anode Electric's position in the market, enhancing both product innovation and manufacturing capacity.
-                        </p>
+                    <!-- Anode Electric Content -->
+                    <div style="flex: 1;">
+                        <div class="company-info" style="padding: 45px 50px; background: linear-gradient(145deg, #ffffff 0%, #f0f7ff 100%); border-radius: 24px; border: 1px solid rgba(1, 58, 91, 0.08); box-shadow: 0 15px 50px rgba(1, 58, 91, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.8); height: 100%; display: flex; flex-direction: column; justify-content: center; position: relative; overflow: hidden; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); backdrop-filter: blur(10px);">
+                            <div style="position: absolute; top: -80px; right: -80px; width: 200px; height: 200px; background: radial-gradient(circle, rgba(1, 58, 91, 0.06) 0%, transparent 70%); border-radius: 50%;"></div>
+                            <div style="position: absolute; bottom: -60px; left: -60px; width: 150px; height: 150px; background: radial-gradient(circle, rgba(253, 201, 0, 0.08) 0%, transparent 70%); border-radius: 50%;"></div>
+                            <h4 style="color: #013A5B; font-size: 28px; font-weight: 900; margin-bottom: 22px; display: flex; align-items: center; position: relative; z-index: 1; letter-spacing: -0.5px;">
+                                <span style="background: linear-gradient(135deg, #013A5B 0%, #025a8f 100%); padding: 14px; border-radius: 16px; margin-right: 18px; box-shadow: 0 8px 24px rgba(1, 58, 91, 0.25), inset 0 -2px 8px rgba(0, 0, 0, 0.2);">
+                                    <i class="fa fa-industry" style="color: white; font-size: 26px;"></i>
+                                </span>
+                                Anode Electric
+                            </h4>
+                            <p style="line-height: 2; text-align: justify; font-size: 16px; color: #2c3e50; margin: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; position: relative; z-index: 1; font-weight: 400;">
+                                "Founded in 2015, Anode Electric Pvt. Ltd. is a pioneering force in the wire and cable industry. Known for its ISO 9001:2008 certification, 
+                                the company manufactures a wide range of cables under the renowned 'AnoCab' brand."
+                            </p>
+                        </div>
+                    </div>
                 </div>
+                
+                <!-- Row 2: Samriddhi Industries Image + Text -->
+                <div style="display: flex; align-items: center; gap: 50px; flex-wrap: wrap;">
+                    <!-- Samriddhi Industries Image -->
+                    <div style="flex: 0 0 45%; max-width: 45%;">
+                        <div class="organisation-image-wrapper" style="border-radius: 24px; overflow: hidden; box-shadow: 0 20px 60px rgba(1, 58, 91, 0.2); background: #f8f9fa; position: relative; transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.4s ease;">
+                            <img loading="lazy" src="https://res.cloudinary.com/drpbrn2ax/image/upload/f_auto,q_auto,w_auto/v1742800561/samridhi_odzurj.webp" 
+                                 alt="Samriddhi Industries" 
+                                 style="width: 100%; height: 320px; object-fit: cover; display: block;">
+                            <div class="image-overlay" style="position: absolute; bottom: 0; left: 0; width: 100%; background: linear-gradient(to top, rgba(1, 58, 91, 0.95) 0%, rgba(1, 58, 91, 0.6) 60%, transparent 100%); padding: 28px; transition: opacity 0.4s ease;">
+                                <h5 style="font-size: 19px; font-weight: 700; margin: 0; color: white; text-shadow: 2px 2px 8px rgba(0,0,0,0.5); letter-spacing: 0.8px;">Karment Road, Dadda Nagar, Jabalpur</h5>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Samriddhi Industries Content -->
+                    <div style="flex: 1;">
+                        <div class="company-info" style="padding: 45px 50px; background: linear-gradient(145deg, #ffffff 0%, #f0f7ff 100%); border-radius: 24px; border: 1px solid rgba(1, 58, 91, 0.08); box-shadow: 0 15px 50px rgba(1, 58, 91, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.8); height: 100%; display: flex; flex-direction: column; justify-content: center; position: relative; overflow: hidden; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); backdrop-filter: blur(10px);">
+                            <div style="position: absolute; top: -80px; right: -80px; width: 200px; height: 200px; background: radial-gradient(circle, rgba(1, 58, 91, 0.06) 0%, transparent 70%); border-radius: 50%;"></div>
+                            <div style="position: absolute; bottom: -60px; left: -60px; width: 150px; height: 150px; background: radial-gradient(circle, rgba(253, 201, 0, 0.08) 0%, transparent 70%); border-radius: 50%;"></div>
+                            <h4 style="color: #013A5B; font-size: 28px; font-weight: 900; margin-bottom: 22px; display: flex; align-items: center; position: relative; z-index: 1; letter-spacing: -0.5px;">
+                                <span style="background: linear-gradient(135deg, #013A5B 0%, #025a8f 100%); padding: 14px; border-radius: 16px; margin-right: 18px; box-shadow: 0 8px 24px rgba(1, 58, 91, 0.25), inset 0 -2px 8px rgba(0, 0, 0, 0.2);">
+                                    <i class="fa fa-handshake" style="color: white; font-size: 26px;"></i>
+                                </span>
+                                Samriddhi Industries
+                            </h4>
+                            <p style="line-height: 2; text-align: justify; font-size: 16px; color: #2c3e50; margin: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; position: relative; z-index: 1; font-weight: 400;">
+                                "A strategic acquisition by Anode Electric in 2022, Samriddhi Industries strengthened our market position, enhancing both product innovation and manufacturing capacity."
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                
+                <style>
+                    .organisation-image-wrapper:hover .image-overlay {
+                        opacity: 0;
+                    }
+                    .organisation-image-wrapper:hover {
+                        transform: translateY(-8px) scale(1.02);
+                        box-shadow: 0 30px 80px rgba(1, 58, 91, 0.3);
+                    }
+                    .company-info:hover {
+                        transform: translateY(-5px);
+                        box-shadow: 0 20px 60px rgba(1, 58, 91, 0.18), inset 0 1px 0 rgba(255, 255, 255, 1);
+                    }
+                </style>
             </div>
-        </div>
+        </section>
     </div>
 </section>
-<section class="contact-section section-padding parallax" style="display:none;">
+<section class="contact-section section-padding parallax" style="background: linear-gradient(135deg, #1a2332 0%, #2c3e50 100%); padding: 60px 0; margin-top: 20px;">
     <div class="" style="padding:0px 60px 0px 60px;">
         <div class="row">
             <div class="col col-md-3">
-                <h2 style="color:#b2b1b4;font-size:40px;font-weight:900;  background-color: #1f2f3dde; ">OUR<br>PROCESSES</h2>
+                <h2 style="color:#f0f4f8;font-size:40px;font-weight:900;">OUR<br>PROCESSES</h2>
             </div>
             <div class="col col-md-9">
                 <div class="row" id="process1_div" style="margin-bottom:2px;">
                     <div class=" col-xs-4 col-md-2" style="padding:0px 5px 5px 5px;display: flex;">
                         <div class="test" id="Wire_Drawing_process">
-                            <video class="video lazyload" width="100%" autoplay muted loop playsinline preload="metadata">
+                            <video class="video lazyload" width="100%" muted loop playsinline preload="none" loading="lazy">
                                 <source src="https://res.cloudinary.com/drpbrn2ax/video/upload/v1742800559/wire_drawing_oigahr.mp4" type="video/mp4">
                             </video>
                             <h2 class="text">Wire Drawing</h2>
@@ -763,7 +938,7 @@ setInterval(nextSlide, 5000);
                     </div>
                     <div class=" col-xs-4 col-md-2" style="padding:0px 5px 5px 5px;display: flex;">
                         <div class="test" id="Anneling_process">
-                            <video class="video lazyload" width="100%" autoplay muted loop playsinline preload="metadata">
+                            <video class="video lazyload" width="100%" muted loop playsinline preload="none" loading="lazy">
                                 <source src="https://res.cloudinary.com/drpbrn2ax/video/upload/v1743833829/annaling_hevynn.mp4" type="video/mp4">
                             </video>
                             <h2 class="text">Anneling</h2>
@@ -771,7 +946,7 @@ setInterval(nextSlide, 5000);
                     </div>
                     <div class=" col-xs-4 col-md-2" style="padding:0px 5px 5px 5px;display: flex;">
                         <div class="test" id="Stranding_process">
-                            <video class="video lazyload" width="100%" autoplay muted loop playsinline preload="metadata">
+                            <video class="video lazyload" width="100%" muted loop playsinline preload="none" loading="lazy">
                                 <source src="https://res.cloudinary.com/drpbrn2ax/video/upload/v1742800568/stranding_uirjjk.mp4" type="video/mp4">
                             </video>
                             <h2 class="text">Stranding</h2>
@@ -779,7 +954,7 @@ setInterval(nextSlide, 5000);
                     </div>
                     <div class=" col-xs-4 col-md-2" style="padding:0px 5px 5px 5px;display: flex;">
                         <div class="test" id="Insulation">
-                            <video class="video lazyload" width="100%" autoplay muted loop playsinline preload="metadata">
+                            <video class="video lazyload" width="100%" muted loop playsinline preload="none" loading="lazy">
                                 <source src="https://res.cloudinary.com/drpbrn2ax/video/upload/v1742800570/insulation_jwj0tg.mp4" type="video/mp4">
                             </video>
                             <h2 class="text">Insulation</h2>
@@ -787,7 +962,7 @@ setInterval(nextSlide, 5000);
                     </div>
                     <div class=" col-xs-4 col-md-2" style="padding: 0px 5px 5px 5px; display: flex;">
                         <div class="test" id="Armouring_process">
-                            <video class="video lazyload" width="100%" autoplay muted loop playsinline preload="metadata">
+                            <video class="video lazyload" width="100%" muted loop playsinline preload="none" loading="lazy">
                                 <source src="https://res.cloudinary.com/drpbrn2ax/video/upload/v1743833847/aurmaring_4_wcyw06.mp4" type="video/mp4">
                             </video>
                             <h2 class="text">Armouring</h2>
@@ -795,7 +970,7 @@ setInterval(nextSlide, 5000);
                     </div>
                     <div class="col-xs-4 col-md-2" style="padding:0px 5px 5px 5px;display: flex;">
                         <div class="test" id="laying_process">
-                            <video class="video lazyload" width="100%" autoplay muted loop playsinline preload="metadata">
+                            <video class="video lazyload" width="100%" muted loop playsinline preload="none" loading="lazy">
                                 <source src="https://res.cloudinary.com/drpbrn2ax/video/upload/v1742800578/laying_lgp7x8.mp4" type="video/mp4">
                             </video>
                             <h2 class="text">Laying</h2>
@@ -805,8 +980,35 @@ setInterval(nextSlide, 5000);
             </div>
         </div>
     </div>
+    
+    <!-- Lazy Load Video Script -->
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const processVideos = document.querySelectorAll('#process1_div video');
+        
+        const videoObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const video = entry.target;
+                    if (video.paused) {
+                        video.play().catch(e => console.log('Video play failed:', e));
+                    }
+                } else {
+                    const video = entry.target;
+                    video.pause();
+                }
+            });
+        }, {
+            threshold: 0.5
+        });
+        
+        processVideos.forEach(video => {
+            videoObserver.observe(video);
+        });
+    });
+    </script>
 </section>
-<section class="about-us-faq" style="background-image: url(https://res.cloudinary.com/drpbrn2ax/image/upload/v1742800586/bg23_rchzr1.png); background-repeat: no-repeat; background-size: cover; background-attachment: fixed; padding: 30px 0; margin-top: 10px;">
+<section class="about-us-faq" style="background-image: url(https://res.cloudinary.com/drpbrn2ax/image/upload/f_auto,q_auto,w_auto/v1742800586/bg23_rchzr1.png); background-repeat: no-repeat; background-size: cover; background-attachment: fixed; padding: 30px 0; margin-top: 10px;">
     <div class="" style="padding:0px 60px 0px 72px;">
         <div class="row">
             <div class="col col-md-5">
@@ -827,7 +1029,7 @@ setInterval(nextSlide, 5000);
                 <div class="row">
                     <div class="col-md-6" style="padding: 2px; margin: 0 !important;">
                         <div class="quality_assurance_test">
-                            <video autoplay muted loop playsinline preload="metadata" class="quality_assurance_intro_video">
+                            <video muted loop playsinline preload="none" loading="lazy" class="quality_assurance_intro_video">
                             <source src="https://res.cloudinary.com/drpbrn2ax/video/upload/v1742800577/LTTest_luniy3.mp4" style="width:100%;height:100%;" alt="longaation and Tensile testing" >
                             </video>
                             <h2 class="quality_assurance_text">LONGATION & TENSILE TESTING</h2>
@@ -835,7 +1037,7 @@ setInterval(nextSlide, 5000);
                     </div>
                     <div class="col-md-6" style="padding: 2px; margin: 0 !important;">
                         <div class="quality_assurance_test">
-                            <video autoplay muted loop playsinline preload="metadata" class="quality_assurance_intro_video">
+                            <video muted loop playsinline preload="none" loading="lazy" class="quality_assurance_intro_video">
                             <source src="https://res.cloudinary.com/drpbrn2ax/video/upload/v1742800592/CRTest_gsbhmn.mp4" style="width:100%;height:100%;" alt="conductor resistance test" >
                             </video>
                             <h2 class="quality_assurance_text">CONDUCTOR RESISTANCE TEST</h2>
@@ -845,7 +1047,7 @@ setInterval(nextSlide, 5000);
                 <div class="row">
                     <div class="col-md-6" style="padding: 2px; margin: 0 !important;">
                         <div class="quality_assurance_test">
-                            <video autoplay muted loop playsinline preload="metadata" class="quality_assurance_intro_video">
+                            <video muted loop playsinline preload="none" loading="lazy" class="quality_assurance_intro_video">
                             <source src="https://res.cloudinary.com/drpbrn2ax/video/upload/v1742800571/ISTest_zm4jwy.mp4" style="width:100%;height:100%;" alt="Insulation resistance test">
                             </video>
                             <h2 class="quality_assurance_text">INSULATION RESISTANCE TEST</h2>
@@ -853,7 +1055,7 @@ setInterval(nextSlide, 5000);
                     </div>
                     <div class="col-md-6" style="padding: 2px; margin: 0 !important;">
                         <div class="quality_assurance_test">
-                            <video autoplay muted loop playsinline preload="metadata" class="quality_assurance_intro_video">
+                            <video muted loop playsinline preload="none" loading="lazy" class="quality_assurance_intro_video">
                             <source src="https://res.cloudinary.com/drpbrn2ax/video/upload/v1742800600/hottest_nc9dqa.mp4" style="width:100%;height:100%;" alt="Hot Test">
                             </video>
                             <h2 class="quality_assurance_text">HOT TEST</h2>
@@ -863,11 +1065,39 @@ setInterval(nextSlide, 5000);
             </div>
         </div>
     </div>
+    
+    <!-- Lazy Load Quality Assurance Videos -->
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const qaVideos = document.querySelectorAll('.quality_assurance_intro_video');
+        
+        const qaObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const video = entry.target;
+                    if (video.paused) {
+                        video.play().catch(e => console.log('QA Video play failed:', e));
+                    }
+                } else {
+                    const video = entry.target;
+                    video.pause();
+                }
+            });
+        }, {
+            threshold: 0.5
+        });
+        
+        qaVideos.forEach(video => {
+            qaObserver.observe(video);
+        });
+    });
+    </script>
 </section>
 
-<!-- Blog Section -->
-<section class="blog-section" style="padding: 240px 0 0 0; margin-bottom: 0; background-image: url('https://res.cloudinary.com/dngojnptn/image/upload/v1776757532/ChatGPT_Image_Apr_21_2026_01_15_17_PM_kmmhup.png'); background-size: cover; background-position: left center; background-repeat: no-repeat;">
-    <div class="container" style="max-width: 1400px; margin: 0 auto; padding: 0 20px;">
+<!-- Blog Section - Simplified Background -->
+<section class="blog-section" style="padding: 60px 0; margin-bottom: 0; background: linear-gradient(135deg, #f0f4f8 0%, #e8eef5 100%);">
+    <div class="container" style="max-width: 1200px; margin: 0 auto; padding: 0 20px;">
+        <h2 style="text-align: center; font-size: 36px; color: #013A5B; font-weight: 700; margin-bottom: 40px; letter-spacing: 1px;">Latest Updates & News</h2>
         <div id="blogSlider" class="blog-slider">
             <!-- Blogs will be loaded here dynamically -->
             <div style="text-align: center; padding: 40px;">
@@ -887,7 +1117,7 @@ setInterval(nextSlide, 5000);
 }
 
 .blog-section > .container {
-    padding-left: 420px !important;
+    padding-left: 20px !important;
     padding-right: 20px !important;
 }
 
@@ -1157,7 +1387,7 @@ setInterval(nextSlide, 5000);
             <div>
                 <div class="blog-card">
                     <div class="blog-card-image-wrapper">
-                        <img src="${blog.image}" alt="${blog.title}" class="blog-card-image" onerror="this.src='https://via.placeholder.com/400x280/013A5B/FFFFFF?text=Blog+Image'">
+                        <img loading="lazy" src="${blog.image || 'https://via.placeholder.com/400x280/013A5B/FFFFFF?text=Blog+Image'}" alt="${blog.title}" class="blog-card-image" onerror="this.src='https://via.placeholder.com/400x280/013A5B/FFFFFF?text=Blog+Image'">
                         <div class="blog-card-overlay">
                             <h3 class="blog-overlay-title">${blog.title}</h3>
                         </div>
@@ -1165,46 +1395,48 @@ setInterval(nextSlide, 5000);
                     <div class="blog-card-content">
                         <div class="blog-date">📅 ${new Date(blog.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}</div>
                         <p class="blog-excerpt">${blog.excerpt}</p>
-                        <a href="/blog.html?slug=${blog.slug}" class="blog-read-more">Read more</a>
+                        <a href="/blog.html?slug=${blog.slug}" class="blog-read-more" aria-label="Read more about ${blog.title}">Read more</a>
                     </div>
                 </div>
             </div>
         `).join('');
         
         // Initialize Slick Slider
-        $('#blogSlider').slick({
-            dots: false,
-            infinite: true,
-            speed: 600,
-            slidesToShow: 3,
-            slidesToScroll: 1,
-            autoplay: true,
-            autoplaySpeed: 4000,
-            arrows: false,
-            responsive: [
-                {
-                    breakpoint: 1200,
-                    settings: {
-                        slidesToShow: 3,
-                        slidesToScroll: 1
+        if (typeof $.fn.slick !== 'undefined') {
+            $('#blogSlider').slick({
+                dots: false,
+                infinite: true,
+                speed: 600,
+                slidesToShow: 3,
+                slidesToScroll: 1,
+                autoplay: true,
+                autoplaySpeed: 4000,
+                arrows: false,
+                responsive: [
+                    {
+                        breakpoint: 1200,
+                        settings: {
+                            slidesToShow: 3,
+                            slidesToScroll: 1
+                        }
+                    },
+                    {
+                        breakpoint: 768,
+                        settings: {
+                            slidesToShow: 2,
+                            slidesToScroll: 1
+                        }
+                    },
+                    {
+                        breakpoint: 480,
+                        settings: {
+                            slidesToShow: 1,
+                            slidesToScroll: 1
+                        }
                     }
-                },
-                {
-                    breakpoint: 768,
-                    settings: {
-                        slidesToShow: 2,
-                        slidesToScroll: 1
-                    }
-                },
-                {
-                    breakpoint: 480,
-                    settings: {
-                        slidesToShow: 1,
-                        slidesToScroll: 1
-                    }
-                }
-            ]
-        });
+                ]
+            });
+        }
         
         const prevBtn = document.querySelector('.blog-prev');
         const nextBtn = document.querySelector('.blog-next');
@@ -1229,10 +1461,10 @@ setInterval(nextSlide, 5000);
 })();
 </script>
 
-<!-- Trusted Across India Section -->
-<section class="clients-section" style="padding: 0; min-height: auto; background: none;">
+<!-- Trusted Across India Section - Optimized -->
+<section class="clients-section" style="padding: 0; margin-top: 40px; min-height: auto; background: none;">
     <div style="width: 100%; margin: 0; padding: 0;">
-        <img src="https://res.cloudinary.com/drpbrn2ax/image/upload/v1776856935/ChatGPT_Image_Apr_22_2026_04_52_01_PM_vkoanf.png" alt="Trusted Across India" style="width: 100%; height: auto; display: block;">
+        <img loading="lazy" src="https://res.cloudinary.com/dngojnptn/image/upload/f_auto,q_auto,w_1200/v1777450659/ChatGPT_Image_Apr_29_2026_01_47_23_PM_s5hebg.png" alt="Trusted Across India" width="1200" height="400" style="width: 100%; height: auto; display: block;">
     </div>
     <!-- Commented out dynamic client carousel
     <div class="container" style="max-width: 1400px; margin: 0 auto; padding: 0 20px;">
@@ -1263,7 +1495,7 @@ setInterval(nextSlide, 5000);
     padding: 0;
 }
 
-}
+
 
 .clients-section > .container {
     max-width: none !important;
@@ -1382,97 +1614,10 @@ setInterval(nextSlide, 5000);
 </style>
 
 <script>
-/* Commented out - Client carousel replaced with static image
-// Load client logos
-(async function loadClients() {
-    try {
-        const apiUrl = window.API_BASE_URL || 'http://localhost:3000';
-        const response = await fetch(`${apiUrl}/api/clients`);
-        
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        
-        const clients = await response.json();
-        
-        console.log('🏢 Clients loaded:', clients.length, clients);
-        
-        const clientsSlider = document.getElementById('clientsSlider');
-        
-        if (clients.length === 0) {
-            return;
-        }
-
-        const requiredSlides = 12;
-        const clientSlides = clients.length >= requiredSlides
-            ? clients
-            : Array.from({ length: Math.ceil(requiredSlides / clients.length) }, () => clients).flat();
-        
-        clientsSlider.innerHTML = clientSlides.map(client => `
-            <div class="client-logo-item">
-                <div class="client-logo-wrapper">
-                    <img src="${client.logo}" alt="${client.name}" onerror="this.src='https://via.placeholder.com/200x100/013A5B/FFFFFF?text=${encodeURIComponent(client.name)}'">
-                </div>
-            </div>
-        `).join('');
-        
-        // Initialize Slick Slider for clients
-        $('#clientsSlider').slick({
-            dots: false,
-            infinite: true,
-            speed: 8000,
-            slidesToShow: 6,
-            slidesToScroll: 1,
-            autoplay: true,
-            autoplaySpeed: 0,
-            cssEase: 'linear',
-            arrows: false,
-            pauseOnHover: false,
-            pauseOnFocus: false,
-            responsive: [
-                {
-                    breakpoint: 1200,
-                    settings: {
-                        slidesToShow: 6,
-                        slidesToScroll: 1
-                    }
-                },
-                {
-                    breakpoint: 992,
-                    settings: {
-                        slidesToShow: 5,
-                        slidesToScroll: 1
-                    }
-                },
-                {
-                    breakpoint: 768,
-                    settings: {
-                        slidesToShow: 3,
-                        slidesToScroll: 1
-                    }
-                },
-                {
-                    breakpoint: 480,
-                    settings: {
-                        slidesToShow: 2,
-                        slidesToScroll: 1
-                    }
-                }
-            ]
-        });
-        
-        console.log('✅ Clients slider initialized with', clients.length, 'clients');
-    } catch (error) {
-        console.error('❌ Error loading clients:', error);
-        const clientsSlider = document.getElementById('clientsSlider');
-        // Hide section if no clients or error
-        clientsSlider.innerHTML = '<div style="text-align: center; padding: 20px;"><p style="color: #999; font-size: 14px;">Client logos will appear here once added</p></div>';
-    }
-})();
-*/
+// Client logo API removed - using static image instead
 </script>
 
-<section class="section-padding about-us-faq" style="background-image: url(https://res.cloudinary.com/drpbrn2ax/image/upload/v1742800585/bgimg_ctihlb.webp); background-repeat: no-repeat; background-size: cover; background-attachment: fixed; background-position: center center; margin-top: 0;">
+<section class="section-padding about-us-faq" style="background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); background-repeat: no-repeat; background-size: cover; background-attachment: fixed; background-position: center center; margin-top: 0;">
     <div class="" style="padding-right:15%;padding-left:15%;">
         <div class="row">
             <div class="col col-md-6">
@@ -1577,16 +1722,16 @@ setInterval(nextSlide, 5000);
         </div>
         <div class="row mt-1"   style="margin-top: 20px; display:flex">
             <div class="col col col col-md-3">
-                <img src="https://res.cloudinary.com/drpbrn2ax/image/upload/v1742800575/key1_mvdhio.webp" alt="Blogs" class="latest_update_box">
+                <img loading="lazy" src="https://res.cloudinary.com/drpbrn2ax/image/upload/f_auto,q_auto,w_auto/v1742800575/key1_mvdhio.webp" alt="Blogs" class="latest_update_box">
             </div>
             <div class=" col col col col-md-3">
-                <img src="https://res.cloudinary.com/drpbrn2ax/image/upload/v1742800575/key2_kub1ej.webp" alt="Blogs" class="latest_update_box">
+                <img loading="lazy" src="https://res.cloudinary.com/drpbrn2ax/image/upload/f_auto,q_auto,w_auto/v1742800575/key2_kub1ej.webp" alt="Blogs" class="latest_update_box">
             </div>
             <div class="col col col col-md-3">
-                <img src="https://res.cloudinary.com/drpbrn2ax/image/upload/v1742800575/key3_tmriqv.webp" alt="Blogs" class="latest_update_box">
+                <img loading="lazy" src="https://res.cloudinary.com/drpbrn2ax/image/upload/f_auto,q_auto,w_auto/v1742800575/key3_tmriqv.webp" alt="Blogs" class="latest_update_box">
             </div>
             <div class="col col col col-md-3">
-                <img src="https://res.cloudinary.com/drpbrn2ax/image/upload/v1742800576/key4_utcra1.webp" alt="Blogs" class="latest_update_box">
+                <img loading="lazy" src="https://res.cloudinary.com/drpbrn2ax/image/upload/f_auto,q_auto,w_auto/v1742800576/key4_utcra1.webp" alt="Blogs" class="latest_update_box">
             </div>
         </div>
     </div>
@@ -1601,7 +1746,7 @@ setInterval(nextSlide, 5000);
                               <tbody>
                                     <tr>
                                         <td style="height:100px;vertical-align:top;">
-                                            <img src="https://res.cloudinary.com/drpbrn2ax/image/upload/v1742800597/footerlogo_swnkat.webp" style="width:50%;border-radius:0px 0px 70px 0px;" alt="Logo">
+                                            <img loading="lazy" src="https://res.cloudinary.com/drpbrn2ax/image/upload/f_auto,q_auto,w_auto/v1742800597/footerlogo_swnkat.webp" style="width:50%;border-radius:0px 0px 70px 0px;" alt="Logo">
                                         </td>
                                         </tr>
                                         <tr>
@@ -1648,7 +1793,7 @@ setInterval(nextSlide, 5000);
                                             <li><a style="display:block; padding:10px;">Blogs</a></li>
                                             <li><a style="display:block; padding:10px;">Dealership</a></li>
                                         </ul>
-                                        <img src="https://res.cloudinary.com/drpbrn2ax/image/upload/v1742800597/ftlogo1_bwigs6.webp" style="width:90px;height:200px;position: absolute;bottom: 0px;right: 16px;" alt="Icon">
+                                        <img loading="lazy" src="https://res.cloudinary.com/drpbrn2ax/image/upload/f_auto,q_auto,w_auto/v1742800597/ftlogo1_bwigs6.webp" style="width:90px;height:200px;position: absolute;bottom: 0px;right: 16px;" alt="Icon">
                                     </div>
                                 </div> 
                             </div> 
@@ -1670,7 +1815,7 @@ setInterval(nextSlide, 5000);
                                     <th style="vertical-align:top;text-align:center;">
                                         <b style="color:#fcfcfc;">IT Park, Jabalpur</b><br>
                                         <a href="https://maps.app.goo.gl/WvxvecW1coZeteUe8" target="_blank">
-                                            <img src="https://res.cloudinary.com/drpbrn2ax/image/upload/v1742800597/ftloc_t8fs2i.webp" style="width:30%;" alt="Location">
+                                            <img loading="lazy" src="https://res.cloudinary.com/drpbrn2ax/image/upload/f_auto,q_auto,w_auto/v1742800597/ftloc_t8fs2i.webp" style="width:30%;" alt="Location">
                                         </a>
                                     </th>
                                     <td style="background-color:#3f4f5a;margin-top:10px;">
@@ -1684,7 +1829,7 @@ setInterval(nextSlide, 5000);
                                     <th style="vertical-align:top;text-align:center;">
                                         <b style="color:#f8f8f6;">Dadda Nagar</b><br>
                                         <a href="https://maps.app.goo.gl/2LvR8L4XP9wDL37H7" target="_blank">
-                                            <img src="https://res.cloudinary.com/drpbrn2ax/image/upload/v1742800597/ftloc_t8fs2i.webp" style="width:30%;" alt="Location">
+                                            <img loading="lazy" src="https://res.cloudinary.com/drpbrn2ax/image/upload/f_auto,q_auto,w_auto/v1742800597/ftloc_t8fs2i.webp" style="width:30%;" alt="Location">
                                         </a>
                                     </th>
                                     <td style="vertical-align:top;background-color:#3f4f5a;color:#f8f8f6;height:208px;">
@@ -1694,7 +1839,7 @@ setInterval(nextSlide, 5000);
                                     </td>
                                 </tr>
                             </table>
-                            <img src="https://res.cloudinary.com/drpbrn2ax/image/upload/v1742800598/ftlogo2_mybnqo.webp" style="width:25%;position: absolute;bottom: 0px;right: 16px;" alt="Icon">
+                            <img loading="lazy" src="https://res.cloudinary.com/drpbrn2ax/image/upload/f_auto,q_auto,w_auto/v1742800598/ftlogo2_mybnqo.webp" style="width:25%;position: absolute;bottom: 0px;right: 16px;" alt="Icon">
                         </div>
                         <div class="col-md-4">
                             <table style="width:100%;margin-top:50px;">
@@ -1713,7 +1858,7 @@ setInterval(nextSlide, 5000);
                                     <th style="vertical-align:top;text-align:center;">
                                         <b style="color:#f8f8f6;">Address</b><br>
                                         <a href="https://maps.app.goo.gl/WvxvecW1coZeteUe8" target="_blank">
-                                            <img src="https://res.cloudinary.com/drpbrn2ax/image/upload/v1742800597/ftloc_t8fs2i.webp" style="width:30%;" alt="Location">
+                                            <img loading="lazy" src="https://res.cloudinary.com/drpbrn2ax/image/upload/f_auto,q_auto,w_auto/v1742800597/ftloc_t8fs2i.webp" style="width:30%;" alt="Location">
                                         </a>
                                     </th>
                                     <td style="background-color:#3f4f5a;">
@@ -1748,7 +1893,7 @@ setInterval(nextSlide, 5000);
                                     </th>
                                     <td style="background-color:#3f4f5a;">
                                         <p style="font-size:12px;padding-left:10px;">
-                                           info@anocab.com <br>
+                                           sales@anocab.in <br>
                                         </p> 
                                     </td>
                                 </tr>
@@ -1763,7 +1908,7 @@ setInterval(nextSlide, 5000);
                                     </td>
                                 </tr>
                             </table>
-                            <img src="https://res.cloudinary.com/drpbrn2ax/image/upload/v1742800598/ftlogo3_edmev9.webp" style="width:25%;position: absolute;bottom: 0px;right: 16px;" alt="Icon">
+                            <img loading="lazy" src="https://res.cloudinary.com/drpbrn2ax/image/upload/f_auto,q_auto,w_auto/v1742800598/ftlogo3_edmev9.webp" style="width:25%;position: absolute;bottom: 0px;right: 16px;" alt="Icon">
                         </div>
                     </div>
                 </div>
@@ -1772,7 +1917,14 @@ setInterval(nextSlide, 5000);
                 <div class="container">
                     <div class="row">
                         <div class="col-12 text-center">
-                            <p style="font-size: 14px; color: #ecf0f1; margin: 0;">2025 &copy; All Rights Reserved by <a href="#" style="color: #ecf0f1; text-decoration: none; font-weight: 600;">Anode Electric Pvt Ltd.</a></p>
+                            <p style="font-size: 14px; color: #ecf0f1; margin: 0; display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 8px;">
+                                <span>2025 &copy; All Rights Reserved by <a href="#" style="color: #ecf0f1; text-decoration: none; font-weight: 600;">Anode Electric Pvt Ltd.</a></span>
+                                <span style="color: #ecf0f1;">|</span>
+                                <a href="https://play.google.com/store/apps/details?id=com.company.anocab" target="_blank" style="color: #ecf0f1; text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; gap: 5px; transition: transform 0.3s ease;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                                    <img src="https://res.cloudinary.com/dngojnptn/image/upload/v1776683252/Screenshot_2026-04-20_163707_tkvpph.png" alt="Anocab App" style="width: 20px; height: 20px; border-radius: 4px; vertical-align: middle;">
+                                    Download Anocab App
+                                </a>
+                            </p>
                         </div>
                     </div>
                 </div>
@@ -1785,49 +1937,107 @@ setInterval(nextSlide, 5000);
         <div class="modal-content">
             <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal">&times;</button>
-            <h4 class="modal-title">Please fill in your details</h4>
+            <h4 class="modal-title">Download Brochure - Fill Details</h4>
             </div>
-            <form action="https://drive.google.com/file/d/1ozgCPNxilEXBUERAMHmer6pXE8AtJyGM/view?usp=drive_link" method="post" id="broucherForm">
+            <form id="brochureForm" onsubmit="return handleBrochureSubmit(event)">
                 <div class="modal-body">
-                    <div class="service-single-content" style="margin-left:10px;margin-right:10px;" required>            
+                    <div class="service-single-content" style="margin-left:10px;margin-right:10px;">            
                             <div class="row">
                                 <div class="col col-md-6">
-                                    <label>First Name</label>
-                                    <input type="text" class="form-control" id="first_name" name="first_name" placeholder="First Name" style="!important" required>
+                                    <label>First Name *</label>
+                                    <input type="text" class="form-control" id="first_name" name="first_name" placeholder="First Name" required>
                                 </div>
                                 <div class="col col-md-6">
-                                    <label>Last Name</label>
+                                    <label>Last Name *</label>
                                     <input type="text" class="form-control" id="last_name" name="last_name" placeholder="Last Name" required>
                                 </div>
                                 <div class="col col-md-6">
                                     <label>Company Name</label>
-                                    <input type="text" class="form-control" id="company_name" name="company_name" placeholder="Company Name" required>
+                                    <input type="text" class="form-control" id="company_name" name="company_name" placeholder="Company Name (Optional)">
                                 </div>
                                 <div class="col col-md-6">
-                                    <label>Email</label>
+                                    <label>Email *</label>
                                     <input type="email" class="form-control" id="email" name="email" placeholder="Email" required>
+                                </div>
+                                <div class="col col-md-12">
+                                    <label>Mobile Number *</label>
+                                    <input type="tel" class="form-control" id="mobile" name="mobile" placeholder="+91 XXXXX XXXXX" pattern="[0-9]{10}" required>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="submit" class="btn btn-primary" style="background-color: #fff; color:#fff"><a href="https://drive.google.com/file/d/1ozgCPNxilEXBUERAMHmer6pXE8AtJyGM/view?usp=drive_link">Download</a></button>
+                        <button type="submit" class="btn btn-primary" id="downloadBtn" style="background-color: #013A5B; color:#fff; border: none;">
+                            <i class="fa fa-download"></i> Submit & Download
+                        </button>
                         <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
                     </div>
                 </div>
             </form>
         </div>
     </div>
-    <script src="js/jsjquery.min.js"></script>
-    <script src="js/bootstrap.min.js"></script>
+    
+    <script>
+    function handleBrochureSubmit(event) {
+        event.preventDefault();
+        
+        const form = document.getElementById('brochureForm');
+        const formData = new FormData(form);
+        const data = Object.fromEntries(formData);
+        
+        const downloadBtn = document.getElementById('downloadBtn');
+        const originalText = downloadBtn.innerHTML;
+        downloadBtn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Processing...';
+        downloadBtn.disabled = true;
+        
+        // Send data to backend
+        const apiUrl = window.API_BASE_URL || 'http://localhost:3000';
+        
+        fetch(`${apiUrl}/api/brochure-downloads`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(result => {
+            console.log('Brochure download logged:', result);
+            
+            // Show success message
+            alert('Thank you! Your brochure download will start now.');
+            
+            // Start download
+            window.open('https://drive.google.com/file/d/1ozgCPNxilEXBUERAMHmer6pXE8AtJyGM/view?usp=drive_link', '_blank');
+            
+            // Reset form and close modal
+            form.reset();
+            $('#myModal').modal('hide');
+            
+            downloadBtn.innerHTML = originalText;
+            downloadBtn.disabled = false;
+        })
+        .catch(error => {
+            console.error('Error logging brochure download:', error);
+            alert('Failed to process request. Please try again.');
+            
+            downloadBtn.innerHTML = originalText;
+            downloadBtn.disabled = false;
+        });
+        
+        return false;
+    }
+    </script>
+    <script src="js/jsjquery.min.js" defer></script>
+    <script src="js/bootstrap.min.js" defer></script>
     <!-- Plugins for this template -->
-    <script src="js/jquery-plugin-collection.js"></script>
+    <script src="js/jquery-plugin-collection.js" defer></script>
     <!-- Custom script for this template -->
-    <script src="js/jsscript.js"></script> <!--line 167 for back to top-->
+    <script src="js/jsscript.js" defer></script> <!--line 167 for back to top-->
     
     <!-- API Configuration -->
-    <script src="/config.js"></script>
-    <!-- Newsletter Popup -->
-    <!-- <script src="js/notification-subscribe.js"></script> -->
+    <script src="/config.js" defer></script>
+    <!-- Newsletter Header Modal -->
+    <script src="js/newsletter-header-modal.js"></script>
 </body>
 </html>

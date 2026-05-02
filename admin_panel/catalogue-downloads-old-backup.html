@@ -1,0 +1,1267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Catalogue Downloads - Anocab Admin</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 40px auto;
+    }
+
+    .back-btn {
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      margin-bottom: 20px;
+      transition: all 0.3s ease;
+    }
+
+    .back-btn:hover {
+      background: rgba(255, 255, 255, 0.3);
+    }
+
+    .main-card {
+      background: white;
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    }
+
+    h1 {
+      color: #333;
+      font-size: 28px;
+      margin-bottom: 10px;
+      font-weight: 700;
+    }
+
+    .subtitle {
+      color: #666;
+      font-size: 14px;
+      margin-bottom: 30px;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 30px;
+    }
+
+    .form-section {
+      background: #f8f9fa;
+      padding: 25px;
+      border-radius: 12px;
+    }
+
+    .preview-section {
+      background: #f8f9fa;
+      padding: 25px;
+      border-radius: 12px;
+      position: sticky;
+      top: 20px;
+    }
+
+    .section-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: #333;
+      font-size: 14px;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="file"],
+    select,
+    textarea {
+      width: 100%;
+      padding: 12px 14px;
+      border-radius: 8px;
+      border: 2px solid #e0e0e0;
+      font-size: 14px;
+      transition: all 0.3s ease;
+      background: white;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+    }
+
+    .file-upload-wrapper {
+      position: relative;
+    }
+
+    .file-upload-label {
+      display: block;
+      padding: 12px 14px;
+      background: white;
+      border: 2px dashed #e0e0e0;
+      border-radius: 8px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .file-upload-label:hover {
+      border-color: #667eea;
+      background: #f8f9ff;
+    }
+
+    input[type="file"] {
+      display: none;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      padding: 14px 24px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 15px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      width: 100%;
+      margin-top: 10px;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+    }
+
+    .btn-secondary {
+      background: #28a745;
+      color: white;
+      border: none;
+      padding: 14px 24px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 15px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      width: 100%;
+      margin-top: 10px;
+    }
+
+    .btn-secondary:hover {
+      background: #218838;
+      transform: translateY(-2px);
+    }
+
+    .preview-canvas-wrapper {
+      background: white;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    #previewCanvas {
+      width: 100%;
+      height: auto;
+      border: 1px solid #e0e0e0;
+      border-radius: 4px;
+    }
+
+    .saved-contacts {
+      margin-top: 0;
+      padding: 15px;
+      background: white;
+      border-radius: 8px;
+      max-height: 300px;
+      overflow-y: auto;
+    }
+
+    .contact-item {
+      padding: 10px;
+      margin-bottom: 8px;
+      background: #f8f9fa;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .contact-item:hover {
+      background: #e9ecef;
+      transform: translateX(4px);
+    }
+
+    .contact-item.selected {
+      background: #667eea;
+      color: white;
+    }
+
+    .contact-checkbox {
+      width: 18px;
+      height: 18px;
+      margin-right: 10px;
+      cursor: pointer;
+    }
+
+    .contact-item-content {
+      display: flex;
+      align-items: center;
+      flex: 1;
+    }
+
+    .delete-contact {
+      background: #dc3545;
+      color: white;
+      border: none;
+      padding: 4px 8px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 12px;
+    }
+
+    .success-msg {
+      padding: 12px 16px;
+      border-radius: 8px;
+      margin-top: 15px;
+      font-size: 14px;
+      background: #d4edda;
+      color: #155724;
+      border-left: 4px solid #28a745;
+      display: none;
+    }
+
+    .success-msg.show {
+      display: block;
+      animation: slideIn 0.3s ease;
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (max-width: 1024px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .preview-section {
+        position: relative;
+        top: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <button class="back-btn" onclick="location.href='/login_panel/dashboard.html'">← Back to Dashboard</button>
+    
+    <div class="main-card">
+      <h1>📄 Catalogue Downloads</h1>
+      <p class="subtitle">Create and download customized price catalogues</p>
+
+      <div class="layout">
+        <!-- Form Section -->
+        <div class="form-section">
+          <div class="section-title">⚙️ Catalogue Settings</div>
+
+          <!-- Header Image Upload -->
+          <div class="form-group">
+            <label>Header Image</label>
+            <div class="file-upload-wrapper">
+              <label for="headerImage" class="file-upload-label">
+                <span id="headerImageName">📷 Click to upload header image</span>
+              </label>
+              <input type="file" id="headerImage" accept="image/*">
+            </div>
+          </div>
+
+          <!-- Logo Uploads -->
+          <div class="form-group">
+            <label>Anocab Logo</label>
+            <div class="file-upload-wrapper">
+              <label for="anocabLogo" class="file-upload-label">
+                <span id="anocabLogoName">🏢 Click to upload Anocab logo</span>
+              </label>
+              <input type="file" id="anocabLogo" accept="image/*">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>JEO Logo</label>
+            <div class="file-upload-wrapper">
+              <label for="jeoLogo" class="file-upload-label">
+                <span id="jeoLogoName">🏢 Click to upload JEO logo</span>
+              </label>
+              <input type="file" id="jeoLogo" accept="image/*">
+            </div>
+          </div>
+
+          <!-- Contact Information -->
+          <div class="section-title" style="margin-top: 30px;">👤 Contact Information</div>
+
+          <div class="form-group">
+            <label>Name</label>
+            <input type="text" id="contactName" placeholder="Enter name">
+          </div>
+
+          <div class="form-group">
+            <label>Mobile Number</label>
+            <input type="text" id="contactMobile" placeholder="Enter mobile number">
+          </div>
+
+          <div class="form-group">
+            <label>Email</label>
+            <input type="email" id="contactEmail" placeholder="Enter email">
+          </div>
+
+          <div class="form-group">
+            <label>QR Code Image</label>
+            <div class="file-upload-wrapper">
+              <label for="qrCode" class="file-upload-label">
+                <span id="qrCodeName">📱 Click to upload QR code</span>
+              </label>
+              <input type="file" id="qrCode" accept="image/*">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Trend Indicators (Edit if needed)</label>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px;">
+              <div>
+                <label style="font-size: 12px; margin-bottom: 4px;">Aluminum EC</label>
+                <select id="trend_aluminum_ec" style="padding: 10px; font-size: 16px; font-weight: bold;">
+                  <option value="up">⬆️ Green (Up)</option>
+                  <option value="down">⬇️ Red (Down)</option>
+                </select>
+              </div>
+              <div>
+                <label style="font-size: 12px; margin-bottom: 4px;">Aluminum Alloy</label>
+                <select id="trend_aluminum_alloy" style="padding: 10px; font-size: 16px; font-weight: bold;">
+                  <option value="up">⬆️ Green (Up)</option>
+                  <option value="down">⬇️ Red (Down)</option>
+                </select>
+              </div>
+              <div>
+                <label style="font-size: 12px; margin-bottom: 4px;">Copper</label>
+                <select id="trend_copper" style="padding: 10px; font-size: 16px; font-weight: bold;">
+                  <option value="up">⬆️ Green (Up)</option>
+                  <option value="down">⬇️ Red (Down)</option>
+                </select>
+              </div>
+              <div>
+                <label style="font-size: 12px; margin-bottom: 4px;">PVC</label>
+                <select id="trend_pvc" style="padding: 10px; font-size: 16px; font-weight: bold;">
+                  <option value="up">⬆️ Green (Up)</option>
+                  <option value="down">⬇️ Red (Down)</option>
+                </select>
+              </div>
+              <div>
+                <label style="font-size: 12px; margin-bottom: 4px;">LLDPE</label>
+                <select id="trend_lldpe" style="padding: 10px; font-size: 16px; font-weight: bold;">
+                  <option value="up">⬆️ Green (Up)</option>
+                  <option value="down">⬇️ Red (Down)</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <button class="btn-primary" id="saveContactBtn">💾 Save Contact</button>
+
+          <!-- Saved Contacts List -->
+          <div class="section-title" style="margin-top: 30px;">👥 Saved Contacts</div>
+          <div class="saved-contacts" id="savedContactsList">
+            <div id="contactsContainer"></div>
+          </div>
+
+          <!-- Bulk Download Section -->
+          <div class="section-title" style="margin-top: 30px;">📦 Bulk Download</div>
+          <div style="background: white; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+              <input type="checkbox" id="selectAllContacts" style="width: 18px; height: 18px;">
+              <strong>Select All Contacts</strong>
+            </label>
+          </div>
+          <button class="btn-secondary" id="bulkDownloadBtn" style="background: #6c63ff;">📥 Download Selected Catalogues</button>
+
+          <!-- Footer Logo -->
+          <div class="section-title" style="margin-top: 30px;">🔖 Footer Settings</div>
+
+          <div class="form-group">
+            <label>Footer Logo</label>
+            <div class="file-upload-wrapper">
+              <label for="footerLogo" class="file-upload-label">
+                <span id="footerLogoName">🏢 Click to upload footer logo</span>
+              </label>
+              <input type="file" id="footerLogo" accept="image/*">
+            </div>
+          </div>
+
+          <button class="btn-primary" id="generateBtn">🎨 Generate Preview</button>
+          <div class="success-msg" id="successMsg"></div>
+        </div>
+
+        <!-- Preview Section -->
+        <div class="preview-section">
+          <div class="section-title">👁️ Live Preview</div>
+          <div class="preview-canvas-wrapper">
+            <canvas id="previewCanvas" width="800" height="1200"></canvas>
+          </div>
+          <button class="btn-secondary" id="downloadBtn">⬇️ Download Catalogue (PNG)</button>
+          <button class="btn-secondary" id="downloadJpgBtn">⬇️ Download Catalogue (JPG)</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+  <script>
+    const API_BASE_URL = window.location.origin || "http://localhost:3000";
+    
+    // Storage keys
+    const CONTACTS_KEY = 'catalogue_contacts';
+    const SETTINGS_KEY = 'catalogue_settings';
+
+    // Image storage
+    let images = {
+      header: null,
+      anocabLogo: null,
+      jeoLogo: null,
+      qrCode: null,
+      footerLogo: null
+    };
+
+    // Load saved data
+    let savedContacts = JSON.parse(localStorage.getItem(CONTACTS_KEY) || '[]');
+    let savedSettings = JSON.parse(localStorage.getItem(SETTINGS_KEY) || '{}');
+    
+    // ============================================
+    // MODULE 1: USER MANAGEMENT
+    // ============================================
+    const UserManager = {
+      STORAGE_KEY: 'catalogue_contacts',
+      
+      getAll() {
+        return JSON.parse(localStorage.getItem(this.STORAGE_KEY) || '[]');
+      },
+      
+      save(userData) {
+        const users = this.getAll();
+        users.push({
+          id: Date.now(),
+          ...userData,
+          createdAt: new Date().toISOString()
+        });
+        localStorage.setItem(this.STORAGE_KEY, JSON.stringify(users));
+        return users;
+      },
+      
+      delete(id) {
+        const users = this.getAll().filter(u => u.id !== id);
+        localStorage.setItem(this.STORAGE_KEY, JSON.stringify(users));
+        return users;
+      },
+      
+      getById(id) {
+        return this.getAll().find(u => u.id === id);
+      }
+    };
+
+    // ============================================
+    // MODULE 2: GLOBAL SETTINGS (Template/Images)
+    // ============================================
+    const GlobalSettings = {
+      STORAGE_KEY: 'catalogue_settings',
+      
+      images: {
+        header: null,
+        anocabLogo: null,
+        jeoLogo: null,
+        footerLogo: null
+      },
+      
+      getSettings() {
+        return JSON.parse(localStorage.getItem(this.STORAGE_KEY) || '{}');
+      },
+      
+      saveImage(key, base64) {
+        const settings = this.getSettings();
+        settings[key] = base64;
+        localStorage.setItem(this.STORAGE_KEY, JSON.stringify(settings));
+      },
+      
+      loadImages() {
+        const settings = this.getSettings();
+        const promises = [];
+        
+        ['header', 'anocabLogo', 'jeoLogo', 'footerLogo'].forEach(key => {
+          if (settings[key]) {
+            promises.push(this.loadImageFromBase64(key, settings[key]));
+          }
+        });
+        
+        return Promise.all(promises);
+      },
+      
+      loadImageFromBase64(key, base64) {
+        return new Promise((resolve) => {
+          const img = new Image();
+          img.onload = () => {
+            this.images[key] = img;
+            resolve();
+          };
+          img.src = base64;
+        });
+      }
+    };
+
+    // ============================================
+    // MODULE 3: GENERATION ENGINE
+    // ============================================
+    const CatalogueGenerator = {
+      async generate(userData, priceData, trends, globalImages) {
+        const canvas = document.getElementById('previewCanvas');
+        const ctx = canvas.getContext('2d');
+
+        ctx.fillStyle = 'white';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        let yPos = 0;
+
+        // Header
+        if (globalImages.header) {
+          const headerHeight = 350;
+          ctx.drawImage(globalImages.header, 0, yPos, canvas.width, headerHeight);
+          yPos += headerHeight + 26;
+        }
+
+        // Logos
+        if (globalImages.anocabLogo || globalImages.jeoLogo) {
+          const logoY = yPos;
+          const logoHeight = 120;
+          
+          if (globalImages.anocabLogo) {
+            const aspectRatio = globalImages.anocabLogo.width / globalImages.anocabLogo.height;
+            const logoWidth = logoHeight * aspectRatio;
+            ctx.drawImage(globalImages.anocabLogo, 60, logoY, logoWidth, logoHeight);
+          }
+          
+          if (globalImages.jeoLogo) {
+            const aspectRatio = globalImages.jeoLogo.width / globalImages.jeoLogo.height;
+            const logoWidth = logoHeight * aspectRatio;
+            ctx.drawImage(globalImages.jeoLogo, canvas.width - logoWidth - 60, logoY, logoWidth, logoHeight);
+          }
+          
+          yPos += logoHeight + 36;
+        }
+
+        // Price Banner
+        const bannerWidth = canvas.width / 2;
+        const bannerX = (canvas.width - bannerWidth) / 2;
+        
+        const gradient = ctx.createLinearGradient(bannerX, yPos, bannerX + bannerWidth, yPos);
+        gradient.addColorStop(0, '#5a6c7d');
+        gradient.addColorStop(0.5, '#4a5c6d');
+        gradient.addColorStop(1, '#5a6c7d');
+        ctx.fillStyle = gradient;
+        
+        ctx.beginPath();
+        ctx.moveTo(bannerX + 20, yPos);
+        ctx.lineTo(bannerX + bannerWidth - 20, yPos);
+        ctx.lineTo(bannerX + bannerWidth, yPos + 25);
+        ctx.lineTo(bannerX + bannerWidth - 20, yPos + 50);
+        ctx.lineTo(bannerX + 20, yPos + 50);
+        ctx.lineTo(bannerX, yPos + 25);
+        ctx.closePath();
+        ctx.fill();
+        
+        ctx.shadowColor = 'rgba(0, 0, 0, 0.3)';
+        ctx.shadowBlur = 10;
+        ctx.shadowOffsetY = 3;
+        
+        ctx.fillStyle = 'white';
+        ctx.font = 'bold 26px Arial';
+        ctx.textAlign = 'center';
+        
+        const today = new Date();
+        const dateStr = `${String(today.getDate()).padStart(2, '0')}/${String(today.getMonth() + 1).padStart(2, '0')}/${today.getFullYear()}`;
+        ctx.fillText(`Price update for ${dateStr}`, canvas.width / 2, yPos + 33);
+        
+        ctx.shadowColor = 'transparent';
+        ctx.shadowBlur = 0;
+        ctx.shadowOffsetY = 0;
+        
+        yPos += 100;
+
+        // Prices
+        ctx.textAlign = 'left';
+
+        const priceItems = [
+          { name: 'Aluminum EC ( Balco )', price: priceData.aluminum_ec, trend: trends.aluminum_ec },
+          { name: 'Aluminum Alloy ( Balco )', price: priceData.aluminum_alloy, trend: trends.aluminum_alloy },
+          { name: 'Copper ( Mcx )', price: priceData.copper, trend: trends.copper },
+          { name: 'PVC - G7GER0IF ( Reliance )', price: priceData.pvc || '----', trend: trends.pvc },
+          { name: 'LLDPE - X24065 ( Reliance )', price: priceData.lldpe, trend: trends.lldpe }
+        ];
+
+        priceItems.forEach((item, index) => {
+          const itemY = yPos + (index * 41);
+          
+          ctx.fillStyle = '#1a1a1a';
+          ctx.font = 'bold 24px Arial';
+          ctx.fillText(item.name, 60, itemY);
+          
+          ctx.fillStyle = '#000';
+          ctx.font = 'bold 24px Arial';
+          ctx.fillText(`₹`, 520, itemY);
+          ctx.fillText(`${item.price}`, 550, itemY);
+          
+          const trendArrow = item.trend === 'up' ? '↑' : '↓';
+          const trendColor = item.trend === 'up' ? '#28a745' : '#dc3545';
+          
+          ctx.fillStyle = trendColor;
+          ctx.font = 'bold 38px Arial';
+          ctx.fillText(trendArrow, 700, itemY);
+        });
+
+        yPos += 227;
+
+        // Line
+        ctx.strokeStyle = '#a0a0a0';
+        ctx.lineWidth = 4;
+        ctx.beginPath();
+        ctx.moveTo(40, yPos);
+        ctx.lineTo(canvas.width - 40, yPos);
+        ctx.stroke();
+        
+        yPos += 41;
+
+        // Contact Info
+        if (userData.name) {
+          ctx.textAlign = 'left';
+          
+          ctx.fillStyle = '#0066cc';
+          ctx.font = 'bold 30px Arial';
+          ctx.fillText(userData.name, 60, yPos);
+          
+          ctx.font = 'bold 26px Arial';
+          ctx.fillText(userData.mobile, 60, yPos + 45);
+          ctx.fillText(userData.email, 60, yPos + 85);
+
+          if (userData.qrCode) {
+            const qrImg = await this.loadImage(userData.qrCode);
+            const qrSize = 130;
+            ctx.drawImage(qrImg, canvas.width - qrSize - 60, yPos - 10, qrSize, qrSize);
+          }
+
+          yPos += 118;
+        }
+
+        // Footer Logo
+        if (globalImages.footerLogo) {
+          const footerLogoHeight = 90;
+          const footerLogoWidth = (globalImages.footerLogo.width / globalImages.footerLogo.height) * footerLogoHeight;
+          const logoX = (canvas.width - footerLogoWidth) / 2;
+          ctx.drawImage(globalImages.footerLogo, logoX, yPos, footerLogoWidth, footerLogoHeight);
+          yPos += footerLogoHeight + 17;
+        }
+
+        // Footer Text
+        ctx.fillStyle = '#0066cc';
+        ctx.font = 'bold 26px Arial';
+        ctx.textAlign = 'center';
+        ctx.fillText('Manufacturers of Complete Range of  Wire & Cable', canvas.width / 2, yPos);
+        
+        yPos += 36;
+        
+        ctx.fillStyle = '#000';
+        ctx.font = 'bold 20px Arial';
+        ctx.fillText('Anode Electric Pvt. Ltd. ® | Samriddhi Industries ® www.anocab.com', canvas.width / 2, yPos);
+        
+        yPos += 31;
+        
+        ctx.font = 'bold 20px Arial';
+        ctx.fillText('sales@anocab.in | sales@jeo.co.in | 1800-27-000-75', canvas.width / 2, yPos);
+        
+        return canvas;
+      },
+      
+      loadImage(src) {
+        return new Promise((resolve) => {
+          const img = new Image();
+          img.onload = () => resolve(img);
+          img.src = src;
+        });
+      },
+      
+      canvasToBlob(canvas) {
+        return new Promise((resolve) => {
+          canvas.toBlob((blob) => resolve(blob), 'image/png');
+        });
+      }
+    };
+    
+    // File upload handlers
+    document.getElementById('headerImage').addEventListener('change', function(e) {
+      handleFileUpload(e, 'header', 'headerImageName');
+    });
+
+    document.getElementById('anocabLogo').addEventListener('change', function(e) {
+      handleFileUpload(e, 'anocabLogo', 'anocabLogoName');
+    });
+
+    document.getElementById('jeoLogo').addEventListener('change', function(e) {
+      handleFileUpload(e, 'jeoLogo', 'jeoLogoName');
+    });
+
+    document.getElementById('qrCode').addEventListener('change', function(e) {
+      handleFileUpload(e, 'qrCode', 'qrCodeName');
+    });
+
+    document.getElementById('footerLogo').addEventListener('change', function(e) {
+      handleFileUpload(e, 'footerLogo', 'footerLogoName');
+    });
+
+    function handleFileUpload(event, imageKey, labelId) {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const img = new Image();
+          img.onload = function() {
+            images[imageKey] = img;
+            document.getElementById(labelId).textContent = `✓ ${file.name}`;
+            
+            // Save to localStorage
+            savedSettings[imageKey] = e.target.result;
+            localStorage.setItem(SETTINGS_KEY, JSON.stringify(savedSettings));
+            
+            generatePreview();
+          };
+          img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    // Load saved settings
+    function loadSavedSettings() {
+      if (savedSettings.header) {
+        loadImageFromBase64('header', savedSettings.header, 'headerImageName');
+      }
+      if (savedSettings.anocabLogo) {
+        loadImageFromBase64('anocabLogo', savedSettings.anocabLogo, 'anocabLogoName');
+      }
+      if (savedSettings.jeoLogo) {
+        loadImageFromBase64('jeoLogo', savedSettings.jeoLogo, 'jeoLogoName');
+      }
+      if (savedSettings.qrCode) {
+        loadImageFromBase64('qrCode', savedSettings.qrCode, 'qrCodeName');
+      }
+      if (savedSettings.footerLogo) {
+        loadImageFromBase64('footerLogo', savedSettings.footerLogo, 'footerLogoName');
+      }
+    }
+
+    function loadImageFromBase64(imageKey, base64, labelId) {
+      const img = new Image();
+      img.onload = function() {
+        images[imageKey] = img;
+        document.getElementById(labelId).textContent = '✓ Image loaded';
+      };
+      img.src = base64;
+    }
+
+    // Save contact
+    document.getElementById('saveContactBtn').addEventListener('click', function() {
+      const name = document.getElementById('contactName').value.trim();
+      const mobile = document.getElementById('contactMobile').value.trim();
+      const email = document.getElementById('contactEmail').value.trim();
+
+      if (!name || !mobile || !email) {
+        alert('Please fill all contact fields');
+        return;
+      }
+
+      const contact = {
+        id: Date.now(),
+        name,
+        mobile,
+        email,
+        qrCode: savedSettings.qrCode || null,
+        trends: {
+          aluminum_ec: document.getElementById('trend_aluminum_ec').value,
+          aluminum_alloy: document.getElementById('trend_aluminum_alloy').value,
+          copper: document.getElementById('trend_copper').value,
+          pvc: document.getElementById('trend_pvc').value,
+          lldpe: document.getElementById('trend_lldpe').value
+        }
+      };
+
+      savedContacts.push(contact);
+      localStorage.setItem(CONTACTS_KEY, JSON.stringify(savedContacts));
+      
+      // Clear form after saving
+      document.getElementById('contactName').value = '';
+      document.getElementById('contactMobile').value = '';
+      document.getElementById('contactEmail').value = '';
+      document.getElementById('qrCodeName').textContent = '📱 Click to upload QR code';
+      
+      renderContactsList();
+      
+      const successMsg = document.getElementById('successMsg');
+      successMsg.textContent = '✓ Contact saved successfully!';
+      successMsg.classList.add('show');
+      setTimeout(() => successMsg.classList.remove('show'), 3000);
+    });
+
+    // Render contacts list
+    function renderContactsList() {
+      const container = document.getElementById('contactsContainer');
+      container.innerHTML = '';
+
+      savedContacts.forEach(contact => {
+        const div = document.createElement('div');
+        div.className = 'contact-item';
+        div.innerHTML = `
+          <div class="contact-item-content">
+            <input type="checkbox" class="contact-checkbox" data-id="${contact.id}">
+            <span>${contact.name} - ${contact.mobile}</span>
+          </div>
+          <button class="delete-contact" onclick="deleteContact(${contact.id})">Delete</button>
+        `;
+        
+        const checkbox = div.querySelector('.contact-checkbox');
+        const span = div.querySelector('span');
+        
+        span.onclick = function() {
+          selectContact(contact);
+        };
+        
+        container.appendChild(div);
+      });
+    }
+
+    // Delete contact
+    window.deleteContact = function(id) {
+      if (confirm('Are you sure you want to delete this contact?')) {
+        savedContacts = savedContacts.filter(c => c.id !== id);
+        localStorage.setItem(CONTACTS_KEY, JSON.stringify(savedContacts));
+        renderContactsList();
+      }
+    };
+
+    // Select contact
+    function selectContact(contact) {
+      document.getElementById('contactName').value = contact.name;
+      document.getElementById('contactMobile').value = contact.mobile;
+      document.getElementById('contactEmail').value = contact.email;
+      
+      if (contact.qrCode) {
+        loadImageFromBase64('qrCode', contact.qrCode, 'qrCodeName');
+      }
+      
+      // Load saved trends
+      if (contact.trends) {
+        document.getElementById('trend_aluminum_ec').value = contact.trends.aluminum_ec || 'up';
+        document.getElementById('trend_aluminum_alloy').value = contact.trends.aluminum_alloy || 'up';
+        document.getElementById('trend_copper').value = contact.trends.copper || 'down';
+        document.getElementById('trend_pvc').value = contact.trends.pvc || 'down';
+        document.getElementById('trend_lldpe').value = contact.trends.lldpe || 'down';
+      }
+      
+      generatePreview();
+    }
+
+    // Update contact select dropdown
+    function updateContactSelect() {
+      // Removed - no longer needed
+    }
+
+    document.getElementById('savedContactSelect')?.addEventListener('change', function() {
+      // Removed - no longer needed
+    });
+
+    // Generate preview
+    document.getElementById('generateBtn').addEventListener('click', generatePreview);
+
+    async function generatePreview() {
+      const canvas = document.getElementById('previewCanvas');
+      const ctx = canvas.getContext('2d');
+
+      // Clear canvas
+      ctx.fillStyle = 'white';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      let yPos = 0;
+
+      // Draw header image with increased height (reduced spacing by 9% total)
+      if (images.header) {
+        const headerHeight = 350;
+        ctx.drawImage(images.header, 0, yPos, canvas.width, headerHeight);
+        yPos += headerHeight + 26; // Reduced from 27 (2% more)
+      }
+
+      // Draw logos with increased width and more spacing between them (reduced spacing by 9% total)
+      if (images.anocabLogo || images.jeoLogo) {
+        const logoY = yPos;
+        const logoHeight = 120; // Increased height from 100
+        
+        if (images.anocabLogo) {
+          // Calculate width maintaining aspect ratio
+          const aspectRatio = images.anocabLogo.width / images.anocabLogo.height;
+          const logoWidth = logoHeight * aspectRatio;
+          ctx.drawImage(images.anocabLogo, 60, logoY, logoWidth, logoHeight);
+        }
+        
+        if (images.jeoLogo) {
+          // Calculate width maintaining aspect ratio
+          const aspectRatio = images.jeoLogo.width / images.jeoLogo.height;
+          const logoWidth = logoHeight * aspectRatio;
+          ctx.drawImage(images.jeoLogo, canvas.width - logoWidth - 60, logoY, logoWidth, logoHeight);
+        }
+        
+        yPos += logoHeight + 36; // Reduced from 37 (2% more)
+      }
+
+      // Draw price update banner with half width
+      const bannerWidth = canvas.width / 2;
+      const bannerX = (canvas.width - bannerWidth) / 2;
+      
+      const gradient = ctx.createLinearGradient(bannerX, yPos, bannerX + bannerWidth, yPos);
+      gradient.addColorStop(0, '#5a6c7d');
+      gradient.addColorStop(0.5, '#4a5c6d');
+      gradient.addColorStop(1, '#5a6c7d');
+      ctx.fillStyle = gradient;
+      
+      // Draw banner with arrow shape (half width)
+      ctx.beginPath();
+      ctx.moveTo(bannerX + 20, yPos);
+      ctx.lineTo(bannerX + bannerWidth - 20, yPos);
+      ctx.lineTo(bannerX + bannerWidth, yPos + 25);
+      ctx.lineTo(bannerX + bannerWidth - 20, yPos + 50);
+      ctx.lineTo(bannerX + 20, yPos + 50);
+      ctx.lineTo(bannerX, yPos + 25);
+      ctx.closePath();
+      ctx.fill();
+      
+      // Add shadow to banner
+      ctx.shadowColor = 'rgba(0, 0, 0, 0.3)';
+      ctx.shadowBlur = 10;
+      ctx.shadowOffsetY = 3;
+      
+      ctx.fillStyle = 'white';
+      ctx.font = 'bold 26px Arial';
+      ctx.textAlign = 'center';
+      
+      const today = new Date();
+      const dateStr = `${String(today.getDate()).padStart(2, '0')}/${String(today.getMonth() + 1).padStart(2, '0')}/${today.getFullYear()}`;
+      ctx.fillText(`Price update for ${dateStr}`, canvas.width / 2, yPos + 33);
+      
+      // Reset shadow
+      ctx.shadowColor = 'transparent';
+      ctx.shadowBlur = 0;
+      ctx.shadowOffsetY = 0;
+      
+      yPos += 100; // Reduced from 102 (2% more)
+
+      // Fetch and draw prices with comparison
+      try {
+        const response = await fetch(`${API_BASE_URL}/api/prices`);
+        const prices = await response.json();
+
+        // Get price history for yesterday's comparison
+        const historyResponse = await fetch(`${API_BASE_URL}/api/price-history`);
+        const priceHistory = await historyResponse.json();
+        
+        // Get yesterday's prices (last entry in history)
+        const yesterdayPrices = priceHistory.length > 0 ? priceHistory[priceHistory.length - 1].prices : {};
+
+        ctx.textAlign = 'left';
+
+        const priceData = [
+          { key: 'aluminum_ec', name: 'Aluminum EC ( Balco )', price: prices.aluminum_ec, prevPrice: yesterdayPrices.aluminum_ec },
+          { key: 'aluminum_alloy', name: 'Aluminum Alloy ( Balco )', price: prices.aluminum_alloy, prevPrice: yesterdayPrices.aluminum_alloy },
+          { key: 'copper', name: 'Copper ( Mcx )', price: prices.copper, prevPrice: yesterdayPrices.copper },
+          { key: 'pvc', name: 'PVC - G7GER0IF ( Reliance )', price: prices.pvc || '----', prevPrice: yesterdayPrices.pvc },
+          { key: 'lldpe', name: 'LLDPE - X24065 ( Reliance )', price: prices.lldpe, prevPrice: yesterdayPrices.lldpe }
+        ];
+
+        priceData.forEach((item, index) => {
+          const itemY = yPos + (index * 41);
+          
+          // Material name - bold
+          ctx.fillStyle = '#1a1a1a';
+          ctx.font = 'bold 24px Arial';
+          ctx.fillText(item.name, 60, itemY);
+          
+          // Price with decimal - bold
+          ctx.fillStyle = '#000';
+          ctx.font = 'bold 24px Arial';
+          const priceStr = typeof item.price === 'number' ? item.price.toFixed(2) : item.price;
+          ctx.fillText(`₹`, 480, itemY);
+          ctx.fillText(`${priceStr}`, 510, itemY);
+          
+          // Calculate price change and show in bracket
+          if (item.prevPrice && item.price !== '----' && typeof item.price === 'number') {
+            const change = item.price - item.prevPrice;
+            const changeStr = change >= 0 ? `+${change.toFixed(2)}` : change.toFixed(2);
+            
+            // Show change in smaller font next to price
+            ctx.font = '18px Arial';
+            ctx.fillStyle = '#666';
+            ctx.fillText(`(${changeStr})`, 610, itemY);
+          }
+          
+          // Determine trend: Green if price decreased (good), Red if increased (bad)
+          let trend = '↑';
+          let trendColor = '#dc3545'; // red for price increase
+          
+          const trendSelectors = {
+            'aluminum_ec': 'trend_aluminum_ec',
+            'aluminum_alloy': 'trend_aluminum_alloy',
+            'copper': 'trend_copper',
+            'pvc': 'trend_pvc',
+            'lldpe': 'trend_lldpe'
+          };
+          
+          const trendSelector = trendSelectors[item.key];
+          if (trendSelector) {
+            const trendValue = document.getElementById(trendSelector).value;
+            if (trendValue === 'down') {
+              trend = '↓';
+              trendColor = '#28a745'; // green for price decrease (good for buyers)
+            } else {
+              trend = '↑';
+              trendColor = '#dc3545'; // red for price increase (bad for buyers)
+            }
+          }
+          
+          // Bold trend arrow
+          ctx.fillStyle = trendColor;
+          ctx.font = 'bold 38px Arial';
+          ctx.fillText(trend, 720, itemY);
+        });
+
+        yPos += 227;
+      } catch (error) {
+        console.error('Error fetching prices:', error);
+      }
+
+      // Draw single horizontal line before contact section (200% bolder)
+      ctx.strokeStyle = '#a0a0a0';
+      ctx.lineWidth = 4; // 200% of 2 = 4
+      ctx.beginPath();
+      ctx.moveTo(40, yPos);
+      ctx.lineTo(canvas.width - 40, yPos);
+      ctx.stroke();
+      
+      yPos += 41; // Reduced from 42 (2% more)
+
+      // Draw contact information and QR in same row
+      const name = document.getElementById('contactName').value;
+      const mobile = document.getElementById('contactMobile').value;
+      const email = document.getElementById('contactEmail').value;
+
+      if (name || mobile || email) {
+        ctx.textAlign = 'left';
+        
+        // Bold name
+        ctx.fillStyle = '#0066cc';
+        ctx.font = 'bold 30px Arial';
+        ctx.fillText(name, 60, yPos);
+        
+        // Bold mobile
+        ctx.font = 'bold 26px Arial';
+        ctx.fillText(mobile, 60, yPos + 45);
+        
+        // Bold email
+        ctx.fillText(email, 60, yPos + 85);
+
+        // Draw QR code in same row (aligned to right)
+        if (images.qrCode) {
+          const qrSize = 130;
+          ctx.drawImage(images.qrCode, canvas.width - qrSize - 60, yPos - 10, qrSize, qrSize);
+        }
+
+        yPos += 118; // Reduced from 120 (2% more)
+      }
+
+      // Draw footer logo full width
+      if (images.footerLogo) {
+        const footerLogoHeight = 90;
+        const footerLogoWidth = (images.footerLogo.width / images.footerLogo.height) * footerLogoHeight;
+        
+        // Center the logo
+        const logoX = (canvas.width - footerLogoWidth) / 2;
+        ctx.drawImage(images.footerLogo, logoX, yPos, footerLogoWidth, footerLogoHeight);
+        yPos += footerLogoHeight + 17; // Reduced from 18 (2% more)
+      }
+
+      // Draw footer text - extra bold and full width
+      ctx.fillStyle = '#0066cc';
+      ctx.font = 'bold 26px Arial';
+      ctx.textAlign = 'center';
+      
+      // Full width text
+      const footerText1 = 'Manufacturers of Complete Range of  Wire & Cable';
+      ctx.fillText(footerText1, canvas.width / 2, yPos);
+      
+      yPos += 36; // Reduced from 37 (2% more)
+      
+      // Extra bold company info - full width
+      ctx.fillStyle = '#000';
+      ctx.font = 'bold 20px Arial';
+      const footerText2 = 'Anode Electric Pvt. Ltd. ® | Samriddhi Industries ® www.anocab.com';
+      ctx.fillText(footerText2, canvas.width / 2, yPos);
+      
+      yPos += 31; // Reduced from 32 (2% more)
+      
+      // Extra bold contact info - full width
+      ctx.font = 'bold 20px Arial';
+      const footerText3 = 'sales@anocab.in | sales@jeo.co.in | 1800-27-000-75';
+      ctx.fillText(footerText3, canvas.width / 2, yPos);
+      
+      yPos += 40; // Add space at bottom
+    }
+
+    // Download as PNG
+    document.getElementById('downloadBtn').addEventListener('click', function() {
+      const canvas = document.getElementById('previewCanvas');
+      const link = document.createElement('a');
+      link.download = `catalogue_${Date.now()}.png`;
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    });
+
+    // Download as JPG
+    document.getElementById('downloadJpgBtn').addEventListener('click', function() {
+      const canvas = document.getElementById('previewCanvas');
+      const link = document.createElement('a');
+      link.download = `catalogue_${Date.now()}.jpg`;
+      link.href = canvas.toDataURL('image/jpeg', 0.95);
+      link.click();
+    });
+
+    // Select all contacts
+    document.getElementById('selectAllContacts').addEventListener('change', function() {
+      const checkboxes = document.querySelectorAll('.contact-checkbox');
+      checkboxes.forEach(cb => cb.checked = this.checked);
+    });
+
+    // Bulk download
+    document.getElementById('bulkDownloadBtn').addEventListener('click', async function() {
+      const selectedCheckboxes = document.querySelectorAll('.contact-checkbox:checked');
+      
+      if (selectedCheckboxes.length === 0) {
+        alert('Please select at least one contact');
+        return;
+      }
+
+      this.disabled = true;
+      this.textContent = '⏳ Generating catalogues...';
+
+      for (let i = 0; i < selectedCheckboxes.length; i++) {
+        const contactId = parseInt(selectedCheckboxes[i].dataset.id);
+        const contact = savedContacts.find(c => c.id === contactId);
+        
+        if (contact) {
+          // Load contact data
+          document.getElementById('contactName').value = contact.name;
+          document.getElementById('contactMobile').value = contact.mobile;
+          document.getElementById('contactEmail').value = contact.email;
+          
+          if (contact.qrCode) {
+            await loadImageFromBase64Async('qrCode', contact.qrCode);
+          }
+          
+          // Load trends
+          if (contact.trends) {
+            document.getElementById('trend_aluminum_ec').value = contact.trends.aluminum_ec || 'up';
+            document.getElementById('trend_aluminum_alloy').value = contact.trends.aluminum_alloy || 'up';
+            document.getElementById('trend_copper').value = contact.trends.copper || 'down';
+            document.getElementById('trend_pvc').value = contact.trends.pvc || 'down';
+            document.getElementById('trend_lldpe').value = contact.trends.lldpe || 'down';
+          }
+          
+          // Generate and download
+          await generatePreview();
+          await new Promise(resolve => setTimeout(resolve, 500)); // Wait for canvas to render
+          
+          const canvas = document.getElementById('previewCanvas');
+          const link = document.createElement('a');
+          link.download = `catalogue_${contact.name.replace(/\s+/g, '_')}_${Date.now()}.png`;
+          link.href = canvas.toDataURL('image/png');
+          link.click();
+          
+          await new Promise(resolve => setTimeout(resolve, 300)); // Delay between downloads
+        }
+      }
+
+      this.disabled = false;
+      this.textContent = '✓ Download Complete!';
+      setTimeout(() => {
+        this.textContent = '📥 Download Selected Catalogues';
+      }, 2000);
+    });
+
+    function loadImageFromBase64Async(imageKey, base64) {
+      return new Promise((resolve) => {
+        const img = new Image();
+        img.onload = function() {
+          images[imageKey] = img;
+          resolve();
+        };
+        img.src = base64;
+      });
+    }
+
+    // Initialize
+    loadSavedSettings();
+    renderContactsList();
+    generatePreview();
+  </script>
+</body>
+</html>

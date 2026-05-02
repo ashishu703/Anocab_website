@@ -154,6 +154,64 @@ const clientLogoSchema = new mongoose.Schema({
 });
 const ClientLogo = mongoose.model('ClientLogo', clientLogoSchema);
 
+// Catalogue Settings Schema
+const catalogueSettingsSchema = new mongoose.Schema({
+  header: { type: String },
+  anocabLogo: { type: String },
+  jeoLogo: { type: String },
+  footerLogo: { type: String },
+  updatedAt: { type: Date, default: Date.now }
+});
+const CatalogueSettings = mongoose.model('CatalogueSettings', catalogueSettingsSchema);
+
+// Catalogue User Schema
+const catalogueUserSchema = new mongoose.Schema({
+  name: { type: String, required: true },
+  mobile: { type: String, required: true },
+  email: { type: String, required: true },
+  qrCode: { type: String },
+  createdAt: { type: Date, default: Date.now }
+});
+const CatalogueUser = mongoose.model('CatalogueUser', catalogueUserSchema);
+
+// Quick Action Enquiry Schema
+const quickEnquirySchema = new mongoose.Schema({
+  name: { type: String, required: true },
+  mobile: { type: String, required: true },
+  email: { type: String },
+  product: { type: String },
+  requirements: { type: String },
+  createdAt: { type: Date, default: Date.now }
+});
+const QuickEnquiry = mongoose.model('QuickEnquiry', quickEnquirySchema);
+
+// Brochure Download Schema
+const brochureDownloadSchema = new mongoose.Schema({
+  first_name: { type: String, required: true },
+  last_name: { type: String, required: true },
+  company_name: { type: String },
+  email: { type: String, required: true },
+  mobile: { type: String, required: true },
+  createdAt: { type: Date, default: Date.now }
+});
+const BrochureDownload = mongoose.model('BrochureDownload', brochureDownloadSchema);
+
+// Job Listing Schema
+const jobListingSchema = new mongoose.Schema({
+  title: { type: String, required: true },
+  category: { type: String, required: true },
+  description: { type: String, required: true },
+  requirements: [String],
+  location: { type: String, default: 'Jabalpur, M.P.' },
+  type: { type: String, default: 'Full-time' }, // Full-time, Part-time, Contract
+  status: { type: String, enum: ['open', 'closed'], default: 'open' },
+  postedDate: { type: Date, default: Date.now },
+  closingDate: { type: Date },
+  createdAt: { type: Date, default: Date.now },
+  updatedAt: { type: Date, default: Date.now }
+});
+const JobListing = mongoose.model('JobListing', jobListingSchema);
+
 // ==================== NODEMAILER SETUP ====================
 
 const transporter = nodemailer.createTransport({
@@ -337,6 +395,7 @@ app.get('/check-auth', (req, res) => {
 // ==================== PRICE MARQUEE ROUTES ====================
 
 const PRICES_FILE = path.join(__dirname, 'prices.json');
+const PRICE_HISTORY_FILE = path.join(__dirname, 'price_history.json');
 
 // Initialize prices file if it doesn't exist
 if (!fs.existsSync(PRICES_FILE)) {
@@ -349,12 +408,28 @@ if (!fs.existsSync(PRICES_FILE)) {
   }, null, 2));
 }
 
+// Initialize price history file if it doesn't exist
+if (!fs.existsSync(PRICE_HISTORY_FILE)) {
+  fs.writeFileSync(PRICE_HISTORY_FILE, JSON.stringify([], null, 2));
+}
+
 // Get current prices (public)
 app.get('/api/prices', (req, res) => {
   fs.readFile(PRICES_FILE, 'utf8', (err, data) => {
     if (err) {
       console.error('Error reading prices:', err);
       return res.status(500).json({ error: 'Error reading prices' });
+    }
+    res.json(JSON.parse(data));
+  });
+});
+
+// Get price history (public)
+app.get('/api/price-history', (req, res) => {
+  fs.readFile(PRICE_HISTORY_FILE, 'utf8', (err, data) => {
+    if (err) {
+      console.error('Error reading price history:', err);
+      return res.json([]); // Return empty array if no history
     }
     res.json(JSON.parse(data));
   });
@@ -370,13 +445,47 @@ app.post('/update-prices', isAuthenticated, (req, res) => {
     lldpe: parseFloat(req.body.price_lldpe)
   };
 
-  fs.writeFile(PRICES_FILE, JSON.stringify(newPrices, null, 2), (err) => {
-    if (err) {
-      console.error('Error saving prices:', err);
-      return res.status(500).json({ status: 'error', error: 'Error saving prices' });
+  // Read current prices to save as history
+  fs.readFile(PRICES_FILE, 'utf8', (err, currentData) => {
+    if (!err) {
+      const currentPrices = JSON.parse(currentData);
+      
+      // Read price history
+      fs.readFile(PRICE_HISTORY_FILE, 'utf8', (histErr, histData) => {
+        let history = [];
+        if (!histErr) {
+          history = JSON.parse(histData);
+        }
+        
+        // Add current prices to history with timestamp
+        history.push({
+          timestamp: new Date().toISOString(),
+          date: new Date().toLocaleDateString('en-GB'),
+          prices: currentPrices
+        });
+        
+        // Keep only last 30 days of history
+        if (history.length > 30) {
+          history = history.slice(-30);
+        }
+        
+        // Save updated history
+        fs.writeFile(PRICE_HISTORY_FILE, JSON.stringify(history, null, 2), (histWriteErr) => {
+          if (histWriteErr) {
+            console.error('Error saving price history:', histWriteErr);
+          }
+        });
+      });
     }
-    // Return JSON response instead of redirect
-    res.json({ status: 'success', message: 'Prices updated successfully', prices: newPrices });
+    
+    // Save new prices
+    fs.writeFile(PRICES_FILE, JSON.stringify(newPrices, null, 2), (err) => {
+      if (err) {
+        console.error('Error saving prices:', err);
+        return res.status(500).json({ status: 'error', error: 'Error saving prices' });
+      }
+      res.json({ status: 'success', message: 'Prices updated successfully', prices: newPrices });
+    });
   });
 });
 
@@ -611,6 +720,22 @@ app.post('/api/newsletter/send-bulk', isAuthenticated, async (req, res) => {
   }
 });
 
+// Delete newsletter subscriber (protected)
+app.delete('/api/newsletter/:id', isAuthenticated, async (req, res) => {
+  try {
+    const subscriber = await Newsletter.findByIdAndDelete(req.params.id);
+    
+    if (!subscriber) {
+      return res.status(404).json({ error: 'Subscriber not found' });
+    }
+    
+    res.json({ status: 'success', message: 'Subscriber deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting subscriber:', error);
+    res.status(500).json({ error: 'Error deleting subscriber' });
+  }
+});
+
 // Submit enquiry
 app.post('/api/enquiry', async (req, res) => {
   try {
@@ -654,6 +779,149 @@ app.get('/api/enquiry', isAuthenticated, async (req, res) => {
   } catch (error) {
     console.error('Error fetching enquiries:', error);
     res.status(500).json({ error: 'Error fetching enquiries' });
+  }
+});
+
+// ==================== QUICK ACTION ENQUIRY ROUTES ====================
+
+// Submit quick action enquiry
+app.post('/api/enquiries', async (req, res) => {
+  try {
+    const { name, mobile, email, product, requirements } = req.body;
+    
+    // Validation
+    if (!name || !mobile) {
+      return res.status(400).json({ 
+        status: 'error', 
+        message: 'Name and mobile number are required' 
+      });
+    }
+    
+    const enquiry = new QuickEnquiry({
+      name,
+      mobile,
+      email: email || '',
+      product: product || '',
+      requirements: requirements || ''
+    });
+    
+    await enquiry.save();
+    
+    // Send email notification to admin (optional)
+    if (process.env.MAIL_USER && process.env.MAIL_PASS && process.env.ADMIN_EMAIL) {
+      try {
+        await transporter.sendMail({
+          from: process.env.MAIL_USER,
+          to: process.env.ADMIN_EMAIL,
+          subject: `New Quick Enquiry from ${name}`,
+          html: `
+            <h2>New Quick Action Enquiry Received</h2>
+            <p><strong>Name:</strong> ${name}</p>
+            <p><strong>Mobile:</strong> ${mobile}</p>
+            <p><strong>Email:</strong> ${email || 'Not provided'}</p>
+            <p><strong>Product:</strong> ${product || 'Not specified'}</p>
+            <p><strong>Requirements:</strong> ${requirements || 'Not provided'}</p>
+            <p><strong>Submitted:</strong> ${new Date().toLocaleString()}</p>
+          `
+        });
+        console.log('✅ Quick enquiry notification sent');
+      } catch (emailError) {
+        console.warn('⚠️ Email notification failed (enquiry still saved):', emailError.message);
+      }
+    }
+    
+    res.json({ 
+      status: 'success', 
+      message: 'Enquiry submitted successfully! We will contact you soon.' 
+    });
+  } catch (error) {
+    console.error('Error submitting quick enquiry:', error);
+    res.status(500).json({ 
+      status: 'error', 
+      message: 'Error submitting enquiry. Please try again.' 
+    });
+  }
+});
+
+// Get all quick enquiries (protected)
+app.get('/api/enquiries', isAuthenticated, async (req, res) => {
+  try {
+    const enquiries = await QuickEnquiry.find().sort({ createdAt: -1 });
+    res.json(enquiries);
+  } catch (error) {
+    console.error('Error fetching quick enquiries:', error);
+    res.status(500).json({ error: 'Error fetching enquiries' });
+  }
+});
+
+// ==================== BROCHURE DOWNLOAD ROUTES ====================
+
+// Submit brochure download request
+app.post('/api/brochure-downloads', async (req, res) => {
+  try {
+    const { first_name, last_name, company_name, email, mobile } = req.body;
+    
+    // Validation
+    if (!first_name || !last_name || !email || !mobile) {
+      return res.status(400).json({ 
+        status: 'error', 
+        message: 'First name, last name, email, and mobile are required' 
+      });
+    }
+    
+    const brochureDownload = new BrochureDownload({
+      first_name,
+      last_name,
+      company_name: company_name || '',
+      email,
+      mobile
+    });
+    
+    await brochureDownload.save();
+    
+    // Send email notification to admin (optional)
+    if (process.env.MAIL_USER && process.env.MAIL_PASS && process.env.ADMIN_EMAIL) {
+      try {
+        await transporter.sendMail({
+          from: process.env.MAIL_USER,
+          to: process.env.ADMIN_EMAIL,
+          subject: `Brochure Downloaded by ${first_name} ${last_name}`,
+          html: `
+            <h2>New Brochure Download</h2>
+            <p><strong>Name:</strong> ${first_name} ${last_name}</p>
+            <p><strong>Company:</strong> ${company_name || 'Not provided'}</p>
+            <p><strong>Email:</strong> ${email}</p>
+            <p><strong>Mobile:</strong> ${mobile}</p>
+            <p><strong>Downloaded:</strong> ${new Date().toLocaleString()}</p>
+          `
+        });
+        console.log('✅ Brochure download notification sent');
+      } catch (emailError) {
+        console.warn('⚠️ Email notification failed (download still saved):', emailError.message);
+      }
+    }
+    
+    res.json({ 
+      status: 'success', 
+      message: 'Form submitted successfully! Your download will start shortly.' 
+    });
+  } catch (error) {
+    console.error('Error submitting brochure download:', error);
+    res.status(500).json({ 
+      status: 'error', 
+      message: 'Error submitting form. Please try again.' 
+    });
+  }
+});
+
+// Get all brochure downloads (protected)
+app.get('/api/brochure-downloads', isAuthenticated, async (req, res) => {
+  try {
+    const downloads = await BrochureDownload.find().sort({ createdAt: -1 });
+    res.json(downloads);
+  } catch (error) {
+    console.error('Error fetching brochure downloads:', error);
+    res.status(500).json({ error: 'Error fetching downloads' });
   }
 });
 
@@ -916,6 +1184,216 @@ app.delete('/api/admin/blogs/:id', isAuthenticated, async (req, res) => {
   } catch (error) {
     console.error('Error deleting blog:', error);
     res.status(500).json({ error: 'Error deleting blog' });
+  }
+});
+
+// ==================== JOB LISTING ROUTES ====================
+
+// Get all active job listings (public)
+app.get('/api/jobs', async (req, res) => {
+  try {
+    const { status, category } = req.query;
+    const query = {};
+    
+    if (status) query.status = status;
+    if (category) query.category = category;
+    
+    const jobs = await JobListing.find(query).sort({ postedDate: -1 });
+    res.json(jobs);
+  } catch (error) {
+    console.error('Error fetching jobs:', error);
+    res.json([]);
+  }
+});
+
+// Get single job by ID (public)
+app.get('/api/jobs/:id', async (req, res) => {
+  try {
+    const job = await JobListing.findById(req.params.id);
+    
+    if (!job) {
+      return res.status(404).json({ error: 'Job not found' });
+    }
+    
+    res.json(job);
+  } catch (error) {
+    console.error('Error fetching job:', error);
+    res.status(500).json({ error: 'Error fetching job' });
+  }
+});
+
+// Get all jobs for admin (protected)
+app.get('/api/admin/jobs', isAuthenticated, async (req, res) => {
+  try {
+    const jobs = await JobListing.find().sort({ createdAt: -1 });
+    res.json(jobs);
+  } catch (error) {
+    console.error('Error fetching jobs:', error);
+    res.status(500).json({ error: 'Error fetching jobs' });
+  }
+});
+
+// Create new job listing (protected)
+app.post('/api/admin/jobs', isAuthenticated, async (req, res) => {
+  try {
+    const { title, category, description, requirements, location, type, status, closingDate } = req.body;
+    
+    const job = new JobListing({
+      title,
+      category,
+      description,
+      requirements: requirements ? (Array.isArray(requirements) ? requirements : requirements.split('\n').filter(r => r.trim())) : [],
+      location: location || 'Jabalpur, M.P.',
+      type: type || 'Full-time',
+      status: status || 'open',
+      closingDate: closingDate || null
+    });
+    
+    await job.save();
+    res.json({ status: 'success', message: 'Job created successfully', job });
+  } catch (error) {
+    console.error('Error creating job:', error);
+    res.status(500).json({ error: 'Error creating job' });
+  }
+});
+
+// Update job listing (protected)
+app.put('/api/admin/jobs/:id', isAuthenticated, async (req, res) => {
+  try {
+    const { title, category, description, requirements, location, type, status, closingDate } = req.body;
+    
+    const updateData = {
+      title,
+      category,
+      description,
+      requirements: requirements ? (Array.isArray(requirements) ? requirements : requirements.split('\n').filter(r => r.trim())) : [],
+      location,
+      type,
+      status,
+      closingDate,
+      updatedAt: new Date()
+    };
+    
+    const job = await JobListing.findByIdAndUpdate(req.params.id, updateData, { new: true });
+    
+    if (!job) {
+      return res.status(404).json({ error: 'Job not found' });
+    }
+    
+    res.json({ status: 'success', message: 'Job updated successfully', job });
+  } catch (error) {
+    console.error('Error updating job:', error);
+    res.status(500).json({ error: 'Error updating job' });
+  }
+});
+
+// Delete job listing (protected)
+app.delete('/api/admin/jobs/:id', isAuthenticated, async (req, res) => {
+  try {
+    const job = await JobListing.findByIdAndDelete(req.params.id);
+    
+    if (!job) {
+      return res.status(404).json({ error: 'Job not found' });
+    }
+    
+    res.json({ status: 'success', message: 'Job deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting job:', error);
+    res.status(500).json({ error: 'Error deleting job' });
+  }
+});
+
+// ==================== CATALOGUE SETTINGS ROUTES ====================
+
+// Get catalogue settings (public)
+app.get('/api/catalogue/settings', async (req, res) => {
+  try {
+    let settings = await CatalogueSettings.findOne();
+    if (!settings) {
+      settings = new CatalogueSettings({});
+      await settings.save();
+    }
+    res.json(settings);
+  } catch (error) {
+    console.error('Error fetching catalogue settings:', error);
+    res.status(500).json({ error: 'Error fetching settings' });
+  }
+});
+
+// Update catalogue settings (protected)
+app.post('/api/catalogue/settings', isAuthenticated, async (req, res) => {
+  try {
+    const { header, anocabLogo, jeoLogo, footerLogo } = req.body;
+    
+    let settings = await CatalogueSettings.findOne();
+    if (!settings) {
+      settings = new CatalogueSettings({});
+    }
+    
+    if (header) settings.header = header;
+    if (anocabLogo) settings.anocabLogo = anocabLogo;
+    if (jeoLogo) settings.jeoLogo = jeoLogo;
+    if (footerLogo) settings.footerLogo = footerLogo;
+    settings.updatedAt = new Date();
+    
+    await settings.save();
+    res.json({ status: 'success', message: 'Settings saved successfully', settings });
+  } catch (error) {
+    console.error('Error saving catalogue settings:', error);
+    res.status(500).json({ error: 'Error saving settings' });
+  }
+});
+
+// ==================== CATALOGUE USER ROUTES ====================
+
+// Get all catalogue users (public - needed for user management page)
+app.get('/api/catalogue/users', async (req, res) => {
+  try {
+    const users = await CatalogueUser.find().sort({ createdAt: -1 });
+    res.json(users);
+  } catch (error) {
+    console.error('Error fetching catalogue users:', error);
+    res.status(500).json({ error: 'Error fetching users' });
+  }
+});
+
+// Create catalogue user (public - needed for user management page)
+app.post('/api/catalogue/users', async (req, res) => {
+  try {
+    const { name, mobile, email, qrCode } = req.body;
+    
+    if (!name || !mobile || !email) {
+      return res.status(400).json({ error: 'Name, mobile, and email are required' });
+    }
+    
+    const user = new CatalogueUser({
+      name,
+      mobile,
+      email,
+      qrCode: qrCode || null
+    });
+    
+    await user.save();
+    res.json({ status: 'success', message: 'User created successfully', user });
+  } catch (error) {
+    console.error('Error creating catalogue user:', error);
+    res.status(500).json({ error: 'Error creating user' });
+  }
+});
+
+// Delete catalogue user (protected)
+app.delete('/api/catalogue/users/:id', isAuthenticated, async (req, res) => {
+  try {
+    const user = await CatalogueUser.findByIdAndDelete(req.params.id);
+    
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    
+    res.json({ status: 'success', message: 'User deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting catalogue user:', error);
+    res.status(500).json({ error: 'Error deleting user' });
   }
 });
 

@@ -508,10 +508,10 @@
                 <h1 style="font-size:25px;color:#013A5B;padding:5px 35px;font-weight:bold;text-align:center;text-decoration:underline;text-decoration-style:dotted;text-decoration-color:#FDC900;">EXPLORE OPPORTUNITIES</h1>
                 <div class="service-single-content">
                     <div class="row">
-                        <form action="Filter" method="POST">
+                        <form onsubmit="event.preventDefault(); filterJobs();">
                              <div class="col-md-3">
                                 <label>Location</label>
-                                <select class="form-control rounded" name="location" id="location" required>
+                                <select class="form-control rounded" name="location" id="location" onchange="filterJobs()">
                                     <option value="All">All</option>
                                     <option value="IT park">IT Park, Jabalpur</option>
                                     <option value="Dadda Nagar">Dadda Nagar, Jabalpur</option>
@@ -520,13 +520,13 @@
                             </div>
                             <div class="col-md-3">
                                 <label>Department</label>
-                                <select class="form-control rounded" name="department" id="department" required>
+                                <select class="form-control rounded" name="department" id="department" onchange="filterJobs()">
                                     <option value="All">All</option>
                                     <option value="Human Resource (HR)">Human Resource (HR)</option>
                                     <option value="Admin">Admin</option>
                                     <option value="Finance">Finance</option>
                                     <option value="Accounts">Accounts</option>
-                                    <option value="Accounts">Execution</option>
+                                    <option value="Execution">Execution</option>
                                     <option value="International Marketing">International Marketing</option>
                                     <option value="Domestic Marketing">Domestic Marketing</option>
                                     <option value="Purchase">Purchase</option>
@@ -542,205 +542,32 @@
                                 </select>
                             </div>                        
                             <div class="col-md-6" style="text-align:right;">
-                                <button type="submit" class="theme-btn" style="border-radius:10px 0px;color:white;font-size:18px;color:#013A5B;padding:5px 35px;">SEE ALL JOBS OFFER</button>
+                                <button type="button" onclick="location.reload()" class="theme-btn" style="border-radius:10px 0px;color:white;font-size:18px;color:#013A5B;padding:5px 35px;">RESET FILTERS</button>
                             </div>
                         </form>
                     </div>
                     <br>
-                    <div class="row">
-                              <div class="col-md-3" style="margin-bottom:10px;">
-                                <div style="height: 250px;width:250px;background-color: #013A5B;color:white;">
-                                    <div class="" style="margin-left:15px;margin-right:10px;padding-top:10px;">
-                                        <b>EXECUTIVE ASSISTANT</b><br>
-                                        <small>Admin</small><br><br>
-                                        <b>IT Park, Jabalpur</b>
-                                        <div class="side-info" style="position: absolute; bottom: 15px; right: 30px; text-align: right;">
-                                            <a href="career.html" class="btn btn-warning" style="color:white;font-size:14px;color:black;"><b>Apply now</b></a>
-                                        </div>
-                                    </div>
-                                </div> 
-                            </div>
-                              <div class="col-md-3" style="margin-bottom:10px;">
-                                <div style="height: 250px;width:250px;background-color: #013A5B;color:white;">
-                                    <div class="" style="margin-left:15px;margin-right:10px;padding-top:10px;">
-                                        <b>ENGINEER - WIRE DRAWING</b><br>
-                                        <small>Production</small><br><br>
-                                        <b>Dadda Nagar, Jabalpur</b>
-                                        <div class="side-info" style="position: absolute; bottom: 15px; right: 30px; text-align: right;">
-                                            <a href="career.html" class="btn btn-warning" style="color:white;font-size:14px;color:black;"><b>Apply now</b></a>
-                                        </div>
-                                    </div>
-                                </div> 
-                            </div>
-                              <div class="col-md-3" style="margin-bottom:10px;">
-                                <div style="height: 250px;width:250px;background-color: #013A5B;color:white;">
-                                    <div class="" style="margin-left:15px;margin-right:10px;padding-top:10px;">
-                                        <b>AUTOMATION ENGINEER</b><br>
-                                        <small>Electrical Maintenance</small><br><br>
-                                        <b>IT Park, Jabalpur</b>
-                                        <div class="side-info" style="position: absolute; bottom: 15px; right: 30px; text-align: right;">
-                                            <a href="career.html" class="btn btn-warning" style="color:white;font-size:14px;color:black;"><b>Apply now</b></a>
-                                        </div>
-                                    </div>
-                                </div> 
-                            </div>
-                              <div class="col-md-3" style="margin-bottom:10px;">
-                                <div style="height: 250px;width:250px;background-color: #013A5B;color:white;">
-                                    <div class="" style="margin-left:15px;margin-right:10px;padding-top:10px;">
-                                        <b>MANAGER - EXECUTION</b><br>
-                                        <small>Accounts</small><br><br>
-                                        <b>IT Park, Jabalpur</b>
-                                        <div class="side-info" style="position: absolute; bottom: 15px; right: 30px; text-align: right;">
-                                            <a href="career.html" class="btn btn-warning" style="color:white;font-size:14px;color:black;"><b>Apply now</b></a>
-                                        </div>
-                                    </div>
-                                </div> 
-                            </div>
-                              <div class="col-md-3" style="margin-bottom:10px;">
-                                <div style="height: 250px;width:250px;background-color: #013A5B;color:white;">
-                                    <div class="" style="margin-left:15px;margin-right:10px;padding-top:10px;">
-                                        <b>SR. OFFICER - METALLURGIST</b><br>
-                                        <small>Quality</small><br><br>
-                                        <b>Dadda Nagar, Jabalpur</b>
-                                        <div class="side-info" style="position: absolute; bottom: 15px; right: 30px; text-align: right;">
-                                            <a href="career.html" class="btn btn-warning" style="color:white;font-size:14px;color:black;"><b>Apply now</b></a>
-                                        </div>
-                                    </div>
-                                </div> 
-                            </div>
-                              <div class="col-md-3" style="margin-bottom:10px;">
-                                <div style="height: 250px;width:250px;background-color: #013A5B;color:white;">
-                                    <div class="" style="margin-left:15px;margin-right:10px;padding-top:10px;">
-                                        <b>ENGINEER - STRANDING AND CLOSING</b><br>
-                                        <small>Production</small><br><br>
-                                        <b>Dadda Nagar, Jabalpur</b>
-                                        <div class="side-info" style="position: absolute; bottom: 15px; right: 30px; text-align: right;">
-                                            <a href="career.html" class="btn btn-warning" style="color:white;font-size:14px;color:black;"><b>Apply now</b></a>
-                                        </div>
-                                    </div>
-                                </div> 
-                            </div>
-                              <div class="col-md-3" style="margin-bottom:10px;">
-                                <div style="height: 250px;width:250px;background-color: #013A5B;color:white;">
-                                    <div class="" style="margin-left:15px;margin-right:10px;padding-top:10px;">
-                                        <b>DOMESTIC MARKETING</b><br>
-                                        <small>Domestic Marketing</small><br><br>
-                                        <b>IT Park, Jabalpur</b>
-                                        <div class="side-info" style="position: absolute; bottom: 15px; right: 30px; text-align: right;">
-                                            <a href="career.html" class="btn btn-warning" style="color:white;font-size:14px;color:black;"><b>Apply now</b></a>
-                                        </div>
-                                    </div>
-                                </div> 
-                            </div>
-                              <div class="col-md-3" style="margin-bottom:10px;">
-                                <div style="height: 250px;width:250px;background-color: #013A5B;color:white;">
-                                    <div class="" style="margin-left:15px;margin-right:10px;padding-top:10px;">
-                                        <b>SR. ENGINEER CALIBRATION </b><br>
-                                        <small>Mechanical Maintenance</small><br><br>
-                                        <b>Dadda Nagar, Jabalpur</b>
-                                        <div class="side-info" style="position: absolute; bottom: 15px; right: 30px; text-align: right;">
-                                            <a href="career.html" class="btn btn-warning" style="color:white;font-size:14px;color:black;"><b>Apply now</b></a>
-                                        </div>
-                                    </div>
-                                </div> 
-                            </div>
-                              <div class="col-md-3" style="margin-bottom:10px;">
-                                <div style="height: 250px;width:250px;background-color: #013A5B;color:white;">
-                                    <div class="" style="margin-left:15px;margin-right:10px;padding-top:10px;">
-                                        <b>MANAGER - ELECTRICAL</b><br>
-                                        <small>Electrical Maintenance</small><br><br>
-                                        <b>Dadda Nagar, Jabalpur</b>
-                                        <div class="side-info" style="position: absolute; bottom: 15px; right: 30px; text-align: right;">
-                                            <a href="career.html" class="btn btn-warning" style="color:white;font-size:14px;color:black;"><b>Apply now</b></a>
-                                        </div>
-                                    </div>
-                                </div> 
-                            </div>
-                              <div class="col-md-3" style="margin-bottom:10px;">
-                                <div style="height: 250px;width:250px;background-color: #013A5B;color:white;">
-                                    <div class="" style="margin-left:15px;margin-right:10px;padding-top:10px;">
-                                        <b>SR.  OFFICER-EXPORT MARKETING</b><br>
-                                        <small>International Marketing</small><br><br>
-                                        <b>IT Park, Jabalpur</b>
-                                        <div class="side-info" style="position: absolute; bottom: 15px; right: 30px; text-align: right;">
-                                            <a href="career.html" class="btn btn-warning" style="color:white;font-size:14px;color:black;"><b>Apply now</b></a>
-                                        </div>
-                                    </div>
-                                </div> 
-                            </div>
-                              <div class="col-md-3" style="margin-bottom:10px;">
-                                <div style="height: 250px;width:250px;background-color: #013A5B;color:white;">
-                                    <div class="" style="margin-left:15px;margin-right:10px;padding-top:10px;">
-                                        <b>DESIGNATION: MANAGER/SR. MANAGER – SAFETY</b><br>
-                                        <small>Mechanical Maintenance</small><br><br>
-                                        <b>Dadda Nagar, Jabalpur</b>
-                                        <div class="side-info" style="position: absolute; bottom: 15px; right: 30px; text-align: right;">
-                                            <a href="career.html" class="btn btn-warning" style="color:white;font-size:14px;color:black;"><b>Apply now</b></a>
-                                        </div>
-                                    </div>
-                                </div> 
-                            </div>
-                              <div class="col-md-3" style="margin-bottom:10px;">
-                                <div style="height: 250px;width:250px;background-color: #013A5B;color:white;">
-                                    <div class="" style="margin-left:15px;margin-right:10px;padding-top:10px;">
-                                        <b>LATH MACHINE OPERATOR </b><br>
-                                        <small>Other</small><br><br>
-                                        <b>Dadda Nagar, Jabalpur</b>
-                                        <div class="side-info" style="position: absolute; bottom: 15px; right: 30px; text-align: right;">
-                                            <a href="career.html" class="btn btn-warning" style="color:white;font-size:14px;color:black;"><b>Apply now</b></a>
-                                        </div>
-                                    </div>
-                                </div> 
-                            </div>
-                              <div class="col-md-3" style="margin-bottom:10px;">
-                                <div style="height: 250px;width:250px;background-color: #013A5B;color:white;">
-                                    <div class="" style="margin-left:15px;margin-right:10px;padding-top:10px;">
-                                        <b>HEAD - QUALITY</b><br>
-                                        <small>Quality</small><br><br>
-                                        <b>Dadda Nagar, Jabalpur</b>
-                                        <div class="side-info" style="position: absolute; bottom: 15px; right: 30px; text-align: right;">
-                                            <a href="career.html" class="btn btn-warning" style="color:white;font-size:14px;color:black;"><b>Apply now</b></a>
-                                        </div>
-                                    </div>
-                                </div> 
-                            </div>
-                              <div class="col-md-3" style="margin-bottom:10px;">
-                                <div style="height: 250px;width:250px;background-color: #013A5B;color:white;">
-                                    <div class="" style="margin-left:15px;margin-right:10px;padding-top:10px;">
-                                        <b>SR. DATA ANALYST </b><br>
-                                        <small>Information Technology (IT)</small><br><br>
-                                        <b>IT Park, Jabalpur</b>
-                                        <div class="side-info" style="position: absolute; bottom: 15px; right: 30px; text-align: right;">
-                                            <a href="career.html" class="btn btn-warning" style="color:white;font-size:14px;color:black;"><b>Apply now</b></a>
-                                        </div>
-                                    </div>
-                                </div> 
-                            </div>
-                            <div class="col-md-3" style="margin-bottom:10px;">
-                                <div style="height: 250px;width:250px;background-color: #013A5B;color:white;">
-                                    <div class="" style="margin-left:15px;margin-right:10px;padding-top:10px;">
-                                        <b>SR. DATA ANALYST </b><br>
-                                        <small>Information Technology (IT)</small><br><br>
-                                        <b>IT Park, Jabalpur</b>
-                                        <div class="side-info" style="position: absolute; bottom: 15px; right: 30px; text-align: right;">
-                                            <a href="career.html" class="btn btn-warning" style="color:white;font-size:14px;color:black;"><b>Apply now</b></a>
-                                        </div>
-                                    </div>
-                                </div> 
-                            </div>
-                            <div class="col-md-3" style="margin-bottom:10px;">
-                                <div style="height: 250px;width:250px;background-color: #013A5B;color:white;">
-                                    <div class="" style="margin-left:15px;margin-right:10px;padding-top:10px;">
-                                        <b>SR. DATA ANALYST </b><br>
-                                        <small>Information Technology (IT)</small><br><br>
-                                        <b>IT Park, Jabalpur</b>
-                                        <div class="side-info" style="position: absolute; bottom: 15px; right: 30px; text-align: right;">
-                                            <a href="career.html" class="btn btn-warning" style="color:white;font-size:14px;color:black;"><b>Apply now</b></a>
-                                        </div>
-                                    </div>
-                                </div> 
-                            </div>
+                    <!-- Loading State -->
+                    <div id="jobsLoading" class="row" style="text-align:center;padding:50px;">
+                        <div class="col-md-12">
+                            <i class="fa fa-spinner fa-spin" style="font-size:48px;color:#013A5B;"></i>
+                            <p style="margin-top:20px;font-size:18px;color:#013A5B;">Loading job openings...</p>
                         </div>
+                    </div>
+                    
+                    <!-- Jobs Container -->
+                    <div id="jobsContainer" class="row" style="display:none;">
+                        <!-- Jobs will be dynamically inserted here -->
+                    </div>
+                    
+                    <!-- No Jobs State -->
+                    <div id="noJobsState" class="row" style="display:none;text-align:center;padding:50px;">
+                        <div class="col-md-12">
+                            <i class="fa fa-briefcase" style="font-size:64px;color:#ddd;"></i>
+                            <p style="margin-top:20px;font-size:18px;color:#666;">No job openings available at the moment.</p>
+                            <p style="color:#999;">Please check back later or contact us directly.</p>
+                        </div>
+                    </div>
                     </div>
                 </div>
             </div>
@@ -748,6 +575,104 @@
 </section>
 
 <script>
+    let allJobs = [];
+    
+    // Fetch jobs from API
+    async function fetchJobs() {
+        try {
+            const response = await fetch(`${API_BASE_URL}/api/jobs`);
+            allJobs = await response.json();
+            
+            // Hide loading, show jobs
+            document.getElementById('jobsLoading').style.display = 'none';
+            
+            if (allJobs.length === 0) {
+                document.getElementById('noJobsState').style.display = 'block';
+            } else {
+                document.getElementById('jobsContainer').style.display = 'flex';
+                renderJobs(allJobs);
+            }
+        } catch (error) {
+            console.error('Error fetching jobs:', error);
+            document.getElementById('jobsLoading').innerHTML = `
+                <div class="col-md-12">
+                    <i class="fa fa-exclamation-triangle" style="font-size:48px;color:#e74c3c;"></i>
+                    <p style="margin-top:20px;font-size:18px;color:#e74c3c;">Error loading jobs. Please try again later.</p>
+                </div>
+            `;
+        }
+    }
+    
+    // Render jobs
+    function renderJobs(jobs) {
+        const container = document.getElementById('jobsContainer');
+        container.innerHTML = '';
+        
+        jobs.forEach(job => {
+            const statusBadge = job.status === 'open' 
+                ? '<span style="background:#27ae60;color:white;padding:3px 10px;border-radius:12px;font-size:11px;position:absolute;top:10px;right:10px;">OPEN</span>'
+                : '<span style="background:#e74c3c;color:white;padding:3px 10px;border-radius:12px;font-size:11px;position:absolute;top:10px;right:10px;">CLOSED</span>';
+            
+            const jobCard = `
+                <div class="col-md-3" style="margin-bottom:10px;">
+                    <div style="height: 280px;width:250px;background-color: #013A5B;color:white;position:relative;border-radius:10px;box-shadow:0 4px 8px rgba(0,0,0,0.2);transition:transform 0.3s;" onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'">
+                        ${statusBadge}
+                        <div class="" style="margin-left:15px;margin-right:10px;padding-top:15px;">
+                            <b style="font-size:15px;">${job.title}</b><br>
+                            <small style="color:#FDC900;">${job.category}</small><br><br>
+                            <p style="font-size:12px;color:#ddd;margin-top:10px;line-height:1.4;">
+                                <i class="fa fa-map-marker-alt"></i> ${job.location}<br>
+                                <i class="fa fa-clock"></i> ${job.type}
+                            </p>
+                            ${job.status === 'open' ? `
+                                <div class="side-info" style="position: absolute; bottom: 15px; right: 15px; text-align: right;">
+                                    <a href="career.html?position=${encodeURIComponent(job.title)}" class="btn btn-warning" style="color:black;font-size:14px;border-radius:6px;"><b>Apply now</b></a>
+                                </div>
+                            ` : `
+                                <div class="side-info" style="position: absolute; bottom: 15px; right: 15px; text-align: right;">
+                                    <button class="btn" style="background:#666;color:white;font-size:14px;border-radius:6px;cursor:not-allowed;" disabled><b>Closed</b></button>
+                                </div>
+                            `}
+                        </div>
+                    </div> 
+                </div>
+            `;
+            
+            container.innerHTML += jobCard;
+        });
+    }
+    
+    // Filter jobs (existing filter functionality)
+    function filterJobs() {
+        const location = document.getElementById('location').value;
+        const department = document.getElementById('department').value;
+        
+        let filtered = allJobs;
+        
+        if (location && location !== 'All') {
+            filtered = filtered.filter(job => job.location.includes(location));
+        }
+        
+        if (department && department !== 'All') {
+            filtered = filtered.filter(job => job.category === department);
+        }
+        
+        if (filtered.length === 0) {
+            document.getElementById('jobsContainer').style.display = 'none';
+            document.getElementById('noJobsState').style.display = 'block';
+        } else {
+            document.getElementById('jobsContainer').style.display = 'flex';
+            document.getElementById('noJobsState').style.display = 'none';
+            renderJobs(filtered);
+        }
+    }
+    
+    // Load jobs on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        fetchJobs();
+    });
+    
+    // Existing hover effects for diversity section
     $("document").ready(function(){ 
         $("#our_diversity").mouseenter(function(){       
             $("#our_diversity_img").attr('src','https://res.cloudinary.com/drpbrn2ax/image/upload/v1742892040/our_diversity_hfwrz8.jpg '); 
@@ -943,8 +868,8 @@
                             </th>
                             <td style="background-color:#3f4f5a;">
                                 <p style="font-size:12px;padding-left:10px;">
-                                    sales@anocab.com<br>
-                                    info@anocab.com
+                                    sales@anocab.in<br>
+                                    sales@anocab.in
                                 </p> 
                             </td>
                         </tr>

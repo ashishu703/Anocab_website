@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Newsletter Subscribers - Admin Panel</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #013A5B;
+            --secondary-color: #FDC900;
+            --success-color: #28a745;
+            --danger-color: #dc3545;
+            --dark-bg: #1a1a2e;
+            --card-bg: #ffffff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container-fluid {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: var(--card-bg);
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            color: var(--primary-color);
+            font-size: 28px;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .header .btn-group {
+            gap: 10px;
+        }
+
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            color: white;
+        }
+
+        .stat-icon.subscribers {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .stat-icon.active {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        }
+
+        .stat-icon.inactive {
+            background: linear-gradient(135deg, #dc3545 0%, #fd7e14 100%);
+        }
+
+        .stat-info h3 {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin: 0;
+        }
+
+        .stat-info p {
+            color: #666;
+            margin: 0;
+            font-size: 14px;
+        }
+
+        .main-card {
+            background: var(--card-bg);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+
+        .card-header {
+            background: var(--primary-color);
+            color: white;
+            padding: 20px 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-header h2 {
+            margin: 0;
+            font-size: 22px;
+            font-weight: 600;
+        }
+
+        .search-box {
+            position: relative;
+            width: 300px;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 10px 40px 10px 15px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .search-box i {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #999;
+        }
+
+        .table-container {
+            padding: 25px;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background: #f8f9fa;
+        }
+
+        th {
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            color: var(--primary-color);
+            border-bottom: 2px solid #dee2e6;
+        }
+
+        td {
+            padding: 15px;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        tbody tr {
+            transition: background 0.3s ease;
+        }
+
+        tbody tr:hover {
+            background: #f8f9fa;
+        }
+
+        .badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .badge-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .badge-danger {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #012a42;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(1,58,91,0.3);
+        }
+
+        .btn-success {
+            background: var(--success-color);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #218838;
+        }
+
+        .btn-danger {
+            background: var(--danger-color);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c82333;
+        }
+
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 12px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 50px;
+            color: #666;
+        }
+
+        .loading i {
+            font-size: 48px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 50px;
+            color: #666;
+        }
+
+        .empty-state i {
+            font-size: 64px;
+            color: #ddd;
+            margin-bottom: 20px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-header h3 {
+            margin: 0;
+            color: var(--primary-color);
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 28px;
+            color: #999;
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        .close-modal:hover {
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 4px rgba(1,58,91,0.1);
+        }
+
+        .form-group textarea {
+            min-height: 150px;
+            resize: vertical;
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .search-box {
+                width: 100%;
+            }
+
+            .stats-container {
+                grid-template-columns: 1fr;
+            }
+
+            .table-container {
+                padding: 15px;
+            }
+
+            table {
+                font-size: 14px;
+            }
+
+            th, td {
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="header">
+            <h1><i class="fas fa-envelope"></i> Newsletter Subscribers</h1>
+            <div class="btn-group">
+                <button class="btn btn-success" onclick="openBulkEmailModal()">
+                    <i class="fas fa-paper-plane"></i> Send Bulk Email
+                </button>
+                <a href="applications.html" class="btn btn-primary">
+                    <i class="fas fa-users"></i> Applications
+                </a>
+                <a href="enquiries.html" class="btn btn-primary">
+                    <i class="fas fa-envelope"></i> Enquiries
+                </a>
+                <a href="brochure-downloads.html" class="btn btn-primary">
+                    <i class="fas fa-download"></i> Brochures
+                </a>
+                <a href="jobs.html" class="btn btn-primary">
+                    <i class="fas fa-briefcase"></i> Jobs
+                </a>
+                <a href="price_marquee.html" class="btn btn-primary">
+                    <i class="fas fa-dollar-sign"></i> Prices
+                </a>
+            </div>
+        </div>
+
+        <div class="stats-container">
+            <div class="stat-card">
+                <div class="stat-icon subscribers">
+                    <i class="fas fa-users"></i>
+                </div>
+                <div class="stat-info">
+                    <h3 id="total-subscribers">0</h3>
+                    <p>Total Subscribers</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon active">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <div class="stat-info">
+                    <h3 id="active-subscribers">0</h3>
+                    <p>Active Subscribers</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon inactive">
+                    <i class="fas fa-times-circle"></i>
+                </div>
+                <div class="stat-info">
+                    <h3 id="inactive-subscribers">0</h3>
+                    <p>Inactive Subscribers</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="main-card">
+            <div class="card-header">
+                <h2>All Subscribers</h2>
+                <div class="search-box">
+                    <input type="text" id="search-input" placeholder="Search by email..." onkeyup="filterTable()">
+                    <i class="fas fa-search"></i>
+                </div>
+            </div>
+            <div class="table-container">
+                <div id="loading" class="loading">
+                    <i class="fas fa-spinner"></i>
+                    <p>Loading subscribers...</p>
+                </div>
+                <div id="empty-state" class="empty-state" style="display: none;">
+                    <i class="fas fa-inbox"></i>
+                    <h3>No Subscribers Yet</h3>
+                    <p>Newsletter subscribers will appear here</p>
+                </div>
+                <table id="subscribers-table" style="display: none;">
+                    <thead>
+                        <tr>
+                            <th><input type="checkbox" id="select-all" onchange="toggleSelectAll()"></th>
+                            <th>#</th>
+                            <th>Email</th>
+                            <th>Subscribed Date</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="subscribers-tbody">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bulk Email Modal -->
+    <div id="bulk-email-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-paper-plane"></i> Send Bulk Email</h3>
+                <button class="close-modal" onclick="closeBulkEmailModal()">&times;</button>
+            </div>
+            <form id="bulk-email-form" onsubmit="sendBulkEmail(event)">
+                <div class="form-group">
+                    <label>Recipients</label>
+                    <p style="color: #666; font-size: 14px; margin-bottom: 10px;">
+                        <span id="selected-count">0</span> subscribers selected
+                        <button type="button" class="btn btn-sm btn-primary" onclick="selectAllSubscribers()" style="margin-left: 10px;">Select All</button>
+                        <button type="button" class="btn btn-sm btn-danger" onclick="deselectAllSubscribers()" style="margin-left: 5px;">Deselect All</button>
+                    </p>
+                </div>
+                <div class="form-group">
+                    <label for="email-subject">Subject *</label>
+                    <input type="text" id="email-subject" required placeholder="Enter email subject">
+                </div>
+                <div class="form-group">
+                    <label for="email-content">Message *</label>
+                    <textarea id="email-content" required placeholder="Enter your message (HTML supported)"></textarea>
+                </div>
+                <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                    <button type="button" class="btn btn-danger" onclick="closeBulkEmailModal()">Cancel</button>
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-paper-plane"></i> Send Email
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = window.location.hostname === 'localhost' ? 'http://localhost:3000' : 'https://api.anocab.com';
+        let allSubscribers = [];
+        let selectedEmails = [];
+
+        // Check authentication
+        function checkAuth() {
+            const token = localStorage.getItem('adminToken');
+            if (!token) {
+                window.location.href = 'index.html';
+                return false;
+            }
+            return token;
+        }
+
+        // Fetch subscribers
+        async function fetchSubscribers() {
+            const token = checkAuth();
+            if (!token) return;
+
+            try {
+                const response = await fetch(`${API_URL}/api/newsletter`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (response.status === 401) {
+                    localStorage.removeItem('adminToken');
+                    window.location.href = 'index.html';
+                    return;
+                }
+
+                const data = await response.json();
+                allSubscribers = data;
+                displaySubscribers(data);
+                updateStats(data);
+            } catch (error) {
+                console.error('Error fetching subscribers:', error);
+                alert('Failed to load subscribers');
+            }
+        }
+
+        // Display subscribers
+        function displaySubscribers(subscribers) {
+            const loading = document.getElementById('loading');
+            const emptyState = document.getElementById('empty-state');
+            const table = document.getElementById('subscribers-table');
+            const tbody = document.getElementById('subscribers-tbody');
+
+            loading.style.display = 'none';
+
+            if (subscribers.length === 0) {
+                emptyState.style.display = 'block';
+                table.style.display = 'none';
+                return;
+            }
+
+            emptyState.style.display = 'none';
+            table.style.display = 'table';
+
+            tbody.innerHTML = subscribers.map((sub, index) => `
+                <tr>
+                    <td><input type="checkbox" class="subscriber-checkbox" value="${sub.email}" onchange="updateSelectedCount()"></td>
+                    <td>${index + 1}</td>
+                    <td>${sub.email}</td>
+                    <td>${new Date(sub.subscribedAt).toLocaleDateString('en-GB')}</td>
+                    <td>
+                        <span class="badge ${sub.active ? 'badge-success' : 'badge-danger'}">
+                            ${sub.active ? 'Active' : 'Inactive'}
+                        </span>
+                    </td>
+                    <td>
+                        <button class="btn btn-sm btn-danger" onclick="deleteSubscriber('${sub._id}', '${sub.email}')">
+                            <i class="fas fa-trash"></i> Delete
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // Update stats
+        function updateStats(subscribers) {
+            const total = subscribers.length;
+            const active = subscribers.filter(s => s.active).length;
+            const inactive = total - active;
+
+            document.getElementById('total-subscribers').textContent = total;
+            document.getElementById('active-subscribers').textContent = active;
+            document.getElementById('inactive-subscribers').textContent = inactive;
+        }
+
+        // Filter table
+        function filterTable() {
+            const searchTerm = document.getElementById('search-input').value.toLowerCase();
+            const filtered = allSubscribers.filter(sub => 
+                sub.email.toLowerCase().includes(searchTerm)
+            );
+            displaySubscribers(filtered);
+        }
+
+        // Toggle select all
+        function toggleSelectAll() {
+            const selectAll = document.getElementById('select-all');
+            const checkboxes = document.querySelectorAll('.subscriber-checkbox');
+            checkboxes.forEach(cb => cb.checked = selectAll.checked);
+            updateSelectedCount();
+        }
+
+        // Update selected count
+        function updateSelectedCount() {
+            const checkboxes = document.querySelectorAll('.subscriber-checkbox:checked');
+            selectedEmails = Array.from(checkboxes).map(cb => cb.value);
+            document.getElementById('selected-count').textContent = selectedEmails.length;
+        }
+
+        // Select all subscribers
+        function selectAllSubscribers() {
+            document.getElementById('select-all').checked = true;
+            toggleSelectAll();
+        }
+
+        // Deselect all subscribers
+        function deselectAllSubscribers() {
+            document.getElementById('select-all').checked = false;
+            toggleSelectAll();
+        }
+
+        // Open bulk email modal
+        function openBulkEmailModal() {
+            updateSelectedCount();
+            document.getElementById('bulk-email-modal').classList.add('show');
+        }
+
+        // Close bulk email modal
+        function closeBulkEmailModal() {
+            document.getElementById('bulk-email-modal').classList.remove('show');
+            document.getElementById('bulk-email-form').reset();
+        }
+
+        // Send bulk email
+        async function sendBulkEmail(event) {
+            event.preventDefault();
+            const token = checkAuth();
+            if (!token) return;
+
+            const subject = document.getElementById('email-subject').value;
+            const content = document.getElementById('email-content').value;
+
+            if (selectedEmails.length === 0) {
+                alert('Please select at least one subscriber');
+                return;
+            }
+
+            if (!confirm(`Send email to ${selectedEmails.length} subscribers?`)) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_URL}/api/newsletter/send-bulk`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        subject,
+                        htmlContent: content,
+                        selectedEmails
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    alert(`Email sent successfully!\n${data.successCount} sent, ${data.failCount} failed`);
+                    closeBulkEmailModal();
+                } else {
+                    alert('Failed to send emails: ' + data.error);
+                }
+            } catch (error) {
+                console.error('Error sending bulk email:', error);
+                alert('Failed to send emails');
+            }
+        }
+
+        // Delete subscriber
+        async function deleteSubscriber(id, email) {
+            if (!confirm(`Delete subscriber: ${email}?`)) {
+                return;
+            }
+
+            const token = checkAuth();
+            if (!token) return;
+
+            try {
+                const response = await fetch(`${API_URL}/api/newsletter/${id}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (response.ok) {
+                    alert('Subscriber deleted successfully');
+                    fetchSubscribers();
+                } else {
+                    alert('Failed to delete subscriber');
+                }
+            } catch (error) {
+                console.error('Error deleting subscriber:', error);
+                alert('Failed to delete subscriber');
+            }
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchSubscribers();
+        });
+    </script>
+</body>
+</html>

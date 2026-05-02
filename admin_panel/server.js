@@ -52,6 +52,7 @@ app.get('/', (req, res) => {
 
 // Price file path
 const PRICES_FILE = path.join(__dirname, 'prices.json');
+const PRICE_HISTORY_FILE = path.join(__dirname, 'price_history.json');
 
 // Initialize prices file if it doesn't exist
 if (!fs.existsSync(PRICES_FILE)) {
@@ -64,12 +65,28 @@ if (!fs.existsSync(PRICES_FILE)) {
   }, null, 2));
 }
 
+// Initialize price history file if it doesn't exist
+if (!fs.existsSync(PRICE_HISTORY_FILE)) {
+  fs.writeFileSync(PRICE_HISTORY_FILE, JSON.stringify([], null, 2));
+}
+
 // API to get current prices
 app.get('/api/prices', (req, res) => {
   fs.readFile(PRICES_FILE, 'utf8', (err, data) => {
     if (err) {
       console.error('Error reading prices:', err);
       return res.status(500).json({ error: 'Error reading prices' });
+    }
+    res.json(JSON.parse(data));
+  });
+});
+
+// API to get price history
+app.get('/api/price-history', (req, res) => {
+  fs.readFile(PRICE_HISTORY_FILE, 'utf8', (err, data) => {
+    if (err) {
+      console.error('Error reading price history:', err);
+      return res.status(500).json({ error: 'Error reading price history' });
     }
     res.json(JSON.parse(data));
   });
@@ -85,12 +102,47 @@ app.post('/update-prices', isAuthenticated, express.json(), (req, res) => {
     lldpe: parseFloat(req.body.price_lldpe)
   };
 
-  fs.writeFile(PRICES_FILE, JSON.stringify(newPrices, null, 2), (err) => {
-    if (err) {
-      console.error('Error saving prices:', err);
-      return res.status(500).json({ status: 'error', message: 'Error saving prices' });
+  // Read current prices to save as history
+  fs.readFile(PRICES_FILE, 'utf8', (err, currentData) => {
+    if (!err) {
+      const currentPrices = JSON.parse(currentData);
+      
+      // Read price history
+      fs.readFile(PRICE_HISTORY_FILE, 'utf8', (histErr, histData) => {
+        let history = [];
+        if (!histErr) {
+          history = JSON.parse(histData);
+        }
+        
+        // Add current prices to history with timestamp
+        history.push({
+          timestamp: new Date().toISOString(),
+          date: new Date().toLocaleDateString('en-GB'),
+          prices: currentPrices
+        });
+        
+        // Keep only last 30 days of history
+        if (history.length > 30) {
+          history = history.slice(-30);
+        }
+        
+        // Save updated history
+        fs.writeFile(PRICE_HISTORY_FILE, JSON.stringify(history, null, 2), (histWriteErr) => {
+          if (histWriteErr) {
+            console.error('Error saving price history:', histWriteErr);
+          }
+        });
+      });
     }
-    return res.json({ status: 'success', message: 'Prices updated successfully', prices: newPrices });
+    
+    // Save new prices
+    fs.writeFile(PRICES_FILE, JSON.stringify(newPrices, null, 2), (err) => {
+      if (err) {
+        console.error('Error saving prices:', err);
+        return res.status(500).json({ status: 'error', message: 'Error saving prices' });
+      }
+      return res.json({ status: 'success', message: 'Prices updated successfully', prices: newPrices });
+    });
   });
 });
 

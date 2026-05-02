@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Brochure Downloads - Admin Panel</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
+    <script src="/config.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #013A5B 0%, #1f2f3d 100%);
+            color: white;
+            padding: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 15px;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            transition: all 0.3s;
+            background: rgba(255,255,255,0.1);
+        }
+
+        .nav-links a:hover {
+            background: rgba(255,255,255,0.2);
+            transform: translateY(-2px);
+        }
+
+        .logout-btn {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .logout-btn:hover {
+            background: #c0392b;
+            transform: translateY(-2px);
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .stat-card h3 {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-bottom: 10px;
+        }
+
+        .stat-card .number {
+            font-size: 36px;
+            font-weight: bold;
+        }
+
+        .filters {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+
+        .filter-group {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .filter-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .filter-group input {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .filter-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+
+        thead {
+            background: linear-gradient(135deg, #013A5B 0%, #1f2f3d 100%);
+            color: white;
+        }
+
+        th {
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        td {
+            padding: 15px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        tbody tr {
+            transition: all 0.3s;
+        }
+
+        tbody tr:hover {
+            background: #f8f9fa;
+            transform: scale(1.01);
+        }
+
+        .no-data {
+            text-align: center;
+            padding: 50px;
+            color: #999;
+            font-size: 18px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 50px;
+            font-size: 18px;
+            color: #667eea;
+        }
+
+        .loading i {
+            font-size: 48px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>
+                <i class="fas fa-download"></i>
+                Brochure Downloads
+            </h1>
+            <div style="display: flex; align-items: center; gap: 20px;">
+                <div class="nav-links">
+                    <a href="price_marquee.html"><i class="fas fa-dollar-sign"></i> Prices</a>
+                    <a href="jobs.html"><i class="fas fa-briefcase"></i> Jobs</a>
+                    <a href="applications.html"><i class="fas fa-users"></i> Applications</a>
+                    <a href="enquiries.html"><i class="fas fa-envelope"></i> Enquiries</a>
+                    <a href="brochure-downloads.html"><i class="fas fa-download"></i> Brochures</a>
+                    <a href="newsletter.html"><i class="fas fa-newspaper"></i> Newsletter</a>
+                    <a href="../login_panel/dashboard.html"><i class="fas fa-home"></i> Dashboard</a>
+                </div>
+                <button class="logout-btn" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+            </div>
+        </div>
+
+        <div class="content">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h3>Total Downloads</h3>
+                    <div class="number" id="totalDownloads">0</div>
+                </div>
+                <div class="stat-card" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                    <h3>This Month</h3>
+                    <div class="number" id="monthDownloads">0</div>
+                </div>
+                <div class="stat-card" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+                    <h3>This Week</h3>
+                    <div class="number" id="weekDownloads">0</div>
+                </div>
+            </div>
+
+            <div class="filters">
+                <div class="filter-group">
+                    <label>Search by Name/Email/Mobile</label>
+                    <input type="text" id="searchInput" placeholder="Type to search..." oninput="filterDownloads()">
+                </div>
+            </div>
+
+            <div class="table-container">
+                <div id="loadingState" class="loading">
+                    <i class="fas fa-spinner"></i>
+                    <p>Loading downloads...</p>
+                </div>
+                <table id="downloadsTable" style="display: none;">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Name</th>
+                            <th>Company</th>
+                            <th>Email</th>
+                            <th>Mobile</th>
+                        </tr>
+                    </thead>
+                    <tbody id="downloadsBody">
+                    </tbody>
+                </table>
+                <div id="noDataState" class="no-data" style="display: none;">
+                    <i class="fas fa-inbox" style="font-size: 64px; color: #ddd; margin-bottom: 20px;"></i>
+                    <p>No downloads found</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let allDownloads = [];
+        let filteredDownloads = [];
+
+        // Check authentication
+        function checkAuth() {
+            const token = localStorage.getItem('authToken');
+            if (!token) {
+                window.location.href = '../login_panel/login.html';
+                return false;
+            }
+            return token;
+        }
+
+        // Logout
+        function logout() {
+            localStorage.removeItem('authToken');
+            localStorage.removeItem('userEmail');
+            localStorage.removeItem('userRole');
+            window.location.href = '../login_panel/login.html';
+        }
+
+        // Fetch downloads
+        async function fetchDownloads() {
+            const token = checkAuth();
+            if (!token) return;
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/brochure-downloads`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (response.status === 401) {
+                    alert('Session expired. Please login again.');
+                    logout();
+                    return;
+                }
+
+                if (!response.ok) {
+                    throw new Error('Failed to fetch downloads');
+                }
+
+                allDownloads = await response.json();
+                filteredDownloads = [...allDownloads];
+                
+                updateStats();
+                renderDownloads();
+                
+                document.getElementById('loadingState').style.display = 'none';
+                document.getElementById('downloadsTable').style.display = 'table';
+            } catch (error) {
+                console.error('Error fetching downloads:', error);
+                document.getElementById('loadingState').innerHTML = `
+                    <i class="fas fa-exclamation-triangle" style="color: #e74c3c;"></i>
+                    <p>Error loading downloads. Please try again.</p>
+                `;
+            }
+        }
+
+        // Update statistics
+        function updateStats() {
+            const now = new Date();
+            const oneWeekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+            const oneMonthAgo = new Date(now.getFullYear(), now.getMonth() - 1, now.getDate());
+
+            const weekCount = allDownloads.filter(dl => 
+                new Date(dl.createdAt) >= oneWeekAgo
+            ).length;
+
+            const monthCount = allDownloads.filter(dl => 
+                new Date(dl.createdAt) >= oneMonthAgo
+            ).length;
+
+            document.getElementById('totalDownloads').textContent = allDownloads.length;
+            document.getElementById('monthDownloads').textContent = monthCount;
+            document.getElementById('weekDownloads').textContent = weekCount;
+        }
+
+        // Filter downloads
+        function filterDownloads() {
+            const searchText = document.getElementById('searchInput').value.toLowerCase();
+
+            filteredDownloads = allDownloads.filter(dl => {
+                return !searchText || 
+                    dl.first_name.toLowerCase().includes(searchText) ||
+                    dl.last_name.toLowerCase().includes(searchText) ||
+                    dl.email.toLowerCase().includes(searchText) ||
+                    dl.mobile.toLowerCase().includes(searchText) ||
+                    (dl.company_name && dl.company_name.toLowerCase().includes(searchText));
+            });
+
+            renderDownloads();
+        }
+
+        // Render downloads table
+        function renderDownloads() {
+            const tbody = document.getElementById('downloadsBody');
+            tbody.innerHTML = '';
+
+            if (filteredDownloads.length === 0) {
+                document.getElementById('downloadsTable').style.display = 'none';
+                document.getElementById('noDataState').style.display = 'block';
+                return;
+            }
+
+            document.getElementById('downloadsTable').style.display = 'table';
+            document.getElementById('noDataState').style.display = 'none';
+
+            filteredDownloads.forEach(dl => {
+                const row = document.createElement('tr');
+                const date = new Date(dl.createdAt).toLocaleDateString('en-IN', {
+                    day: '2-digit',
+                    month: 'short',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+
+                row.innerHTML = `
+                    <td>${date}</td>
+                    <td><strong>${dl.first_name} ${dl.last_name}</strong></td>
+                    <td>${dl.company_name || '-'}</td>
+                    <td>${dl.email}</td>
+                    <td>${dl.mobile}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            fetchDownloads();
+        });
+    </script>
+</body>
+</html>

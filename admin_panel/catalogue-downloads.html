@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Catalogue Downloads - Anocab Admin</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 40px auto;
+    }
+
+    .back-btn {
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      margin-bottom: 20px;
+      transition: all 0.3s ease;
+    }
+
+    .back-btn:hover {
+      background: rgba(255, 255, 255, 0.3);
+    }
+
+    .main-card {
+      background: white;
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    }
+
+    h1 {
+      color: #333;
+      font-size: 28px;
+      margin-bottom: 10px;
+      font-weight: 700;
+    }
+
+    .subtitle {
+      color: #666;
+      font-size: 14px;
+      margin-bottom: 30px;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 30px;
+    }
+
+    .form-section {
+      background: #f8f9fa;
+      padding: 25px;
+      border-radius: 12px;
+    }
+
+    .preview-section {
+      background: #f8f9fa;
+      padding: 25px;
+      border-radius: 12px;
+      position: sticky;
+      top: 20px;
+    }
+
+    .section-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: #333;
+      font-size: 14px;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="file"],
+    select,
+    textarea {
+      width: 100%;
+      padding: 12px 14px;
+      border-radius: 8px;
+      border: 2px solid #e0e0e0;
+      font-size: 14px;
+      transition: all 0.3s ease;
+      background: white;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+    }
+
+    .file-upload-wrapper {
+      position: relative;
+    }
+
+    .file-upload-label {
+      display: block;
+      padding: 12px 14px;
+      background: white;
+      border: 2px dashed #e0e0e0;
+      border-radius: 8px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .file-upload-label:hover {
+      border-color: #667eea;
+      background: #f8f9ff;
+    }
+
+    input[type="file"] {
+      display: none;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      padding: 14px 24px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 15px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      width: 100%;
+      margin-top: 10px;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+    }
+
+    .btn-secondary {
+      background: #28a745;
+      color: white;
+      border: none;
+      padding: 14px 24px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 15px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      width: 100%;
+      margin-top: 10px;
+    }
+
+    .btn-secondary:hover {
+      background: #218838;
+      transform: translateY(-2px);
+    }
+
+    .preview-canvas-wrapper {
+      background: white;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    #previewCanvas {
+      width: 100%;
+      height: auto;
+      border: 1px solid #e0e0e0;
+      border-radius: 4px;
+    }
+
+    .saved-contacts {
+      margin-top: 0;
+      padding: 15px;
+      background: white;
+      border-radius: 8px;
+      max-height: 300px;
+      overflow-y: auto;
+    }
+
+    .contact-item {
+      padding: 10px;
+      margin-bottom: 8px;
+      background: #f8f9fa;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .contact-item:hover {
+      background: #e9ecef;
+      transform: translateX(4px);
+    }
+
+    .contact-item.selected {
+      background: #667eea;
+      color: white;
+    }
+
+    .contact-checkbox {
+      width: 18px;
+      height: 18px;
+      margin-right: 10px;
+      cursor: pointer;
+    }
+
+    .contact-item-content {
+      display: flex;
+      align-items: center;
+      flex: 1;
+    }
+
+    .delete-contact {
+      background: #dc3545;
+      color: white;
+      border: none;
+      padding: 4px 8px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 12px;
+    }
+
+    .success-msg {
+      padding: 12px 16px;
+      border-radius: 8px;
+      margin-top: 15px;
+      font-size: 14px;
+      background: #d4edda;
+      color: #155724;
+      border-left: 4px solid #28a745;
+      display: none;
+    }
+
+    .success-msg.show {
+      display: block;
+      animation: slideIn 0.3s ease;
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (max-width: 1024px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .preview-section {
+        position: relative;
+        top: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <button class="back-btn" onclick="location.href='/login_panel/dashboard.html'">← Back to Dashboard</button>
+    
+    <div class="main-card">
+      <h1>📄 Catalogue Downloads</h1>
+      <p class="subtitle">Create and download customized price catalogues</p>
+
+      <div class="layout">
+        <!-- Form Section -->
+        <div class="form-section">
+          <div class="section-title">⚙️ Catalogue Settings</div>
+
+          <!-- Header Image Upload -->
+          <div class="form-group">
+            <label>Header Image</label>
+            <div class="file-upload-wrapper">
+              <label for="headerImage" class="file-upload-label">
+                <span id="headerImageName">📷 Click to upload header image</span>
+              </label>
+              <input type="file" id="headerImage" accept="image/*">
+            </div>
+          </div>
+
+          <!-- Logo Uploads -->
+          <div class="form-group">
+            <label>Anocab Logo</label>
+            <div class="file-upload-wrapper">
+              <label for="anocabLogo" class="file-upload-label">
+                <span id="anocabLogoName">🏢 Click to upload Anocab logo</span>
+              </label>
+              <input type="file" id="anocabLogo" accept="image/*">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>JEO Logo</label>
+            <div class="file-upload-wrapper">
+              <label for="jeoLogo" class="file-upload-label">
+                <span id="jeoLogoName">🏢 Click to upload JEO logo</span>
+              </label>
+              <input type="file" id="jeoLogo" accept="image/*">
+            </div>
+          </div>
+
+          <!-- User Management Link -->
+          <div class="section-title" style="margin-top: 30px;">👥 Select User for Preview</div>
+          <div style="background: white; padding: 20px; border-radius: 8px;">
+            <div class="form-group">
+              <label>Select User (Optional)</label>
+              <select id="userSelect" style="width: 100%;">
+                <option value="">-- No user selected --</option>
+              </select>
+            </div>
+            <p style="margin: 15px 0; color: #666; font-size: 14px;">Select a user to preview their catalogue with contact details and QR code</p>
+            <button class="btn-secondary" onclick="location.href='/admin_panel/user-management.html'" style="width: 100%;">
+              👥 Go to User Management
+            </button>
+          </div>
+
+          <!-- Footer Logo -->
+          <div class="section-title" style="margin-top: 30px;">🔖 Footer Settings</div>
+
+          <div class="form-group">
+            <label>Footer Logo</label>
+            <div class="file-upload-wrapper">
+              <label for="footerLogo" class="file-upload-label">
+                <span id="footerLogoName">🏢 Click to upload footer logo</span>
+              </label>
+              <input type="file" id="footerLogo" accept="image/*">
+            </div>
+          </div>
+
+          <button class="btn-primary" id="generateBtn">🎨 Generate Preview</button>
+          <button class="btn-primary" id="saveSettingsBtn" style="background: #28a745;">💾 Save Settings to Database</button>
+          <div class="success-msg" id="successMsg"></div>
+        </div>
+
+        <!-- Preview Section -->
+        <div class="preview-section">
+          <div class="section-title">👁️ Live Preview</div>
+          <div class="preview-canvas-wrapper">
+            <canvas id="previewCanvas" width="800" height="1200"></canvas>
+          </div>
+          <button class="btn-secondary" id="downloadBtn">⬇️ Download Catalogue (PNG)</button>
+          <button class="btn-secondary" id="downloadJpgBtn">⬇️ Download Catalogue (JPG)</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const API_BASE_URL = window.location.origin || "http://localhost:3000";
+    
+    // Image storage
+    let images = {
+      header: null,
+      anocabLogo: null,
+      jeoLogo: null,
+      footerLogo: null
+    };
+
+    // User data for preview
+    let currentUserData = null;
+    let allUsers = [];
+    
+    // Load users on page load
+    async function loadUsers() {
+      try {
+        const response = await fetch(`${API_BASE_URL}/api/catalogue/users`);
+        allUsers = await response.json();
+        
+        const userSelect = document.getElementById('userSelect');
+        userSelect.innerHTML = '<option value="">-- No user selected --</option>';
+        
+        allUsers.forEach(user => {
+          const option = document.createElement('option');
+          option.value = user._id;
+          option.textContent = `${user.name} (${user.mobile})`;
+          userSelect.appendChild(option);
+        });
+      } catch (error) {
+        console.error('Error loading users:', error);
+      }
+    }
+    
+    // User selection change
+    document.addEventListener('DOMContentLoaded', function() {
+      document.getElementById('userSelect').addEventListener('change', function() {
+        const userId = this.value;
+        if (userId) {
+          currentUserData = allUsers.find(u => u._id === userId);
+        } else {
+          currentUserData = null;
+        }
+        generatePreview();
+      });
+    });
+    
+    // File upload handlers
+    document.getElementById('headerImage').addEventListener('change', function(e) {
+      handleFileUpload(e, 'header', 'headerImageName');
+    });
+
+    document.getElementById('anocabLogo').addEventListener('change', function(e) {
+      handleFileUpload(e, 'anocabLogo', 'anocabLogoName');
+    });
+
+    document.getElementById('jeoLogo').addEventListener('change', function(e) {
+      handleFileUpload(e, 'jeoLogo', 'jeoLogoName');
+    });
+
+    document.getElementById('footerLogo').addEventListener('change', function(e) {
+      handleFileUpload(e, 'footerLogo', 'footerLogoName');
+    });
+
+    function handleFileUpload(event, imageKey, labelId) {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const img = new Image();
+          img.onload = function() {
+            images[imageKey] = img;
+            document.getElementById(labelId).textContent = `✓ ${file.name}`;
+            generatePreview();
+          };
+          img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    // Save settings to database
+    document.getElementById('saveSettingsBtn').addEventListener('click', async function() {
+      const btn = this;
+      const originalText = btn.textContent;
+      btn.disabled = true;
+      btn.textContent = '⏳ Saving...';
+      
+      try {
+        const token = localStorage.getItem('authToken');
+        if (!token) {
+          alert('Please login first');
+          window.location.href = '/login_panel/login.html';
+          return;
+        }
+        
+        const settingsData = {};
+        
+        // Convert images to base64
+        if (images.header) {
+          const canvas = document.createElement('canvas');
+          canvas.width = images.header.width;
+          canvas.height = images.header.height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(images.header, 0, 0);
+          settingsData.header = canvas.toDataURL('image/png');
+        }
+        
+        if (images.anocabLogo) {
+          const canvas = document.createElement('canvas');
+          canvas.width = images.anocabLogo.width;
+          canvas.height = images.anocabLogo.height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(images.anocabLogo, 0, 0);
+          settingsData.anocabLogo = canvas.toDataURL('image/png');
+        }
+        
+        if (images.jeoLogo) {
+          const canvas = document.createElement('canvas');
+          canvas.width = images.jeoLogo.width;
+          canvas.height = images.jeoLogo.height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(images.jeoLogo, 0, 0);
+          settingsData.jeoLogo = canvas.toDataURL('image/png');
+        }
+        
+        if (images.footerLogo) {
+          const canvas = document.createElement('canvas');
+          canvas.width = images.footerLogo.width;
+          canvas.height = images.footerLogo.height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(images.footerLogo, 0, 0);
+          settingsData.footerLogo = canvas.toDataURL('image/png');
+        }
+        
+        const response = await fetch(`${API_BASE_URL}/api/catalogue/settings`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify(settingsData)
+        });
+        
+        const result = await response.json();
+        
+        if (result.status === 'success') {
+          btn.textContent = '✓ Saved Successfully!';
+          setTimeout(() => {
+            btn.textContent = originalText;
+            btn.disabled = false;
+          }, 2000);
+        } else {
+          throw new Error(result.error || 'Failed to save settings');
+        }
+      } catch (error) {
+        console.error('Error saving settings:', error);
+        alert('Error saving settings: ' + error.message);
+        btn.textContent = originalText;
+        btn.disabled = false;
+      }
+    });
+
+    // Load saved settings from database
+    async function loadSavedSettings() {
+      try {
+        const response = await fetch(`${API_BASE_URL}/api/catalogue/settings`);
+        const settings = await response.json();
+        
+        if (settings.header) {
+          loadImageFromBase64('header', settings.header, 'headerImageName');
+        }
+        if (settings.anocabLogo) {
+          loadImageFromBase64('anocabLogo', settings.anocabLogo, 'anocabLogoName');
+        }
+        if (settings.jeoLogo) {
+          loadImageFromBase64('jeoLogo', settings.jeoLogo, 'jeoLogoName');
+        }
+        if (settings.footerLogo) {
+          loadImageFromBase64('footerLogo', settings.footerLogo, 'footerLogoName');
+        }
+      } catch (error) {
+        console.error('Error loading settings:', error);
+      }
+    }
+
+    function loadImageFromBase64(imageKey, base64, labelId) {
+      const img = new Image();
+      img.onload = function() {
+        images[imageKey] = img;
+        document.getElementById(labelId).textContent = '✓ Image loaded';
+        generatePreview();
+      };
+      img.onerror = function() {
+        console.error(`Failed to load ${imageKey}`);
+      };
+      img.src = base64;
+    }
+
+    // Generate preview
+    document.getElementById('generateBtn').addEventListener('click', generatePreview);
+
+    async function generatePreview() {
+      const canvas = document.getElementById('previewCanvas');
+      const ctx = canvas.getContext('2d');
+
+      // Clear canvas
+      ctx.fillStyle = 'white';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      let yPos = 0;
+
+      // Draw header image with increased height (reduced spacing by 9% total)
+      if (images.header) {
+        const headerHeight = 350;
+        ctx.drawImage(images.header, 0, yPos, canvas.width, headerHeight);
+        yPos += headerHeight + 26; // Reduced from 27 (2% more)
+      }
+
+      // Draw logos with increased width and more spacing between them (reduced spacing by 9% total)
+      if (images.anocabLogo || images.jeoLogo) {
+        const logoY = yPos;
+        const logoHeight = 120; // Increased height from 100
+        
+        if (images.anocabLogo) {
+          // Calculate width maintaining aspect ratio
+          const aspectRatio = images.anocabLogo.width / images.anocabLogo.height;
+          const logoWidth = logoHeight * aspectRatio;
+          ctx.drawImage(images.anocabLogo, 60, logoY, logoWidth, logoHeight);
+        }
+        
+        if (images.jeoLogo) {
+          // Calculate width maintaining aspect ratio
+          const aspectRatio = images.jeoLogo.width / images.jeoLogo.height;
+          const logoWidth = logoHeight * aspectRatio;
+          ctx.drawImage(images.jeoLogo, canvas.width - logoWidth - 60, logoY, logoWidth, logoHeight);
+        }
+        
+        yPos += logoHeight + 36; // Reduced from 37 (2% more)
+      }
+
+      // Draw price update banner with half width
+      const bannerWidth = canvas.width / 2;
+      const bannerX = (canvas.width - bannerWidth) / 2;
+      
+      const gradient = ctx.createLinearGradient(bannerX, yPos, bannerX + bannerWidth, yPos);
+      gradient.addColorStop(0, '#5a6c7d');
+      gradient.addColorStop(0.5, '#4a5c6d');
+      gradient.addColorStop(1, '#5a6c7d');
+      ctx.fillStyle = gradient;
+      
+      // Draw banner with arrow shape (half width)
+      ctx.beginPath();
+      ctx.moveTo(bannerX + 20, yPos);
+      ctx.lineTo(bannerX + bannerWidth - 20, yPos);
+      ctx.lineTo(bannerX + bannerWidth, yPos + 25);
+      ctx.lineTo(bannerX + bannerWidth - 20, yPos + 50);
+      ctx.lineTo(bannerX + 20, yPos + 50);
+      ctx.lineTo(bannerX, yPos + 25);
+      ctx.closePath();
+      ctx.fill();
+      
+      // Add shadow to banner
+      ctx.shadowColor = 'rgba(0, 0, 0, 0.3)';
+      ctx.shadowBlur = 10;
+      ctx.shadowOffsetY = 3;
+      
+      ctx.fillStyle = 'white';
+      ctx.font = 'bold 26px Arial';
+      ctx.textAlign = 'center';
+      
+      const today = new Date();
+      const dateStr = `${String(today.getDate()).padStart(2, '0')}/${String(today.getMonth() + 1).padStart(2, '0')}/${today.getFullYear()}`;
+      ctx.fillText(`Price update for ${dateStr}`, canvas.width / 2, yPos + 33);
+      
+      // Reset shadow
+      ctx.shadowColor = 'transparent';
+      ctx.shadowBlur = 0;
+      ctx.shadowOffsetY = 0;
+      
+      yPos += 100; // Reduced from 102 (2% more)
+
+      // Fetch and draw prices with comparison
+      try {
+        const response = await fetch(`${API_BASE_URL}/api/prices`);
+        const prices = await response.json();
+
+        // Get price history for yesterday's comparison
+        const historyResponse = await fetch(`${API_BASE_URL}/api/price-history`);
+        const priceHistory = await historyResponse.json();
+        
+        // Get yesterday's prices (last entry in history)
+        const yesterdayPrices = priceHistory.length > 0 ? priceHistory[priceHistory.length - 1].prices : {};
+
+        ctx.textAlign = 'left';
+
+        const priceData = [
+          { key: 'aluminum_ec', name: 'Aluminum EC ( Balco )', price: prices.aluminum_ec, prevPrice: yesterdayPrices.aluminum_ec },
+          { key: 'aluminum_alloy', name: 'Aluminum Alloy ( Balco )', price: prices.aluminum_alloy, prevPrice: yesterdayPrices.aluminum_alloy },
+          { key: 'copper', name: 'Copper ( Mcx )', price: prices.copper, prevPrice: yesterdayPrices.copper },
+          { key: 'pvc', name: 'PVC - G7GER0IF ( Reliance )', price: prices.pvc || '----', prevPrice: yesterdayPrices.pvc },
+          { key: 'lldpe', name: 'LLDPE - X24065 ( Reliance )', price: prices.lldpe, prevPrice: yesterdayPrices.lldpe }
+        ];
+
+        priceData.forEach((item, index) => {
+          const itemY = yPos + (index * 41);
+          
+          // Material name - bold
+          ctx.fillStyle = '#1a1a1a';
+          ctx.font = 'bold 24px Arial';
+          ctx.fillText(item.name, 60, itemY);
+          
+          // Price with decimal - bold
+          ctx.fillStyle = '#000';
+          ctx.font = 'bold 24px Arial';
+          const priceStr = typeof item.price === 'number' ? item.price.toFixed(2) : item.price;
+          ctx.fillText(`₹`, 480, itemY);
+          ctx.fillText(`${priceStr}`, 510, itemY);
+          
+          // Calculate price change and show in bracket
+          if (item.prevPrice && item.price !== '----' && typeof item.price === 'number') {
+            const change = item.price - item.prevPrice;
+            const changeStr = change >= 0 ? `+${change.toFixed(2)}` : change.toFixed(2);
+            
+            // Show change in smaller font next to price
+            ctx.font = '18px Arial';
+            ctx.fillStyle = '#666';
+            ctx.fillText(`(${changeStr})`, 610, itemY);
+          }
+          
+          // Determine trend automatically from price comparison
+          let trend = '↑';
+          let trendColor = '#dc3545'; // red for price increase (bad for buyers)
+          
+          if (item.prevPrice && item.price !== '----' && typeof item.price === 'number') {
+            if (item.price < item.prevPrice) {
+              trend = '↓';
+              trendColor = '#28a745'; // green for price decrease (good for buyers)
+            }
+          }
+          
+          // Bold trend arrow
+          ctx.fillStyle = trendColor;
+          ctx.font = 'bold 38px Arial';
+          ctx.fillText(trend, 720, itemY);
+        });
+
+        yPos += 227;
+      } catch (error) {
+        console.error('Error fetching prices:', error);
+      }
+
+      // Draw single horizontal line before contact section (200% bolder)
+      ctx.strokeStyle = '#a0a0a0';
+      ctx.lineWidth = 4; // 200% of 2 = 4
+      ctx.beginPath();
+      ctx.moveTo(40, yPos);
+      ctx.lineTo(canvas.width - 40, yPos);
+      ctx.stroke();
+      
+      yPos += 41; // Reduced from 42 (2% more)
+
+      // Draw contact information and QR in same row (from user data if available)
+      if (currentUserData) {
+        ctx.textAlign = 'left';
+        
+        // Bold name
+        ctx.fillStyle = '#0066cc';
+        ctx.font = 'bold 30px Arial';
+        ctx.fillText(currentUserData.name, 60, yPos);
+        
+        // Bold mobile
+        ctx.font = 'bold 26px Arial';
+        ctx.fillText(currentUserData.mobile, 60, yPos + 45);
+        
+        // Bold email
+        ctx.fillText(currentUserData.email, 60, yPos + 85);
+
+        // Draw QR code in same row (aligned to right)
+        if (currentUserData.qrCode) {
+          const qrImg = await loadImageAsync(currentUserData.qrCode);
+          const qrSize = 130;
+          ctx.drawImage(qrImg, canvas.width - qrSize - 60, yPos - 10, qrSize, qrSize);
+        }
+
+        yPos += 118; // Reduced from 120 (2% more)
+      }
+
+      // Draw footer logo full width
+      if (images.footerLogo) {
+        const footerLogoHeight = 90;
+        const footerLogoWidth = (images.footerLogo.width / images.footerLogo.height) * footerLogoHeight;
+        
+        // Center the logo
+        const logoX = (canvas.width - footerLogoWidth) / 2;
+        ctx.drawImage(images.footerLogo, logoX, yPos, footerLogoWidth, footerLogoHeight);
+        yPos += footerLogoHeight + 17; // Reduced from 18 (2% more)
+      }
+
+      // Draw footer text - extra bold and full width
+      ctx.fillStyle = '#0066cc';
+      ctx.font = 'bold 26px Arial';
+      ctx.textAlign = 'center';
+      
+      // Full width text
+      const footerText1 = 'Manufacturers of Complete Range of  Wire & Cable';
+      ctx.fillText(footerText1, canvas.width / 2, yPos);
+      
+      yPos += 36; // Reduced from 37 (2% more)
+      
+      // Extra bold company info - full width
+      ctx.fillStyle = '#000';
+      ctx.font = 'bold 20px Arial';
+      const footerText2 = 'Anode Electric Pvt. Ltd. ® | Samriddhi Industries ® www.anocab.com';
+      ctx.fillText(footerText2, canvas.width / 2, yPos);
+      
+      yPos += 31; // Reduced from 32 (2% more)
+      
+      // Extra bold contact info - full width
+      ctx.font = 'bold 20px Arial';
+      const footerText3 = 'sales@anocab.in | sales@jeo.co.in | 1800-27-000-75';
+      ctx.fillText(footerText3, canvas.width / 2, yPos);
+      
+      yPos += 40; // Add space at bottom
+    }
+
+    function loadImageAsync(src) {
+      return new Promise((resolve) => {
+        const img = new Image();
+        img.onload = () => resolve(img);
+        img.src = src;
+      });
+    }
+
+    // Download as PNG
+    document.getElementById('downloadBtn').addEventListener('click', function() {
+      const canvas = document.getElementById('previewCanvas');
+      const link = document.createElement('a');
+      const filename = currentUserData ? 
+        `catalogue_${currentUserData.name.replace(/\s+/g, '_')}_${Date.now()}.png` :
+        `catalogue_${Date.now()}.png`;
+      link.download = filename;
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    });
+
+    // Download as JPG
+    document.getElementById('downloadJpgBtn').addEventListener('click', function() {
+      const canvas = document.getElementById('previewCanvas');
+      const link = document.createElement('a');
+      const filename = currentUserData ? 
+        `catalogue_${currentUserData.name.replace(/\s+/g, '_')}_${Date.now()}.jpg` :
+        `catalogue_${Date.now()}.jpg`;
+      link.download = filename;
+      link.href = canvas.toDataURL('image/jpeg', 0.95);
+      link.click();
+    });
+
+    // Initialize
+    loadSavedSettings();
+    loadUsers();
+    generatePreview();
+  </script>
+</body>
+</html>
