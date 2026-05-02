@@ -673,23 +673,23 @@
             const change = item.price - item.prevPrice;
             const changeStr = change >= 0 ? `+${change.toFixed(2)}` : change.toFixed(2);
             
-            ctx.font = '18px Arial';
-            ctx.fillStyle = '#666';
+            ctx.font = 'bold 20px Arial';
+            ctx.fillStyle = '#000';
             ctx.fillText(`(${changeStr})`, 610, itemY);
           }
           
           let trend = '↑';
-          let trendColor = '#dc3545';
+          let trendColor = '#cc0000';
           
           if (item.prevPrice && item.price !== '----' && typeof item.price === 'number') {
             if (item.price < item.prevPrice) {
               trend = '↓';
-              trendColor = '#28a745';
+              trendColor = '#006400';
             }
           }
           
           ctx.fillStyle = trendColor;
-          ctx.font = 'bold 38px Arial';
+          ctx.font = 'bold 40px Arial';
           ctx.fillText(trend, 720, itemY);
         });
 

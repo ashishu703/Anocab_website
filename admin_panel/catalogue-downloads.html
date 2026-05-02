@@ -739,26 +739,26 @@
             const change = item.price - item.prevPrice;
             const changeStr = change >= 0 ? `+${change.toFixed(2)}` : change.toFixed(2);
             
-            // Show change in smaller font next to price
-            ctx.font = '18px Arial';
-            ctx.fillStyle = '#666';
+            // Show change in bold dark black
+            ctx.font = 'bold 20px Arial';
+            ctx.fillStyle = '#000';
             ctx.fillText(`(${changeStr})`, 610, itemY);
           }
           
           // Determine trend automatically from price comparison
           let trend = '↑';
-          let trendColor = '#dc3545'; // red for price increase (bad for buyers)
+          let trendColor = '#cc0000'; // dark red for price increase
           
           if (item.prevPrice && item.price !== '----' && typeof item.price === 'number') {
             if (item.price < item.prevPrice) {
               trend = '↓';
-              trendColor = '#28a745'; // green for price decrease (good for buyers)
+              trendColor = '#006400'; // dark green for price decrease
             }
           }
           
           // Bold trend arrow
           ctx.fillStyle = trendColor;
-          ctx.font = 'bold 38px Arial';
+          ctx.font = 'bold 40px Arial';
           ctx.fillText(trend, 720, itemY);
         });
 

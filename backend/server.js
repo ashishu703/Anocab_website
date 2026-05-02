@@ -14,13 +14,10 @@ const path = require('path');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Trust nginx reverse proxy (needed for correct secure cookie handling)
 app.set('trust proxy', 1);
 
-// Mongoose settings
 mongoose.set('strictQuery', false);
 
-// MongoDB Connection FIRST (before session middleware)
 const mongoOptions = {
   serverSelectionTimeoutMS: 30000,
   socketTimeoutMS: 45000,
@@ -38,7 +35,7 @@ mongoose.connect(process.env.MONGODB_URI, mongoOptions)
   .catch(err => {
     console.error("❌ MongoDB connection error:", err.message);
     console.log("💡 Check your MongoDB Atlas credentials and network access");
-    process.exit(1); // Exit if DB connection fails
+    process.exit(1); 
   });
 
 // Security Middleware
@@ -211,6 +208,31 @@ const jobListingSchema = new mongoose.Schema({
   updatedAt: { type: Date, default: Date.now }
 });
 const JobListing = mongoose.model('JobListing', jobListingSchema);
+
+// Price Schema - NEW
+const priceSchema = new mongoose.Schema({
+  aluminum_ec: { type: Number, required: true },
+  aluminum_alloy: { type: Number, required: true },
+  copper: { type: Number, required: true },
+  pvc: { type: Number, required: true },
+  lldpe: { type: Number, required: true },
+  updatedAt: { type: Date, default: Date.now },
+  updatedBy: { type: String }
+});
+const Price = mongoose.model('Price', priceSchema);
+
+// Price History Schema - NEW
+const priceHistorySchema = new mongoose.Schema({
+  aluminum_ec: { type: Number, required: true },
+  aluminum_alloy: { type: Number, required: true },
+  copper: { type: Number, required: true },
+  pvc: { type: Number, required: true },
+  lldpe: { type: Number, required: true },
+  date: { type: String, required: true },
+  timestamp: { type: Date, default: Date.now },
+  updatedBy: { type: String }
+});
+const PriceHistory = mongoose.model('PriceHistory', priceHistorySchema);
 
 // ==================== NODEMAILER SETUP ====================
 
@@ -395,98 +417,132 @@ app.get('/check-auth', (req, res) => {
 // ==================== PRICE MARQUEE ROUTES ====================
 
 const PRICES_FILE = path.join(__dirname, 'prices.json');
-const PRICE_HISTORY_FILE = path.join(__dirname, 'price_history.json');
+// ==================== PRICE MARQUEE ROUTES ====================
 
-// Initialize prices file if it doesn't exist
-if (!fs.existsSync(PRICES_FILE)) {
-  fs.writeFileSync(PRICES_FILE, JSON.stringify({
-    aluminum_ec: 275.50,
-    aluminum_alloy: 283.00,
-    copper: 912.02,
-    pvc: 92.63,
-    lldpe: 105.52
-  }, null, 2));
+// Initialize default prices in DB if not exists
+async function initializePrices() {
+  try {
+    const existingPrice = await Price.findOne();
+    if (!existingPrice) {
+      const defaultPrice = new Price({
+        aluminum_ec: 275.50,
+        aluminum_alloy: 283.00,
+        copper: 912.02,
+        pvc: 92.63,
+        lldpe: 105.52,
+        updatedBy: 'system'
+      });
+      await defaultPrice.save();
+      console.log('✅ Default prices initialized in MongoDB');
+    }
+  } catch (error) {
+    console.error('❌ Error initializing prices:', error);
+  }
 }
 
-// Initialize price history file if it doesn't exist
-if (!fs.existsSync(PRICE_HISTORY_FILE)) {
-  fs.writeFileSync(PRICE_HISTORY_FILE, JSON.stringify([], null, 2));
-}
+// Call initialization after MongoDB connection
+mongoose.connection.once('open', () => {
+  initializePrices();
+});
 
 // Get current prices (public)
-app.get('/api/prices', (req, res) => {
-  fs.readFile(PRICES_FILE, 'utf8', (err, data) => {
-    if (err) {
-      console.error('Error reading prices:', err);
-      return res.status(500).json({ error: 'Error reading prices' });
+app.get('/api/prices', async (req, res) => {
+  try {
+    const currentPrice = await Price.findOne().sort({ updatedAt: -1 });
+    
+    if (!currentPrice) {
+      return res.status(404).json({ error: 'No prices found' });
     }
-    res.json(JSON.parse(data));
-  });
+    
+    res.json({
+      aluminum_ec: currentPrice.aluminum_ec,
+      aluminum_alloy: currentPrice.aluminum_alloy,
+      copper: currentPrice.copper,
+      pvc: currentPrice.pvc,
+      lldpe: currentPrice.lldpe
+    });
+  } catch (error) {
+    console.error('Error reading prices:', error);
+    res.status(500).json({ error: 'Error reading prices' });
+  }
 });
 
 // Get price history (public)
-app.get('/api/price-history', (req, res) => {
-  fs.readFile(PRICE_HISTORY_FILE, 'utf8', (err, data) => {
-    if (err) {
-      console.error('Error reading price history:', err);
-      return res.json([]); // Return empty array if no history
-    }
-    res.json(JSON.parse(data));
-  });
+app.get('/api/price-history', async (req, res) => {
+  try {
+    const history = await PriceHistory.find()
+      .sort({ timestamp: -1 })
+      .limit(30);
+    
+    res.json(history);
+  } catch (error) {
+    console.error('Error reading price history:', error);
+    res.json([]);
+  }
 });
 
 // Update prices (protected)
-app.post('/update-prices', isAuthenticated, (req, res) => {
-  const newPrices = {
-    aluminum_ec: parseFloat(req.body.price_aluminum_ec),
-    aluminum_alloy: parseFloat(req.body.price_aluminum_alloy),
-    copper: parseFloat(req.body.price_copper),
-    pvc: parseFloat(req.body.price_pvc),
-    lldpe: parseFloat(req.body.price_lldpe)
-  };
+app.post('/update-prices', isAuthenticated, async (req, res) => {
+  try {
+    const newPrices = {
+      aluminum_ec: parseFloat(req.body.price_aluminum_ec),
+      aluminum_alloy: parseFloat(req.body.price_aluminum_alloy),
+      copper: parseFloat(req.body.price_copper),
+      pvc: parseFloat(req.body.price_pvc),
+      lldpe: parseFloat(req.body.price_lldpe)
+    };
 
-  // Read current prices to save as history
-  fs.readFile(PRICES_FILE, 'utf8', (err, currentData) => {
-    if (!err) {
-      const currentPrices = JSON.parse(currentData);
-      
-      // Read price history
-      fs.readFile(PRICE_HISTORY_FILE, 'utf8', (histErr, histData) => {
-        let history = [];
-        if (!histErr) {
-          history = JSON.parse(histData);
-        }
-        
-        // Add current prices to history with timestamp
-        history.push({
-          timestamp: new Date().toISOString(),
-          date: new Date().toLocaleDateString('en-GB'),
-          prices: currentPrices
-        });
-        
-        // Keep only last 30 days of history
-        if (history.length > 30) {
-          history = history.slice(-30);
-        }
-        
-        // Save updated history
-        fs.writeFile(PRICE_HISTORY_FILE, JSON.stringify(history, null, 2), (histWriteErr) => {
-          if (histWriteErr) {
-            console.error('Error saving price history:', histWriteErr);
-          }
-        });
+    // Get current prices to save as history
+    const currentPrice = await Price.findOne().sort({ updatedAt: -1 });
+    
+    if (currentPrice) {
+      // Save current prices to history
+      const historyEntry = new PriceHistory({
+        aluminum_ec: currentPrice.aluminum_ec,
+        aluminum_alloy: currentPrice.aluminum_alloy,
+        copper: currentPrice.copper,
+        pvc: currentPrice.pvc,
+        lldpe: currentPrice.lldpe,
+        date: new Date().toLocaleDateString('en-GB'),
+        timestamp: currentPrice.updatedAt,
+        updatedBy: currentPrice.updatedBy || 'admin'
       });
+      await historyEntry.save();
+      
+      // Keep only last 30 days of history
+      const historyCount = await PriceHistory.countDocuments();
+      if (historyCount > 30) {
+        const oldestEntries = await PriceHistory.find()
+          .sort({ timestamp: 1 })
+          .limit(historyCount - 30);
+        
+        for (const entry of oldestEntries) {
+          await PriceHistory.findByIdAndDelete(entry._id);
+        }
+      }
     }
     
     // Save new prices
-    fs.writeFile(PRICES_FILE, JSON.stringify(newPrices, null, 2), (err) => {
-      if (err) {
-        console.error('Error saving prices:', err);
-        return res.status(500).json({ status: 'error', error: 'Error saving prices' });
-      }
-      res.json({ status: 'success', message: 'Prices updated successfully', prices: newPrices });
+    const updatedPrice = new Price({
+      ...newPrices,
+      updatedBy: req.user.email || 'admin',
+      updatedAt: new Date()
     });
-  });
+    await updatedPrice.save();
+    
+    console.log('✅ Prices updated in MongoDB by:', req.user.email);
+    res.json({ 
+      status: 'success', 
+      message: 'Prices updated successfully', 
+      prices: newPrices 
+    });
+  } catch (error) {
+    console.error('Error saving prices:', error);
+    res.status(500).json({ 
+      status: 'error', 
+      error: 'Error saving prices' 
+    });
+  }
 });
 
 // Get approved prices (protected)

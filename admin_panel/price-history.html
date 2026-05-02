@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Price History - Anocab Admin</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 40px auto;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .back-btn {
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: all 0.3s ease;
+    }
+
+    .back-btn:hover {
+      background: rgba(255, 255, 255, 0.3);
+    }
+
+    .card {
+      background: white;
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    }
+
+    h1 {
+      color: #333;
+      font-size: 28px;
+      margin-bottom: 10px;
+      font-weight: 700;
+    }
+
+    .subtitle {
+      color: #666;
+      font-size: 14px;
+      margin-bottom: 30px;
+    }
+
+    .table-container {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+    }
+
+    thead {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+
+    th {
+      padding: 15px;
+      text-align: left;
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    td {
+      padding: 15px;
+      border-bottom: 1px solid #e0e0e0;
+      font-size: 14px;
+    }
+
+    tbody tr:hover {
+      background: #f8f9fa;
+    }
+
+    .price-change {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .price-up {
+      background: #fee;
+      color: #c00;
+    }
+
+    .price-down {
+      background: #efe;
+      color: #060;
+    }
+
+    .price-same {
+      background: #f0f0f0;
+      color: #666;
+    }
+
+    .pagination {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .pagination button {
+      padding: 8px 16px;
+      border: none;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: all 0.3s ease;
+    }
+
+    .pagination button:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+    }
+
+    .pagination button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .pagination span {
+      color: #333;
+      font-weight: 600;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 40px;
+      color: #666;
+    }
+
+    .no-data {
+      text-align: center;
+      padding: 40px;
+      color: #999;
+      font-size: 16px;
+    }
+
+    .error-msg {
+      background: #f8d7da;
+      color: #721c24;
+      padding: 15px;
+      border-radius: 8px;
+      border-left: 4px solid #dc3545;
+      margin-bottom: 20px;
+    }
+
+    @media (max-width: 768px) {
+      .card {
+        padding: 20px;
+      }
+
+      h1 {
+        font-size: 22px;
+      }
+
+      table {
+        font-size: 12px;
+      }
+
+      th, td {
+        padding: 10px 8px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <button class="back-btn" onclick="location.href='/login_panel/dashboard.html'">← Back to Dashboard</button>
+    </div>
+    
+    <div class="card">
+      <h1>📊 Price History</h1>
+      <p class="subtitle">Complete history of all price updates</p>
+
+      <div id="errorMsg" class="error-msg" style="display: none;"></div>
+
+      <div id="loadingMsg" class="loading">
+        Loading price history...
+      </div>
+
+      <div id="tableContainer" style="display: none;">
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Aluminum EC</th>
+                <th>Aluminum Alloy</th>
+                <th>Copper</th>
+                <th>PVC</th>
+                <th>LLDPE</th>
+                <th>Updated By</th>
+              </tr>
+            </thead>
+            <tbody id="historyTableBody">
+              <!-- Data will be inserted here -->
+            </tbody>
+          </table>
+        </div>
+
+        <div class="pagination">
+          <button id="prevBtn" onclick="changePage(-1)">← Previous</button>
+          <span id="pageInfo">Page 1 of 1</span>
+          <button id="nextBtn" onclick="changePage(1)">Next →</button>
+        </div>
+      </div>
+
+      <div id="noDataMsg" class="no-data" style="display: none;">
+        No price history available yet.
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // JWT Helper Functions
+    function getAuthHeaders() {
+      const token = localStorage.getItem('authToken');
+      return {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      };
+    }
+
+    function getAuthToken() {
+      return localStorage.getItem('authToken');
+    }
+
+    // Check authentication on page load
+    (async function checkAuth() {
+      const token = getAuthToken();
+      
+      if (!token) {
+        window.location.href = '/login_panel/login.html';
+        return;
+      }
+      
+      try {
+        const response = await fetch('/check-auth', {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await response.json();
+        if (!data.authenticated) {
+          localStorage.clear();
+          window.location.href = '/login_panel/login.html';
+        }
+      } catch (error) {
+        console.error('Auth check failed:', error);
+        localStorage.clear();
+        window.location.href = '/login_panel/login.html';
+      }
+    })();
+
+    const API_BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
+      ? 'http://localhost:3000' 
+      : 'https://anocab.com';
+    
+    let currentPage = 1;
+    const itemsPerPage = 10;
+    let allHistory = [];
+    let previousPrices = {};
+
+    // Load price history
+    async function loadPriceHistory() {
+      try {
+        document.getElementById('loadingMsg').style.display = 'block';
+        document.getElementById('tableContainer').style.display = 'none';
+        document.getElementById('noDataMsg').style.display = 'none';
+        document.getElementById('errorMsg').style.display = 'none';
+
+        const response = await fetch(`${API_BASE_URL}/api/price-history`);
+        
+        if (!response.ok) {
+          throw new Error('Failed to fetch price history');
+        }
+
+        allHistory = await response.json();
+        
+        document.getElementById('loadingMsg').style.display = 'none';
+
+        if (allHistory.length === 0) {
+          document.getElementById('noDataMsg').style.display = 'block';
+        } else {
+          document.getElementById('tableContainer').style.display = 'block';
+          renderTable();
+        }
+      } catch (error) {
+        console.error('Error loading price history:', error);
+        document.getElementById('loadingMsg').style.display = 'none';
+        document.getElementById('errorMsg').textContent = '✗ Failed to load price history. Please try again.';
+        document.getElementById('errorMsg').style.display = 'block';
+      }
+    }
+
+    // Calculate price change
+    function getPriceChange(current, previous) {
+      if (!previous) return { text: '—', class: 'price-same' };
+      
+      const diff = current - previous;
+      if (diff > 0) {
+        return { text: `+${diff.toFixed(2)}`, class: 'price-up', arrow: '↑' };
+      } else if (diff < 0) {
+        return { text: diff.toFixed(2), class: 'price-down', arrow: '↓' };
+      } else {
+        return { text: '0.00', class: 'price-same', arrow: '—' };
+      }
+    }
+
+    // Render table with pagination
+    function renderTable() {
+      const tbody = document.getElementById('historyTableBody');
+      tbody.innerHTML = '';
+
+      const totalPages = Math.ceil(allHistory.length / itemsPerPage);
+      const startIndex = (currentPage - 1) * itemsPerPage;
+      const endIndex = startIndex + itemsPerPage;
+      const pageData = allHistory.slice(startIndex, endIndex);
+
+      pageData.forEach((entry, index) => {
+        const actualIndex = startIndex + index;
+        const prevEntry = allHistory[actualIndex + 1]; // Next item is previous date
+
+        // Handle both old and new data structure
+        const prices = entry.prices || entry;
+        const prevPrices = prevEntry?.prices || prevEntry;
+
+        const row = document.createElement('tr');
+        
+        // Date
+        const dateCell = document.createElement('td');
+        dateCell.innerHTML = `<strong>${entry.date || new Date(entry.timestamp).toLocaleDateString('en-GB')}</strong>`;
+        row.appendChild(dateCell);
+
+        // Aluminum EC
+        const alEcCell = document.createElement('td');
+        const alEcChange = getPriceChange(prices.aluminum_ec, prevPrices?.aluminum_ec);
+        alEcCell.innerHTML = `
+          ₹${prices.aluminum_ec.toFixed(2)}
+          <span class="price-change ${alEcChange.class}">${alEcChange.arrow || ''} ${alEcChange.text}</span>
+        `;
+        row.appendChild(alEcCell);
+
+        // Aluminum Alloy
+        const alAlloyCell = document.createElement('td');
+        const alAlloyChange = getPriceChange(prices.aluminum_alloy, prevPrices?.aluminum_alloy);
+        alAlloyCell.innerHTML = `
+          ₹${prices.aluminum_alloy.toFixed(2)}
+          <span class="price-change ${alAlloyChange.class}">${alAlloyChange.arrow || ''} ${alAlloyChange.text}</span>
+        `;
+        row.appendChild(alAlloyCell);
+
+        // Copper
+        const copperCell = document.createElement('td');
+        const copperChange = getPriceChange(prices.copper, prevPrices?.copper);
+        copperCell.innerHTML = `
+          ₹${prices.copper.toFixed(2)}
+          <span class="price-change ${copperChange.class}">${copperChange.arrow || ''} ${copperChange.text}</span>
+        `;
+        row.appendChild(copperCell);
+
+        // PVC
+        const pvcCell = document.createElement('td');
+        const pvcChange = getPriceChange(prices.pvc, prevPrices?.pvc);
+        pvcCell.innerHTML = `
+          ₹${prices.pvc.toFixed(2)}
+          <span class="price-change ${pvcChange.class}">${pvcChange.arrow || ''} ${pvcChange.text}</span>
+        `;
+        row.appendChild(pvcCell);
+
+        // LLDPE
+        const lldpeCell = document.createElement('td');
+        const lldpeChange = getPriceChange(prices.lldpe, prevPrices?.lldpe);
+        lldpeCell.innerHTML = `
+          ₹${prices.lldpe.toFixed(2)}
+          <span class="price-change ${lldpeChange.class}">${lldpeChange.arrow || ''} ${lldpeChange.text}</span>
+        `;
+        row.appendChild(lldpeCell);
+
+        // Updated By
+        const updatedByCell = document.createElement('td');
+        updatedByCell.textContent = entry.updatedBy || 'admin';
+        row.appendChild(updatedByCell);
+
+        tbody.appendChild(row);
+      });
+
+      // Update pagination
+      document.getElementById('pageInfo').textContent = `Page ${currentPage} of ${totalPages}`;
+      document.getElementById('prevBtn').disabled = currentPage === 1;
+      document.getElementById('nextBtn').disabled = currentPage === totalPages;
+    }
+
+    // Change page
+    function changePage(direction) {
+      const totalPages = Math.ceil(allHistory.length / itemsPerPage);
+      const newPage = currentPage + direction;
+      
+      if (newPage >= 1 && newPage <= totalPages) {
+        currentPage = newPage;
+        renderTable();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    }
+
+    // Load data on page load
+    loadPriceHistory();
+  </script>
+</body>
+</html>

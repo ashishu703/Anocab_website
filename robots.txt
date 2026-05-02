@@ -4,14 +4,132 @@ Allow: /
 # Sitemap
 Sitemap: https://anocab.com/sitemap.xml
 
-# Disallow admin areas
+# ========================================
+# BLOCKED AREAS (Admin, Backend, Dev files)
+# ========================================
 Disallow: /admin_panel/
 Disallow: /backend/
+Disallow: /login_panel/
 Disallow: /apply_now/
+Disallow: /.git/
+Disallow: /.github/
+Disallow: /.vscode/
+Disallow: /node_modules/
+Disallow: /price_list/node_modules/
+Disallow: /price_list/server.js
+Disallow: /price_list/.env
+Disallow: /test-api-config.html
 
-# Allow all other pages
+# ========================================
+# ALLOWED PUBLIC PAGES
+# ========================================
+
+# Main Pages
+Allow: /index.html
+Allow: /blog.html
+Allow: /enquiry.html
+Allow: /quality_assurance.html
+Allow: /price_list.html
+
+# Products Section
 Allow: /products/
+Allow: /products/0.All Products.html
+Allow: /products/1.Domestic Products.html
+Allow: /products/2.Industrial Products.html
+Allow: /products/3.Agricultural products.html
+Allow: /products/4.Networking products.html
+Allow: /products/Main_products.html
+Allow: /products/enquiry.html
+Allow: /products/agriculture/
+Allow: /products/domestic/
+Allow: /products/industrial/
+Allow: /products/netwoking/
+
+# Product Details
+Allow: /product-details/
+Allow: /product-details/agricultural-cables.html
+Allow: /product-details/domestic-cables.html
+Allow: /product-details/flexible-cables.html
+Allow: /product-details/industrial-cables.html
+Allow: /product-details/networking-cables.html
+Allow: /product-details/solar-cables.html
+
+# Individual Product Pages (All 26 products)
+Allow: /aaac_product_twentysix.html
+Allow: /abc_product_twentythree.html
+Allow: /acgsrac_product_twentyfive.html
+Allow: /aupiccc_product_fifteen.html
+Allow: /aw_product_eleven.html
+Allow: /cc_product_nine.html
+Allow: /coc_product_thirteen.html
+Allow: /lc_product_ten.html
+Allow: /mcc_product_two.html
+Allow: /mcw_product_one.html
+Allow: /mpiaac_product_twenty.html
+Allow: /mpiauc_product_eightteen.html
+Allow: /mxiaac__product_nineteen.html
+Allow: /mxiauc_product_seventeen.html
+Allow: /pcacdw_product_twentyfour.html
+Allow: /pfc_product_fourteen.html
+Allow: /pimac_product_five.html
+Allow: /pisc_product_four.html
+Allow: /piscac_product_three.html
+Allow: /sc_product_eight.html
+Allow: /sc_product_twelve.html
+Allow: /scpiacauc_product_twentytwo.html
+Allow: /scxiacauc_product_twentyone.html
+Allow: /sww_product_six.html
+Allow: /tsbc_product_sixteen.html
+Allow: /ttcw_product_seven.html
+
+# PHP Product Pages
+Allow: /*.php
+
+# Price Lists
+Allow: /price_list/
+Allow: /price_list/aaac.html
+Allow: /price_list/ab_cable.html
+Allow: /price_list/acsr.html
+Allow: /price_list/multicore_armoured_2core.html
+Allow: /price_list/multicore_armoured_3core.html
+Allow: /price_list/multicore_armoured_4core.html
+Allow: /price_list/multicore_copper_2coreflat.html
+Allow: /price_list/multicore_copper_2coreround.html
+Allow: /price_list/multicore_copper_3corecopperround.html
+Allow: /price_list/multicore_copper_4core_round.html
+Allow: /price_list/multicore_xlpe_2corearmoured.html
+Allow: /price_list/multicore_xlpe_3corearmoured.html
+Allow: /price_list/multicore_xlpe_4corearmoured.html
+Allow: /price_list/multistrand_1core_copper.html
+Allow: /price_list/pvc_insulated_corealuminium.html
+Allow: /price_list/summersiblecable.html
+Allow: /price_list/twin_twisted.html
+
+# Calculator
+Allow: /Calculator/
+Allow: /Calculator/index.html
+
+# About Us
 Allow: /about_us/
+Allow: /about_us/how_we_add_value.html
+Allow: /about_us/our_team.html
+
+# Contact Us
 Allow: /contact_us/
+Allow: /contact_us/contact_us.html
+
+# Media
 Allow: /media/
+Allow: /media/events.html
+Allow: /media/newspaper.html
+Allow: /media/online articles.html
+Allow: /media/television.html
+
+# Certificates
 Allow: /certificates/
+Allow: /certificates/certificate/
+
+# Assets (CSS, JS, Images) - Required for proper page rendering
+Allow: /CSS/
+Allow: /js/
+Allow: /prodimg/
