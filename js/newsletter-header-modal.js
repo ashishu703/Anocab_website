@@ -369,16 +369,20 @@
   };
   
   function init() {
-    // In development mode (localhost), always show modal for testing
-    const isDevelopment = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+    // Check if user has already seen or subscribed to the newsletter
+    const hasSeenModal = localStorage.getItem('newsletter_seen');
+    const hasSubscribed = getCookie(COOKIE_NAME) === 'true';
     
-    if (!isDevelopment && getCookie(COOKIE_NAME) === 'true') {
-      console.log('Newsletter: Already subscribed, skipping modal');
+    if (hasSeenModal || hasSubscribed) {
+      console.log('Newsletter: Already seen or subscribed, skipping modal');
       return;
     }
     
     console.log('Newsletter: Initializing modal...');
     createModal();
+    
+    // Mark as seen immediately when modal is created
+    localStorage.setItem('newsletter_seen', 'true');
     
     // Show modal after delay
     setTimeout(() => {

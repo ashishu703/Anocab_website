@@ -98,6 +98,10 @@
     animation-delay: 0.3s;
 }
 
+.quick-actions-menu.active .quick-action-btn:nth-child(4) {
+    animation-delay: 0.4s;
+}
+
 .whatsapp-btn {
     background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
 }
@@ -116,6 +120,17 @@
     background: linear-gradient(135deg, #005f8c 0%, #004466 100%);
     transform: translateX(-5px) scale(1.05);
     box-shadow: 0 6px 20px rgba(0, 136, 204, 0.5);
+}
+
+.calculator-btn {
+    background: linear-gradient(135deg, #FF8C00 0%, #FF6347 100%);
+    color: #fff;
+}
+
+.calculator-btn:hover {
+    background: linear-gradient(135deg, #FF6347 0%, #FF4500 100%);
+    transform: translateX(-5px) scale(1.05);
+    box-shadow: 0 6px 20px rgba(255, 140, 0, 0.5);
 }
 
 .enquiry-btn {
@@ -237,6 +252,7 @@
     font-size: 48px;
     margin-bottom: 15px;
     animation: bounce 1s infinite;
+    color: #fff;
 }
 
 @keyframes bounce {
@@ -248,12 +264,14 @@
     font-size: 28px;
     margin: 0 0 10px 0;
     font-weight: bold;
+    color: #fff;
 }
 
 .enquiry-header p {
     margin: 0;
-    opacity: 0.9;
+    opacity: 1;
     font-size: 14px;
+    color: #fff;
 }
 
 .enquiry-form {

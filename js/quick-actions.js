@@ -56,6 +56,13 @@
                     <span>Call Now</span>
                 </a>
                 
+                <a href="https://anocab.com/Calculator/index.html" 
+                   class="quick-action-btn calculator-btn"
+                   title="Cable Calculator">
+                    <i class="fas fa-calculator"></i>
+                    <span>Calculator</span>
+                </a>
+                
                 <button class="quick-action-btn enquiry-btn" 
                         id="openEnquiryForm"
                         title="Send Enquiry">
@@ -153,6 +160,17 @@
             
             const icon = toggle.querySelector('.quick-icon');
             icon.style.transform = isOpen ? 'rotate(45deg)' : 'rotate(0deg)';
+        });
+        
+        // Close menu when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!toggle.contains(e.target) && !menu.contains(e.target) && isOpen) {
+                isOpen = false;
+                menu.classList.remove('active');
+                toggle.classList.remove('active');
+                const icon = toggle.querySelector('.quick-icon');
+                icon.style.transform = 'rotate(0deg)';
+            }
         });
 
         // Open modal
