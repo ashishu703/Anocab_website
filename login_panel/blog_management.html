@@ -5,6 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Blog Management - Anocab Admin</title>
   <script src="/config.js"></script>
+  
+  <!-- Quill Rich Text Editor -->
+  <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+  <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+  
   <style>
     * {
       margin: 0;
@@ -213,9 +218,9 @@
     .modal-content {
       background: white;
       border-radius: 16px;
-      max-width: 900px;
-      width: 90%;
-      max-height: 90vh;
+      max-width: 1200px;
+      width: 95%;
+      max-height: 95vh;
       overflow-y: auto;
       box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
       margin: 20px;
@@ -227,6 +232,10 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+      position: sticky;
+      top: 0;
+      background: white;
+      z-index: 10;
     }
 
     .modal-header h2 {
@@ -280,6 +289,7 @@
       border-radius: 8px;
       font-size: 14px;
       transition: all 0.3s ease;
+      font-family: inherit;
     }
 
     .form-group input:focus,
@@ -288,11 +298,6 @@
       outline: none;
       border-color: #667eea;
       box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
-    }
-
-    .form-group textarea {
-      min-height: 400px;
-      font-family: monospace;
     }
 
     .form-row {
@@ -313,12 +318,148 @@
       cursor: pointer;
     }
 
+    /* Rich Text Editor Styles */
+    #editor-container {
+      height: 500px;
+      background: white;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    #editor-container:focus-within {
+      border-color: #667eea;
+      box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+    }
+
+    .ql-toolbar {
+      background: #f8f9fa;
+      border: none !important;
+      border-bottom: 1px solid #e0e0e0 !important;
+      padding: 12px !important;
+    }
+
+    .ql-container {
+      border: none !important;
+      font-size: 16px;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+
+    .ql-editor {
+      min-height: 450px;
+      padding: 20px;
+    }
+
+    .ql-editor h1 {
+      font-size: 2.5em;
+      font-weight: 700;
+      margin-bottom: 0.5em;
+    }
+
+    .ql-editor h2 {
+      font-size: 2em;
+      font-weight: 600;
+      margin-bottom: 0.5em;
+    }
+
+    .ql-editor h3 {
+      font-size: 1.5em;
+      font-weight: 600;
+      margin-bottom: 0.5em;
+    }
+
+    .ql-editor p {
+      margin-bottom: 1em;
+      line-height: 1.6;
+    }
+
+    .ql-editor img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 8px;
+      margin: 1em 0;
+    }
+
+    /* Image Upload Styles */
+    .image-upload-section {
+      display: flex;
+      gap: 15px;
+      align-items: flex-start;
+    }
+
+    .image-url-input {
+      flex: 1;
+    }
+
+    .upload-divider {
+      color: #999;
+      font-size: 14px;
+      padding-top: 10px;
+    }
+
+    .image-preview {
+      margin-top: 15px;
+      display: none;
+    }
+
+    .preview-img {
+      max-width: 100%;
+      max-height: 300px;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .help-text {
+      display: block;
+      margin-top: 8px;
+      color: #666;
+      font-size: 13px;
+    }
+
+    .help-link {
+      color: #667eea;
+      text-decoration: none;
+    }
+
+    .help-link:hover {
+      text-decoration: underline;
+    }
+
+    .excerpt-textarea {
+      min-height: 80px !important;
+      resize: vertical;
+    }
+
     .modal-footer {
       padding: 20px 25px;
       border-top: 1px solid #e0e0e0;
       display: flex;
-      justify-content: flex-end;
+      justify-content: space-between;
+      align-items: center;
       gap: 10px;
+      position: sticky;
+      bottom: 0;
+      background: white;
+      z-index: 10;
+    }
+
+    .footer-left {
+      display: flex;
+      gap: 10px;
+    }
+
+    .footer-right {
+      display: flex;
+      gap: 10px;
+    }
+
+    .btn-preview {
+      background: #6c757d;
+      color: white;
+    }
+
+    .btn-preview:hover {
+      background: #5a6268;
     }
 
     .btn-cancel {
@@ -363,6 +504,52 @@
       margin-bottom: 20px;
     }
 
+    /* Preview Mode */
+    .preview-container {
+      display: none;
+      padding: 40px;
+      background: white;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .preview-container.show {
+      display: block;
+    }
+
+    .preview-header {
+      margin-bottom: 30px;
+    }
+
+    .preview-title {
+      font-size: 2.5em;
+      font-weight: 700;
+      color: #333;
+      margin-bottom: 15px;
+      line-height: 1.2;
+    }
+
+    .preview-meta {
+      display: flex;
+      gap: 20px;
+      color: #666;
+      font-size: 14px;
+    }
+
+    .preview-image {
+      width: 100%;
+      max-height: 500px;
+      object-fit: cover;
+      border-radius: 12px;
+      margin-bottom: 30px;
+    }
+
+    .preview-content {
+      font-size: 18px;
+      line-height: 1.8;
+      color: #333;
+    }
+
     @media (max-width: 768px) {
       .header {
         flex-direction: column;
@@ -376,6 +563,36 @@
 
       .form-row {
         grid-template-columns: 1fr;
+      }
+
+      .modal-content {
+        width: 100%;
+        max-height: 100vh;
+        border-radius: 0;
+      }
+
+      #editor-container {
+        height: 400px;
+      }
+
+      .ql-editor {
+        min-height: 350px;
+      }
+
+      .image-upload-section {
+        flex-direction: column;
+      }
+
+      .modal-footer {
+        flex-direction: column;
+      }
+
+      .footer-left, .footer-right {
+        width: 100%;
+      }
+
+      .btn {
+        width: 100%;
       }
     }
   </style>
@@ -442,14 +659,12 @@
         <button type="button" class="close-btn" onclick="closeModal()">&times;</button>
       </div>
       <div class="modal-body">
-        <form id="blogForm">
+        <form id="blogForm" onsubmit="return false;">
           <input type="hidden" id="blogId">
-
-          <button type="submit" class="hidden-submit" aria-hidden="true" tabindex="-1"></button>
 
           <div class="form-group">
             <label>Title *</label>
-            <input type="text" id="title" required placeholder="Enter blog title">
+            <input type="text" id="title" required placeholder="Enter blog title (e.g., Latest Copper Price Updates for May 2026)">
           </div>
 
           <div class="form-row">
@@ -467,64 +682,68 @@
 
             <div class="form-group">
               <label>Tags (comma separated)</label>
-              <input type="text" id="tags" placeholder="wire, cable, manufacturing">
+              <input type="text" id="tags" placeholder="copper, price, wire, cable">
             </div>
           </div>
 
           <div class="form-group">
-            <label>Featured Image *</label>
-
-            <!-- Option 1: Paste Cloudinary URL (Recommended) -->
-            <div class="mb-10">
-              <input type="url" id="imageUrl" placeholder="Paste Cloudinary image URL here (recommended)" class="image-url-input" onchange="handleUrlInput()">
+            <label>Featured Image URL *</label>
+            <div class="image-upload-section">
+              <input type="url" id="imageUrl" class="image-url-input" placeholder="Paste Cloudinary or image URL here" onchange="handleUrlInput()" required>
             </div>
-
-            <!-- Option 2: Upload File -->
-            <div class="upload-row">
-              <span class="upload-row-label">Or upload:</span>
-              <input type="file" id="imageFile" accept="image/*" class="upload-row-file" onchange="handleImageUpload()">
-            </div>
-
             <input type="hidden" id="image">
-
             <div id="imagePreview" class="image-preview">
               <img id="previewImg" class="preview-img" src="data:," alt="Image preview">
             </div>
-
             <small class="help-text">
-              💡 <strong>Best Practice:</strong> Upload to <a href="https://cloudinary.com" target="_blank" class="help-link">Cloudinary</a> first, then paste URL above
-            </small>
-
-            <small class="help-text-muted">
-              File upload: Max 5MB, slower performance
+              💡 Upload to <a href="https://cloudinary.com" target="_blank" class="help-link">Cloudinary</a> first, then paste URL above
             </small>
           </div>
 
           <div class="form-group">
-            <label>Excerpt *</label>
-            <textarea id="excerpt" required placeholder="Short description (2-3 sentences)" class="excerpt-textarea"></textarea>
+            <label>Excerpt (Short Description) *</label>
+            <textarea id="excerpt" required placeholder="Write a brief 2-3 sentence summary of your blog post..." class="excerpt-textarea"></textarea>
+            <small class="help-text">This will appear in blog cards and search results</small>
           </div>
 
           <div class="form-group">
-            <label>Content *</label>
-            <textarea id="content" required placeholder="Write your blog content here (plain text, will be formatted automatically)"></textarea>
-
-            <small class="content-tip">
-              Tip: Use line breaks for paragraphs. Content will be automatically formatted.
+            <label>Content * (Rich Text Editor)</label>
+            <div id="editor-container"></div>
+            <small class="help-text">
+              Use the toolbar above to format your content with headings, bold, italic, lists, links, images, and more
             </small>
           </div>
 
           <div class="form-group">
             <div class="checkbox-group">
               <input type="checkbox" id="published">
-              <label for="published" class="checkbox-label">Publish immediately</label>
+              <label for="published" class="checkbox-label">Publish immediately (uncheck to save as draft)</label>
             </div>
           </div>
         </form>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-small btn-cancel" onclick="closeModal()">Cancel</button>
-        <button type="button" class="btn btn-small btn-save" id="saveBtn" onclick="saveBlog()">Save Blog</button>
+        <div class="footer-left">
+          <button type="button" class="btn btn-small btn-preview" onclick="togglePreview()">👁️ Preview</button>
+        </div>
+        <div class="footer-right">
+          <button type="button" class="btn btn-small btn-cancel" onclick="closeModal()">Cancel</button>
+          <button type="button" class="btn btn-small btn-save" id="saveBtn" onclick="saveBlog()">💾 Save Blog</button>
+        </div>
+      </div>
+      
+      <!-- Preview Container -->
+      <div id="previewContainer" class="preview-container">
+        <div class="preview-header">
+          <h1 class="preview-title" id="previewTitle">Blog Title</h1>
+          <div class="preview-meta">
+            <span id="previewCategory">Category</span>
+            <span>•</span>
+            <span id="previewDate">Date</span>
+          </div>
+        </div>
+        <img id="previewImage" class="preview-image" src="" alt="Preview">
+        <div class="preview-content" id="previewContent"></div>
       </div>
     </div>
   </div>
@@ -532,10 +751,39 @@
   <script>
     let blogs = [];
     let editingBlogId = null;
+    let quill; // Quill editor instance
+    let isPreviewMode = false;
     
     // Wait for API_BASE_URL to be available
     if (typeof API_BASE_URL === 'undefined') {
       window.API_BASE_URL = window.location.origin;
+    }
+
+    // Initialize Quill Editor
+    function initQuillEditor() {
+      const toolbarOptions = [
+        [{ 'header': [1, 2, 3, false] }],
+        ['bold', 'italic', 'underline', 'strike'],
+        [{ 'color': [] }, { 'background': [] }],
+        [{ 'font': [] }],
+        [{ 'size': ['small', false, 'large', 'huge'] }],
+        [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+        [{ 'indent': '-1'}, { 'indent': '+1' }],
+        [{ 'align': [] }],
+        ['blockquote', 'code-block'],
+        ['link', 'image', 'video'],
+        ['clean']
+      ];
+
+      quill = new Quill('#editor-container', {
+        theme: 'snow',
+        modules: {
+          toolbar: toolbarOptions
+        },
+        placeholder: 'Start writing your blog content here...\n\nUse the toolbar above to:\n• Add headings (H1, H2, H3)\n• Format text (bold, italic, underline)\n• Change colors and fonts\n• Insert images and links\n• Create lists and tables\n• Add quotes and code blocks'
+      });
+
+      console.log('✅ Quill editor initialized');
     }
 
     // Handle URL input (Cloudinary)
@@ -547,49 +795,41 @@
         document.getElementById('image').value = url;
         document.getElementById('previewImg').src = url;
         document.getElementById('imagePreview').style.display = 'block';
-        document.getElementById('imageFile').value = ''; // Clear file input
       }
     }
 
-    // Handle image upload
-    async function handleImageUpload() {
-      const fileInput = document.getElementById('imageFile');
-      const file = fileInput.files[0];
+    // Toggle Preview Mode
+    function togglePreview() {
+      isPreviewMode = !isPreviewMode;
+      const previewContainer = document.getElementById('previewContainer');
+      const modalBody = document.querySelector('.modal-body');
+      const previewBtn = document.querySelector('.btn-preview');
       
-      if (!file) return;
-
-      // Show preview
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        document.getElementById('previewImg').src = e.target.result;
-        document.getElementById('imagePreview').style.display = 'block';
-      };
-      reader.readAsDataURL(file);
-
-      // Upload to server
-      const formData = new FormData();
-      formData.append('image', file);
-
-      try {
-        const response = await fetch(API_BASE_URL + '/api/admin/blogs/upload-image', {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${getAuthToken()}`
-          },
-          body: formData
+      if (isPreviewMode) {
+        // Show preview
+        const title = document.getElementById('title').value || 'Untitled Blog';
+        const category = document.getElementById('category').value;
+        const image = document.getElementById('image').value;
+        const content = quill.root.innerHTML;
+        
+        document.getElementById('previewTitle').textContent = title;
+        document.getElementById('previewCategory').textContent = category;
+        document.getElementById('previewDate').textContent = new Date().toLocaleDateString('en-US', { 
+          year: 'numeric', 
+          month: 'long', 
+          day: 'numeric' 
         });
-
-        const result = await response.json();
-
-        if (response.ok) {
-          document.getElementById('image').value = result.imageUrl;
-          console.log('Image uploaded successfully');
-        } else {
-          alert('Failed to upload image: ' + result.error);
-        }
-      } catch (error) {
-        console.error('Error uploading image:', error);
-        alert('Failed to upload image');
+        document.getElementById('previewImage').src = image || 'https://via.placeholder.com/800x400?text=No+Image';
+        document.getElementById('previewContent').innerHTML = content;
+        
+        modalBody.style.display = 'none';
+        previewContainer.classList.add('show');
+        previewBtn.textContent = '✏️ Edit';
+      } else {
+        // Show editor
+        modalBody.style.display = 'block';
+        previewContainer.classList.remove('show');
+        previewBtn.textContent = '👁️ Preview';
       }
     }
 
@@ -619,15 +859,45 @@
         return;
       }
 
-      blogGrid.innerHTML = blogs.map(blog => '<div class="blog-card"><img src="' + blog.image + '" alt="' + blog.title + '" class="blog-card-image" onerror="this.src=\'https://via.placeholder.com/350x200?text=Blog+Image\'"><div class="blog-card-content"><div class="blog-card-meta"><span>' + new Date(blog.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) + '</span><span class="blog-card-status ' + (blog.published ? 'status-published' : 'status-draft') + '">' + (blog.published ? 'Published' : 'Draft') + '</span></div><h3 class="blog-card-title">' + blog.title + '</h3><p class="blog-card-excerpt">' + blog.excerpt + '</p><div class="blog-card-actions"><button class="btn-small btn-edit" onclick="editBlog(\'' + blog._id + '\')">Edit</button><button class="btn-small btn-delete" onclick="deleteBlog(\'' + blog._id + '\')">Delete</button></div></div></div>').join('');
+      blogGrid.innerHTML = blogs.map(blog => `
+        <div class="blog-card">
+          <img src="${blog.image}" alt="${blog.title}" class="blog-card-image" onerror="this.src='https://via.placeholder.com/350x200?text=Blog+Image'">
+          <div class="blog-card-content">
+            <div class="blog-card-meta">
+              <span>${new Date(blog.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}</span>
+              <span class="blog-card-status ${blog.published ? 'status-published' : 'status-draft'}">
+                ${blog.published ? 'Published' : 'Draft'}
+              </span>
+            </div>
+            <h3 class="blog-card-title">${blog.title}</h3>
+            <p class="blog-card-excerpt">${blog.excerpt}</p>
+            <div class="blog-card-actions">
+              <button class="btn-small btn-edit" onclick="editBlog('${blog._id}')">Edit</button>
+              <button class="btn-small btn-delete" onclick="deleteBlog('${blog._id}')">Delete</button>
+            </div>
+          </div>
+        </div>
+      `).join('');
     }
 
     // Open create modal
     function openCreateModal() {
       editingBlogId = null;
+      isPreviewMode = false;
       document.getElementById('modalTitle').textContent = 'Create New Blog';
       document.getElementById('blogForm').reset();
       document.getElementById('blogId').value = '';
+      document.getElementById('imagePreview').style.display = 'none';
+      document.querySelector('.modal-body').style.display = 'block';
+      document.getElementById('previewContainer').classList.remove('show');
+      
+      // Clear Quill editor
+      if (quill) {
+        quill.setContents([]);
+      } else {
+        initQuillEditor();
+      }
+      
       document.getElementById('blogModal').classList.add('show');
     }
 
@@ -637,6 +907,7 @@
       if (!blog) return;
 
       editingBlogId = id;
+      isPreviewMode = false;
       document.getElementById('modalTitle').textContent = 'Edit Blog';
       document.getElementById('blogId').value = id;
       document.getElementById('title').value = blog.title;
@@ -645,7 +916,6 @@
       document.getElementById('image').value = blog.image;
       document.getElementById('imageUrl').value = blog.image.startsWith('http') ? blog.image : '';
       document.getElementById('excerpt').value = blog.excerpt;
-      document.getElementById('content').value = blog.content;
       document.getElementById('published').checked = blog.published;
       
       // Show image preview if exists
@@ -654,6 +924,16 @@
         document.getElementById('imagePreview').style.display = 'block';
       }
       
+      // Initialize Quill if not already done
+      if (!quill) {
+        initQuillEditor();
+      }
+      
+      // Set Quill content
+      quill.root.innerHTML = blog.content;
+      
+      document.querySelector('.modal-body').style.display = 'block';
+      document.getElementById('previewContainer').classList.remove('show');
       document.getElementById('blogModal').classList.add('show');
     }
 
@@ -661,8 +941,8 @@
     function closeModal() {
       document.getElementById('blogModal').classList.remove('show');
       document.getElementById('imagePreview').style.display = 'none';
-      document.getElementById('imageFile').value = '';
       document.getElementById('imageUrl').value = '';
+      isPreviewMode = false;
       editingBlogId = null;
     }
 
@@ -673,10 +953,10 @@
       const tags = document.getElementById('tags').value.trim();
       const image = document.getElementById('image').value.trim();
       const excerpt = document.getElementById('excerpt').value.trim();
-      const content = document.getElementById('content').value.trim();
+      const content = quill.root.innerHTML.trim();
       const published = document.getElementById('published').checked;
 
-      if (!title || !image || !excerpt || !content) {
+      if (!title || !image || !excerpt || !content || content === '<p><br></p>') {
         alert('Please fill in all required fields');
         return;
       }
@@ -720,7 +1000,7 @@
         alert('❌ Failed to save blog');
       } finally {
         saveBtn.disabled = false;
-        saveBtn.textContent = 'Save Blog';
+        saveBtn.textContent = '💾 Save Blog';
       }
     }
 

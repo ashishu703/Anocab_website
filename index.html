@@ -81,7 +81,7 @@
         <link href="CSS/toastr.min.css" rel="stylesheet">
     </noscript>
     <!-- API Configuration - MUST load before any API calls -->
-    <script src="/config.js" defer></script>
+    <script src="/config.js"></script>
     <script src="js/jquery.min.js" defer></script>
     <script src="js/toastr.min.js" defer></script>
     
@@ -320,19 +320,36 @@
         <script>
             // Function to update marquee prices with comparison
             async function updateMarqueePrices() {
-                const apiUrl = window.API_BASE_URL || 'https://anocab.com';
+                // Wait for API_BASE_URL to be set, or use fallback
+                const apiUrl = window.API_BASE_URL || window.location.origin;
+                
+                console.log('🔍 Fetching prices from:', apiUrl);
                 
                 try {
                     // Fetch current prices
                     const pricesResponse = await fetch(`${apiUrl}/api/prices`);
+                    
+                    if (!pricesResponse.ok) {
+                        throw new Error(`HTTP error! status: ${pricesResponse.status}`);
+                    }
+                    
                     const prices = await pricesResponse.json();
+                    console.log('✅ Prices fetched successfully:', prices);
                     
                     // Fetch price history for comparison
                     const historyResponse = await fetch(`${apiUrl}/api/price-history`);
-                    const priceHistory = await historyResponse.json();
+                    
+                    if (!historyResponse.ok) {
+                        console.warn('⚠️ Price history not available');
+                    }
+                    
+                    const priceHistory = historyResponse.ok ? await historyResponse.json() : [];
+                    console.log('📊 Price history fetched:', priceHistory.length, 'entries');
                     
                     // Get yesterday's prices (last entry in history)
-                    const yesterdayPrices = priceHistory.length > 0 ? priceHistory[priceHistory.length - 1].prices : {};
+                    // Price history objects have prices directly as properties, not nested
+                    const yesterdayPrices = priceHistory.length > 0 ? priceHistory[priceHistory.length - 1] : {};
+                    console.log('📅 Yesterday prices:', yesterdayPrices);
                     
                     // Function to get trend indicator
                     function getTrendIndicator(current, previous) {
@@ -361,15 +378,23 @@
                         <b>LLDPE - X24065 (Reliance) Rs: ${prices.lldpe.toFixed(2)}</b> ${getTrendIndicator(prices.lldpe, yesterdayPrices.lldpe)}${getPriceChange(prices.lldpe, yesterdayPrices.lldpe)}
                     `;
                     document.getElementById('dynamic-prices').innerHTML = priceText;
+                    console.log('✅ Price marquee updated successfully');
                 } catch (error) {
-                    console.error('Error fetching prices:', error);
+                    console.error('❌ Error fetching prices:', error);
+                    console.error('API URL was:', apiUrl);
                     document.getElementById('dynamic-prices').innerHTML = 
                         'Current prices unavailable. Please check back later.';
                 }
             }
             
-            // Update immediately
-            updateMarqueePrices();
+            // Wait for DOM and config.js to load before updating prices
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', function() {
+                    setTimeout(updateMarqueePrices, 100); // Small delay to ensure config.js loads
+                });
+            } else {
+                setTimeout(updateMarqueePrices, 100);
+            }
             
             // Update every 5 minutes (300000 ms)
             setInterval(updateMarqueePrices, 300000);
@@ -1387,15 +1412,15 @@ document.querySelector('.cable-showcase')?.addEventListener('mouseleave', () => 
             <div>
                 <div class="blog-card">
                     <div class="blog-card-image-wrapper">
-                        <img loading="lazy" src="${blog.image || 'https://via.placeholder.com/400x280/013A5B/FFFFFF?text=Blog+Image'}" alt="${blog.title}" class="blog-card-image" onerror="this.src='https://via.placeholder.com/400x280/013A5B/FFFFFF?text=Blog+Image'">
+                        <img loading="lazy" src="${blog.image || 'https://via.placeholder.com/400x280/013A5B/FFFFFF?text=Blog+Image'}" alt="${blog.title || 'Blog'}" class="blog-card-image" onerror="this.src='https://via.placeholder.com/400x280/013A5B/FFFFFF?text=Blog+Image'">
                         <div class="blog-card-overlay">
-                            <h3 class="blog-overlay-title">${blog.title}</h3>
+                            <h3 class="blog-overlay-title">${blog.title || 'Untitled'}</h3>
                         </div>
                     </div>
                     <div class="blog-card-content">
                         <div class="blog-date">📅 ${new Date(blog.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}</div>
-                        <p class="blog-excerpt">${blog.excerpt}</p>
-                        <a href="/blog.html?slug=${blog.slug}" class="blog-read-more" aria-label="Read more about ${blog.title}">Read more</a>
+                        <p class="blog-excerpt">${blog.excerpt || 'No description available'}</p>
+                        ${blog.slug ? `<a href="/blog.html?slug=${blog.slug}" class="blog-read-more" aria-label="Read more about ${blog.title}">Read more</a>` : ''}
                     </div>
                 </div>
             </div>
@@ -2036,7 +2061,7 @@ document.querySelector('.cable-showcase')?.addEventListener('mouseleave', () => 
     <script src="js/jsscript.js" defer></script> <!--line 167 for back to top-->
     
     <!-- API Configuration -->
-    <script src="/config.js" defer></script>
+    <script src="/config.js"></script>
     <!-- Newsletter Header Modal -->
     <script src="js/newsletter-header-modal.js"></script>
 </body>

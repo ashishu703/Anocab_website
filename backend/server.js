@@ -139,6 +139,13 @@ const blogSchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now }
 });
+
+// Add indexes for better query performance
+blogSchema.index({ slug: 1 }); // For slug-based queries
+blogSchema.index({ published: 1, createdAt: -1 }); // For listing published blogs
+blogSchema.index({ category: 1, published: 1 }); // For category filtering
+blogSchema.index({ tags: 1 }); // For tag-based queries
+
 const Blog = mongoose.model('Blog', blogSchema);
 
 // Client Logo Schema
@@ -1101,6 +1108,7 @@ app.post('/api/admin/blogs/upload-image', isAuthenticated, upload.single('image'
 });
 
 // Get all published blogs (public)
+// Get all published blogs (public) - OPTIMIZED
 app.get('/api/blogs', async (req, res) => {
   try {
     const { limit = 6, category, tag } = req.query;
@@ -1112,7 +1120,8 @@ app.get('/api/blogs', async (req, res) => {
     const blogs = await Blog.find(query)
       .sort({ createdAt: -1 })
       .limit(parseInt(limit))
-      .select('-content');
+      .select('_id title slug excerpt image category tags createdAt views author')
+      .lean(); // Use lean() for faster queries
     
     res.json(blogs);
   } catch (error) {
@@ -1123,26 +1132,28 @@ app.get('/api/blogs', async (req, res) => {
 });
 
 // Get single blog by slug (public)
+// Get single blog by slug (public) - OPTIMIZED
 app.get('/api/blogs/:slug', async (req, res) => {
   try {
-    const blog = await Blog.findOne({ slug: req.params.slug, published: true });
+    const blog = await Blog.findOne({ slug: req.params.slug, published: true }).lean();
     
     if (!blog) {
       return res.status(404).json({ error: 'Blog not found' });
     }
     
-    // Increment views
-    blog.views += 1;
-    await blog.save();
+    // Increment views asynchronously (don't wait for it)
+    Blog.updateOne({ _id: blog._id }, { $inc: { views: 1 } }).exec();
     
-    // Get related blogs (same category, exclude current)
+    // Get related blogs (same category, exclude current) - optimized with lean()
     const relatedBlogs = await Blog.find({
       published: true,
       category: blog.category,
       _id: { $ne: blog._id }
     })
     .limit(3)
-    .select('-content');
+    .select('_id title slug excerpt image category createdAt views')
+    .sort({ createdAt: -1 })
+    .lean();
     
     res.json({ blog, relatedBlogs });
   } catch (error) {
@@ -1152,9 +1163,15 @@ app.get('/api/blogs/:slug', async (req, res) => {
 });
 
 // Get all blogs for admin (protected)
+// Get all blogs for admin (protected) - OPTIMIZED
 app.get('/api/admin/blogs', isAuthenticated, async (req, res) => {
   try {
-    const blogs = await Blog.find().sort({ createdAt: -1 });
+    // Only select necessary fields for listing, exclude heavy content field
+    const blogs = await Blog.find()
+      .select('_id title slug excerpt image category tags published createdAt updatedAt views author')
+      .sort({ createdAt: -1 })
+      .lean(); // Use lean() for faster queries (returns plain JS objects)
+    
     res.json(blogs);
   } catch (error) {
     console.error('Error fetching blogs:', error);
